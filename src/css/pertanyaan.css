@@ -11,6 +11,20 @@ body {
     background-color: #FF7F2A;
 }
 
+.logo-container {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 40px;
+    box-sizing: border-box;
+  }
+  
+  .logo-container img {
+    width: 100px;
+  }  
+
 .container {
     text-align: center;
     width: 100%;
@@ -33,6 +47,7 @@ body {
 }
 
 .options {
+    padding: 20px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
@@ -46,10 +61,12 @@ body {
     text-align: center;
     font-size: 16px;
     color: #FF7F2A;
+    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
 }
 
 .option:hover {
     background: #FF7F2A;
+    color: #ffffff;
 }
 
 .button-container {
