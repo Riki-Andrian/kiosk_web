@@ -1,31 +1,39 @@
 import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
-const port = 3000;
-import url from "url";
+const PORT = 3000;
 
-const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+// Sajikan file statis dari folder CSS
+app.use(express.static(path.join(__dirname, 'css')));
 
+// Routing ke halaman HTML
 app.get('/', (req, res) => {
-    res.sendFile("./page/index.html", {root: __dirname});
-})
+    res.sendFile(path.join(__dirname, 'page/index.html'));
+});
 
 app.get('/form', (req, res) => {
-    res.sendFile("./page/form_nama.html", {root: __dirname});
-})
+    res.sendFile(path.join(__dirname, 'page/form_nama.html'));
+});
 
 app.get('/pertanyaan', (req, res) => {
-    res.sendFile("./page/pertanyaan.html", {root: __dirname});
-})
+    res.sendFile(path.join(__dirname, 'page/pertanyaan.html'));
+});
 
 app.get('/kamera', (req, res) => {
-    res.sendFile("./page/kamera.html", {root: __dirname});
-})
+    res.sendFile(path.join(__dirname, 'page/kamera.html'));
+});
 
+// Handle 404 - Halaman tidak ditemukan
 app.use("*", (req, res) => {
-    res.status(404)
-    res.send('Halaman tidak ditemukan')
-})
+    res.status(404).send('Halaman tidak ditemukan');
+});
 
-app.listen(port, () => {
-    console.log(`Example app listening at  http://localhost:${port}`)
-})
+// Jalankan server
+app.listen(PORT, () => {
+    console.log(`Server berjalan di http://localhost:${PORT}`);
+});
