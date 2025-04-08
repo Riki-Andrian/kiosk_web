@@ -51,7 +51,7 @@
 
 </script>
 
-<template>
+<!-- <template>
   <div v-if="!capturedImage">
     <video ref="cameraStream" autoplay></video>
     <button @click="capturePhoto">Capture</button>
@@ -61,4 +61,110 @@
     <button @click="retakePhoto">Take another picture</button>
     <button @click="editPhoto">Edit</button>
   </div>
+</template> -->
+
+<template>
+  <div class="app-container">
+    <img src="../assets/Background.png" class="background-image" />
+
+    <div class="overlay">
+      <div class="top-bar">
+        <img src="../assets/art & sound logo.svg" class="logo" />
+        <img src="../assets/mld logo.svg" class="logo" />
+      </div>
+
+      <div class="title-text">
+        <h1>GET YOUR ALBUM COVER.</h1>
+        <h2>STRIKE A POSE!</h2>
+      </div>
+
+      <div v-if="!capturedImage" class="camera-container">
+        <video ref="cameraStream" autoplay></video>
+        <button class="action-button" @click="capturePhoto">Take a Photo</button>
+      </div>
+
+      <div v-else class="preview-container">
+        <!-- <PreviewPicture :image="capturedImage" /> -->
+        <button class="action-button" @click="retakePhoto">Take another picture</button>
+        <button class="action-button" @click="editPhoto">Edit</button>
+      </div>
+    </div>
+  </div>
 </template>
+
+<style scoped>
+.app-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.background-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.overlay {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  color: white;
+  text-align: center;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  width: 80px;
+  height: auto;
+}
+
+.title-text {
+  margin-top: 20px;
+}
+
+.title-text h1,
+.title-text h2 {
+  margin: 0;
+}
+
+.camera-container,
+.preview-container {
+  flex: 1;
+  padding-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+video {
+  width: 80%;
+  max-width: 400px;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.action-button {
+  background-color: #ffffffcc;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 10px;
+}
+</style>
+

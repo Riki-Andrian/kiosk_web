@@ -3,6 +3,7 @@ import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import { ref, onMounted } from "vue";
 import videoSrc from "@/assets/template.mp4"; 
 
+
 const ffmpeg = createFFmpeg({ log: true });
 const videoFile = ref(null);
 const outputUrl = ref(null);

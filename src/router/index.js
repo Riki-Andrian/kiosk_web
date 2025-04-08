@@ -1,3 +1,4 @@
+import Pertanyaan from "@/components/Pertanyaan.vue";
 import Edit from "@/views/Edit.vue";
 import Home from "@/views/Home.vue";
 import { createRouter, createWebHistory } from "vue-router";
@@ -10,6 +11,10 @@ const routes = [
     {
         path: "/edit",
         component: Edit,
+    },
+    {
+        path: "/pertanyaan",
+        component: Pertanyaan,
     }
 ];
 
