@@ -1,0 +1,52 @@
+[
+    {
+        "id" : 1,
+        "pertanyaan" : "HOW DO YOU LISTEN TO MUSIC",
+        "options": [
+            {"option": "Alone", "point": ["I"]},
+            {"option": "With close friend", "point": ["I", "E"]},
+            {"option": "With large crowd", "point": ["E"]},
+            {"option": "Live concerts loud and wild", "point": ["E"]}
+        ]
+    },
+    {
+        "id" : 2,
+        "pertanyaan" : "WHAT MAKES A SONG GREAT FOR YOU?",
+        "options": [
+            {"option": "Smooth, precise melodies", "point": ["T"]},
+            {"option": "Emotional lyrics", "point": ["F"]},
+            {"option": "Groove & rhythm", "point": ["S", "E"]},
+            {"option": "Unpredictable, free-folowing sound", "point": ["P", "E"]}
+        ]
+    },
+    {
+        "id" : 3,
+        "pertanyaan" : "IF YOU WERE IN A JAZZ BAND, YOU'D BE...",
+        "options": [
+            {"option": "Pianist", "point": ["I", "T"]},
+            {"option": "Saxophonist", "point": ["I", "F"]},
+            {"option": "Drummer", "point": ["E"]},
+            {"option": "Singer", "point": ["E", "P"]}
+        ]
+    },
+    {
+        "id" : 4,
+        "pertanyaan" : "WHAT'S YOUR IDEAL CROOVE NIGHT?",
+        "options": [
+            {"option": "Chill lounge", "point": ["I", "T"]},
+            {"option": "Soulfull jam session", "point": ["I", "F"]},
+            {"option": "Big band swing", "point": ["E", "F"]},
+            {"option": "Underground club", "point": ["E", "P"]}
+        ]
+    },
+    {
+        "id" : 5,
+        "pertanyaan" : "WHICH JAZZ STYLE FITS YOU BEST?",
+        "options": [
+            {"option": "Cool jazz", "point": ["I", "T"]},
+            {"option": "Soul jazz", "point": ["I", "F"]},
+            {"option": "big band swing", "point": ["E", "F"]},
+            {"option": "Free jazz", "point": ["E", "P"]}
+        ]
+    }
+]

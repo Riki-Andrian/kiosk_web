@@ -84,7 +84,7 @@
       </div>
 
       <div v-else class="preview-container">
-        <!-- <PreviewPicture :image="capturedImage" /> -->
+        <PreviewPicture :image="capturedImage" />
         <button class="action-button" @click="retakePhoto">Take another picture</button>
         <button class="action-button" @click="editPhoto">Edit</button>
       </div>
@@ -118,6 +118,8 @@
   box-sizing: border-box;
   color: white;
   text-align: center;
+  overflow-y: auto;
+  max-height: 100vh;
 }
 
 .top-bar {
@@ -143,7 +145,6 @@
 .camera-container,
 .preview-container {
   flex: 1;
-  padding-bottom: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
