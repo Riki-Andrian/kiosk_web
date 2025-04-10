@@ -6,68 +6,108 @@ const questions = ref(
     [
         {
             "id": 1,
-            "pertanyaan": "HOW DO YOU LISTEN TO MUSIC",
+            "pertanyaan": "CARA LO NIKMATIN MUSIK?",
             "options": [
-                { "option": "Alone", "point": ["I"] },
-                { "option": "With close friend", "point": ["I", "E"] },
-                { "option": "With large crowd", "point": ["E"] },
-                { "option": "Live concerts loud and wild", "point": ["E"] }
+                { "option": "Sendirian aja", "point": ["I"] },
+                { "option": "Bareng close friends", "point": ["I", "E"] },
+                { "option": "Di tengah keramaian full of energy", "point": ["E"] },
+                { "option": "Live concerts, loud and wild!", "point": ["E"] }
             ]
         },
         {
             "id": 2,
-            "pertanyaan": "WHAT MAKES A SONG GREAT FOR YOU?",
+            "pertanyaan": "LAGU KEREN BUAT LO?",
             "options": [
-                { "option": "Smooth, precise melodies", "point": ["T"] },
-                { "option": "Emotional lyrics", "point": ["F"] },
-                { "option": "Groove & rhythm", "point": ["S", "E"] },
-                { "option": "Unpredictable, free-folowing sound", "point": ["P", "E"] }
+                { "option": "Complex melody & deep details", "point": ["T"] },
+                { "option": "Lirik & emosi yang deep banget", "point": ["F"] },
+                { "option": "Groove & rhythm that makes me move", "point": ["S", "E"] },
+                { "option": "Unpredictable beat & wild creativity", "point": ["P", "E"] }
             ]
         },
         {
             "id": 3,
-            "pertanyaan": "IF YOU WERE IN A JAZZ BAND, YOU'D BE...",
+            "pertanyaan": "ARTI MUSIK BUAT LO?",
             "options": [
-                { "option": "Pianist", "point": ["I", "T"] },
-                { "option": "Saxophonist", "point": ["I", "F"] },
-                { "option": "Drummer", "point": ["E"] },
-                { "option": "Singer", "point": ["E", "P"] }
+                { "option": "Helps me think & feel deeply", "point": ["I", "T"] },
+                { "option": "Connects with my feelings & memories", "point": ["I", "F"] },
+                { "option": "Bikin gw semangat & siap menghadapi hari", "point": ["E"] },
+                { "option": "Kebebasan berekspresi & high energy", "point": ["E", "P"] }
             ]
         },
         {
             "id": 4,
-            "pertanyaan": "WHAT'S YOUR IDEAL CROOVE NIGHT?",
+            "pertanyaan": "KALO LU MUSISI, LO ADALAH..?",
             "options": [
-                { "option": "Chill lounge", "point": ["I", "T"] },
-                { "option": "Soulfull jam session", "point": ["I", "F"] },
-                { "option": "Big band swing", "point": ["E", "F"] },
-                { "option": "Underground club", "point": ["E", "P"] }
+                { "option": "Composer, crafting every sound with precision", "point": ["I", "T"] },
+                { "option": "Songwriter, express deep emotions with my song", "point": ["I", "F"] },
+                { "option": "Drummer, selalu bring up the energy", "point": ["E", "F"] },
+                { "option": "Vokalis utama, owning the stage & hyping up the crowd", "point": ["E", "P"] }
             ]
         },
         {
             "id": 5,
-            "pertanyaan": "WHICH JAZZ STYLE FITS YOU BEST?",
+            "pertanyaan": "PAS ADA LAGU BARU YANG LO SUKA, LO AKAN..?",
             "options": [
-                { "option": "Cool jazz", "point": ["I", "T"] },
-                { "option": "Soul jazz", "point": ["I", "F"] },
-                { "option": "big band swing", "point": ["E", "F"] },
-                { "option": "Free jazz", "point": ["E", "P"] }
+                { "option": "Analisa dulu lirik, melodi dan aransemennya", "point": ["I", "T"] },
+                { "option": "Add to playlist & play it on repeat", "point": ["I", "F"] },
+                { "option": "Share ke teman & talk about it", "point": ["E", "F"] },
+                { "option": "Remix it & sing along loud!", "point": ["E", "P"] }
             ]
         }
     ]
 );
+
 const currentQuestionIndex = ref(0);
+const currentAnswer = ref(null);
+const currentPoints = ref([]);
+const points = ref({
+    "I": 0,
+    "E": 0,
+    "T": 0,
+    "F": 0,
+    "S": 0,
+    "N": 0,
+    "J": 0,
+    "P": 0
+});
 
 // Fungsi tombol "Next"
-function goToNext() {
+const goToNext = () => {
     if (currentQuestionIndex.value < questions.value.length - 1) {
         currentQuestionIndex.value++;
+        currentAnswer.value = null;
     } else {
         // Nanti bisa arahkan ke hasil/halaman lain
         console.log("Quiz selesai");
+
+        rateAnswers();
         // router.push("/result"); // Contoh jika mau redirect
     }
 }
+
+const pickAnswer = (optionIndex) => {
+    currentAnswer.value = optionIndex;
+
+    currentPoints.value[currentQuestionIndex.value] = (currentQuestion.value.options[currentAnswer.value].point);
+}
+
+const rateAnswers = () => {
+    currentPoints.value.forEach((point) => {
+        point.forEach((p) => {
+            points.value[p]++;
+        });
+    });
+
+    const result = [];
+
+    result.push(points.value["I"] > points.value["E"] ? "I" : "E");
+    result.push(points.value["S"] > points.value["N"] ? "S" : "N");
+    result.push(points.value["T"] > points.value["F"] ? "T" : "F");
+    result.push(points.value["P"] > points.value["J"] ? "P" : "J");
+
+    return result;
+}
+
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value]);
 </script>
 
@@ -87,8 +127,7 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
             </div>
 
             <div class="options-grid" v-if="currentQuestion">
-                <button class="option-button" v-for="(opt, idx) in currentQuestion.options"
-                :key="idx">
+                <button class="option-button" :class="{ active: idx === currentAnswer }" v-for="(opt, idx) in currentQuestion.options" :key="idx" @click="pickAnswer(idx)">
                     <img src="../assets/art & sound logo.svg" class="logo" />
                     {{ opt.option }}
                 </button>
@@ -188,6 +227,11 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 }
 
 .option-button:hover {
+    background-color: rgba(255, 127, 42, 100);
+    color: #fff;
+}
+
+.option-button.active {
     background-color: rgba(255, 127, 42, 100);
     color: #fff;
 }
