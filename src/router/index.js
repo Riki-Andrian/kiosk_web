@@ -8,7 +8,7 @@ import Camera from "@/views/Camera.vue";
 const routes = [
     {
         path: "/",
-        component: Home,
+        component: FormNama,
     },
     {
         path: "/edit",
@@ -17,10 +17,6 @@ const routes = [
     {
         path: "/pertanyaan",
         component: Pertanyaan,
-    },
-    {
-        path: "/form",
-        component: FormNama,
     },
     {
         path: "/camera",

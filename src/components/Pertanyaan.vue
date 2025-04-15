@@ -80,7 +80,9 @@ const goToNext = () => {
         // Nanti bisa arahkan ke hasil/halaman lain
         console.log("Quiz selesai");
 
-        rateAnswers();
+        const rating = rateAnswers();
+
+        console.log(rating);
         // router.push("/result"); // Contoh jika mau redirect
     }
 }
@@ -98,12 +100,14 @@ const rateAnswers = () => {
         });
     });
 
-    const result = [];
+    let result = [];
 
     result.push(points.value["I"] > points.value["E"] ? "I" : "E");
     result.push(points.value["S"] > points.value["N"] ? "S" : "N");
     result.push(points.value["T"] > points.value["F"] ? "T" : "F");
     result.push(points.value["P"] > points.value["J"] ? "P" : "J");
+
+    result = result.join('');
 
     return result;
 }

@@ -1,13 +1,14 @@
 <script setup>
 import { ref } from 'vue';
 import EditVideo from './EditVideo.vue';
+import Replicate from 'replicate';
 
 const editedImage = ref(null);
 
 const imageUrl = localStorage.getItem("currentImage");
 
 // const textContent = "Make it seems like it's underwater";
-const textContent = "make like anime game 3d realistic";
+const textContent = "Make the current picture looks like it's underwater";
 
 const editPhoto = async () => {
   try {
@@ -16,19 +17,23 @@ const editPhoto = async () => {
     formData.append('image', imageUrl);
     formData.append('text', textContent);
 
-    const resp = await fetch('https://api.deepai.org/api/image-editor', {
-      method: 'POST',
-      headers: {
-        'api-key': import.meta.env.VITE_DEEP_AI_KEY,
-      },
-      body: formData
+    const response = await fetch("http://localhost:3001/api/style-transfer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        image: imageUrl,
+        textContent: textContent
+      })
     });
 
-    const data = await resp.json();
-    if (data) {
-      const response = await fetch(data.output_url);
-      const overlayBlob = await response.blob();
-      editedImage.value = URL.createObjectURL(overlayBlob);
+    const data = await response.json();
+    if (data.success) {
+      console.log(data.images);
+      const response = await fetch(data.images);
+      const blob = await response.blob();
+      editedImage.value = URL.createObjectURL(blob);
+    } else {
+      console.error('Error applying style transfer:', data.error);
     }
   } catch (error) {
     console.error("Error editing photo:", error);
