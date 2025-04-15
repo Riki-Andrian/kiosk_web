@@ -2,6 +2,8 @@
 import { ref, computed  } from "vue";
 import { useRouter } from 'vue-router';
 
+const router = useRouter();
+
 const questions = ref(
     [
         {
@@ -84,6 +86,7 @@ const goToNext = () => {
 
         console.log(rating);
         // router.push("/result"); // Contoh jika mau redirect
+        router.push(`/camera/${rating}`);
     }
 }
 

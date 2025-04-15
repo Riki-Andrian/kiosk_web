@@ -11,7 +11,7 @@ const routes = [
         component: FormNama,
     },
     {
-        path: "/edit",
+        path: "/edit/:personality",
         component: Edit,
     },
     {
@@ -19,7 +19,7 @@ const routes = [
         component: Pertanyaan,
     },
     {
-        path: "/camera",
+        path: "/camera/:personality",
         component: Camera,
     }
 ];

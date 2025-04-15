@@ -1,7 +1,10 @@
 <script setup>
   import { ref, onMounted } from "vue";
-  import { useRouter } from 'vue-router';
+  import { useRouter, useRoute } from 'vue-router';
   import PreviewPicture from "./PreviewPicture.vue";
+
+  const router = useRouter();
+  const route = useRoute();
 
   const cameraStream = ref(null);
   const capturedImage = ref(null);
@@ -40,13 +43,11 @@
     capturedImage.value = null;
     loadCameraStream();
   }
-  
-  const router = useRouter();
 
   const editPhoto = () => {
     localStorage.setItem("currentImage", capturedImage.value);
 
-    router.push({ path: '/edit'});
+    router.push({ path: `/edit/${route.params.personality}` });
   };
 
 </script>

@@ -2,6 +2,11 @@
 import { ref } from 'vue';
 import EditVideo from './EditVideo.vue';
 import Replicate from 'replicate';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+
+const personality = ref(route.params.personality);
 
 const editedImage = ref(null);
 
@@ -68,7 +73,7 @@ const editPhoto = async () => {
       </div>
       <div v-if="editedImage">
         <h2>Generate Video</h2>
-        <EditVideo :overlay-image="editedImage" />
+        <EditVideo :overlay-image="editedImage" :personality="personality" />
       </div>
     </div>
   </div>
