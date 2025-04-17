@@ -19,14 +19,36 @@ app.use(express.json());
 const API_TOKEN = process.env.REPLICATE_API_TOKEN;
 
 app.post('/api/style-transfer', async (req, res) => {
+    console.log(req.body);
     const replicate = new Replicate({ auth: API_TOKEN });
 
-    const input = {
-        style_image: req.body.image,
-        prompt: req.body.textContent
-    };
+    // const input = {
+    //     image: req.body.image,
+    //     prompt: req.body.textContent,
+    //     style_image: req.body.style_image
+    // };
 
-    const output = await replicate.run("fofr/style-transfer:f1023890703bc0a5a3a2c21b5e498833be5f6ef6e70e9daf6b9b3a4fd8309cf0", { input });
+    const { image, style_image } = req.body;
+
+    if (!image || !style_image) {
+        return res.status(400).json({ success: false, error: "Missing image or style_image" });
+      }
+
+    const output = await replicate.run(
+        "fofr/style-transfer:f1023890703bc0a5a3a2c21b5e498833be5f6ef6e70e9daf6b9b3a4fd8309cf0", 
+        { 
+            input: {
+                model: "fast",
+                width: 744,
+                height: 744,
+                prompt: "",
+                style_image: style_image,
+                output_format:"png",
+                output_quality: 80,
+                negative_prompt: "",
+                structure_image: image,
+                number_of_images: 1
+        }});
 
     res.json({ success: true, images: output[0].url() });
 });

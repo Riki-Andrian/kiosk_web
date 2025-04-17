@@ -52,18 +52,6 @@
 
 </script>
 
-<!-- <template>
-  <div v-if="!capturedImage">
-    <video ref="cameraStream" autoplay></video>
-    <button @click="capturePhoto">Capture</button>
-  </div>
-  <div v-else>
-    <PreviewPicture :image="capturedImage" />
-    <button @click="retakePhoto">Take another picture</button>
-    <button @click="editPhoto">Edit</button>
-  </div>
-</template> -->
-
 <template>
   <div class="app-container">
     <img src="../assets/Background.png" class="background-image" />

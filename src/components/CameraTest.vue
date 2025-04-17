@@ -1,0 +1,386 @@
+<script setup>
+import { ref, onMounted, computed, watch } from "vue";
+import { useRouter, useRoute } from 'vue-router';
+import PreviewPicture from "./PreviewPicture.vue";
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import videoSrc from "@/assets/template.mp4";
+import video1 from "@/assets/video/ENTP-ENFP.mp4";
+import video2 from "@/assets/video/ESFJ-ENFJ.mp4";
+import video3 from "@/assets/video/ESTP-ESFP.mp4";
+import video4 from "@/assets/video/INFJ-INFP.mp4";
+import video5 from "@/assets/video/INTJ-INTP.mp4";
+import mld_kiosk from "@/assets/mld_kiosk.mp3"
+import loadingAnimation from '@/assets/loading.json?url';
+
+const router = useRouter();
+const route = useRoute();
+
+const cameraStream = ref(null);
+const capturedImage = ref(null);
+
+const personality = ref(route.params.personality);
+const editedImage = ref(null);
+const imageUrl = computed(() => capturedImage.value);
+
+const ffmpeg = createFFmpeg({ log: true });
+const videoFile = ref(null);
+const outputUrl = ref(null);
+const userName = ref("John Doe");
+const imageCoord = ref(null);
+const isLoading = ref(false);
+const lottieContainer = ref(null);
+
+const loadComponent = async () => {
+    await ffmpeg.load();
+    console.log("FFmpeg is ready!");
+    chooseVideo();
+};
+
+onMounted(loadComponent);
+
+const loadCameraStream = async () => {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+        if (cameraStream.value) {
+            cameraStream.value.srcObject = stream;
+        }
+    } catch (error) {
+        console.error("Error accessing camera:", error);
+    }
+};
+
+onMounted(loadCameraStream);
+
+const capturePhoto = () => {
+    if (!cameraStream.value) return;
+
+    setTimeout(() => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = cameraStream.value.videoWidth;
+        canvas.height = cameraStream.value.videoHeight;
+
+        ctx.drawImage(cameraStream.value, 0, 0, canvas.width, canvas.height);
+
+        capturedImage.value = canvas.toDataURL("image/png");
+    }, 500);
+};
+
+const retakePhoto = () => {
+    capturedImage.value = null;
+    loadCameraStream();
+}
+
+const styles = {
+    'ENTP_ENFP': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/ENTP_ENFP.jpg',
+    'ESFJ_ENFJ': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/ESFJ_ENFJ.jpg',
+    'ESTP_ESFP': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/ESTP_ESFP.jpg',
+    'INFJ_INFP': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/INFJ_INFP.jpg',
+    'INTJ_INTP': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/INTJ_INTP.jpg'
+};
+
+let selectedStyle = '';
+
+const chooseStyle = () => {
+    switch (personality.value) {
+        case "ENTP":
+        case "ENFP":
+            selectedStyle = styles['ENTP_ENFP'];
+            videoFile.value = video1;
+            imageCoord.value = "75:380";
+            break;
+        case "ESFJ":
+        case "ENFJ":
+            selectedStyle = styles['ESFJ_ENFJ'];
+            videoFile.value = video2;
+            imageCoord.value = "185:737";
+            break;
+        case "ESTP":
+        case "ESFP":
+            selectedStyle = styles['ESTP_ESFP'];
+            videoFile.value = video3;
+            imageCoord.value = "200:645";
+            break;
+        case "INFJ":
+        case "INFP":
+            selectedStyle = styles['INFJ_INFP'];
+            videoFile.value = video4;
+            imageCoord.value = "350:685";
+            break;
+        case "INTJ":
+        case "INTP":
+            selectedStyle = styles['INTJ_INTP'];
+            videoFile.value = video5;
+            imageCoord.value = "185:350";
+            break;
+        default:
+            selectedStyle = null;
+            videoFile.value = videoSrc;
+            break;
+    }
+};
+
+const editPhoto = async () => {
+    try {
+        chooseStyle();
+        if (!selectedStyle) {
+            console.error("Style not found for the selected personality");
+            return;
+        }
+
+        console.log("editing...");
+        console.log("Image URL:", imageUrl.value);
+        console.log("Selected Style:", selectedStyle);
+
+        const response = await fetch("http://localhost:3001/api/style-transfer", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                image: imageUrl.value,
+                style_image: selectedStyle
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data.success) {
+            console.log(data.images);
+            const imageResponse = await fetch(data.images);
+            const blob = await imageResponse.blob();
+            editedImage.value = URL.createObjectURL(blob);
+        } else {
+            console.error('Error applying style transfer:', data.error);
+        }
+    } catch (error) {
+        console.error("Error editing photo:", error);
+    }
+};
+
+const editVideo = async () => {
+    if (!videoFile.value || !editedImage.value) {
+        alert("Please select a video and an image!");
+        return;
+    }
+
+    const videoName = "input.mp4";
+    const overlayName = "overlay.png";
+    const outputName = "output.mp4";
+    const musik = "musik.mp3"
+
+    try {
+        //donlot imej wak
+        const response = await fetch(editedImage.value);
+        const overlayBlob = await response.blob();
+        const overlayArrayBuffer = await overlayBlob.arrayBuffer();
+
+        ffmpeg.FS("writeFile", videoName, await fetchFile(videoFile.value));
+        ffmpeg.FS("writeFile", overlayName, new Uint8Array(overlayArrayBuffer));
+        ffmpeg.FS("writeFile", musik, await fetchFile(mld_kiosk));
+
+        await ffmpeg.run(
+            "-i", videoName,
+            "-loop", "1",
+            "-t", "5",
+            "-i", overlayName,
+            "-i", musik,
+            "-filter_complex",
+            `[1:v] format=yuva420p, scale=320:320, fade=t=in:st=0:d=1:alpha=1 [ovl]; [0:v][ovl] overlay=${imageCoord.value}`,
+            "-map", "0:v",
+            "-map", "2:a",
+            "-c:v", "libx264",
+            "-preset", "veryfast",
+            "-crf", "23",
+            "-threads", "4",
+            "-b:v", "700k",
+            "-c:a", "aac",
+            "-shortest",
+            outputName
+        );
+
+        const files = ffmpeg.FS("readdir", "/");
+        if (!files.includes(outputName)) {
+            console.error("Output file not found after processing.");
+            return;
+        }
+
+        const outputData = ffmpeg.FS("readFile", outputName);
+        const outputBlob = new Blob([outputData.buffer], { type: "video/mp4" });
+        outputUrl.value = URL.createObjectURL(outputBlob);
+
+    } catch (error) {
+        console.error("Error processing video:", error);
+        alert("There was an error processing the video.");
+    }
+};
+const goToResultPage = () => {
+    if (outputUrl.value) {
+        router.push({ name: "Result", query: { videoUrl: outputUrl.value } });
+    } else {
+        alert("Please finish editing the video first.");
+    }
+};
+
+const process = async () => {
+    isLoading.value = true;
+    try {
+        await editPhoto();
+        await editVideo();
+        await goToResultPage();
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+
+watch(isLoading, (val) => {
+  if (val && lottieContainer.value) {
+    lottie.loadAnimation({
+        container: lottieContainer.value,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: loadingAnimation,
+    });
+  }
+});
+
+</script>
+
+<template>
+    <div class="app-container">
+        <img src="../assets/Background.png" class="background-image" />
+
+
+        <div v-if="isLoading" class="loading-overlay">
+            <div ref="lottieContainer" class="lottie-player"></div>
+            <p>Processing your video, please wait...</p>
+        </div>
+
+        <div class="overlay">
+            <div class="top-bar">
+                <img src="../assets/art & sound logo.svg" class="logo" />
+                <img src="../assets/mld logo.svg" class="logo" />
+            </div>
+
+            <div class="title-text">
+                <h1>GET YOUR ALBUM COVER.</h1>
+                <h2>STRIKE A POSE!</h2>
+            </div>
+
+            <div v-if="!capturedImage" class="camera-container">
+                <video ref="cameraStream" autoplay></video>
+                <button class="action-button" @click="capturePhoto">Take a Photo</button>
+            </div>
+
+            <div v-else class="preview-container">
+                <PreviewPicture :image="capturedImage" />
+                <button class="action-button" @click="retakePhoto">Take another picture</button>
+                <button class="action-button" @click="process">Edit</button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style scoped>
+.app-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.background-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.overlay {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    color: white;
+    text-align: center;
+    overflow-y: auto;
+    max-height: 100vh;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    width: 80px;
+    height: auto;
+}
+
+.title-text {
+    margin-top: 20px;
+}
+
+.title-text h1,
+.title-text h2 {
+    margin: 0;
+}
+
+.camera-container,
+.preview-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+video {
+    width: 80%;
+    max-width: 400px;
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+.action-button {
+    background-color: #ffffffcc;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 10px;
+}
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.lottie-player {
+  width: 200px;
+  height: 200px;
+}
+
+</style>

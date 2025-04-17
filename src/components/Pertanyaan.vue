@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed  } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -10,50 +10,50 @@ const questions = ref(
             "id": 1,
             "pertanyaan": "CARA LO NIKMATIN MUSIK?",
             "options": [
-                { "option": "Sendirian aja", "point": ["I"] },
-                { "option": "Bareng close friends", "point": ["I", "E"] },
-                { "option": "Di tengah keramaian full of energy", "point": ["E"] },
-                { "option": "Live concerts, loud and wild!", "point": ["E"] }
+                { "option": "Sendirian aja", "point": ["I"],"image": new URL('@/assets/pertanyaan/1-1.png', import.meta.url).href },
+                { "option": "Bareng close friends", "point": ["I", "E"],"image": new URL('@/assets/pertanyaan/1-2.png', import.meta.url).href  },
+                { "option": "Di tengah keramaian full of energy", "point": ["E"],"image":new URL('@/assets/pertanyaan/1-3.png', import.meta.url).href  },
+                { "option": "Live concerts, loud and wild!", "point": ["E"],"image": new URL('@/assets/pertanyaan/1-4.png', import.meta.url).href  }
             ]
         },
         {
             "id": 2,
             "pertanyaan": "LAGU KEREN BUAT LO?",
             "options": [
-                { "option": "Complex melody & deep details", "point": ["T"] },
-                { "option": "Lirik & emosi yang deep banget", "point": ["F"] },
-                { "option": "Groove & rhythm that makes me move", "point": ["S", "E"] },
-                { "option": "Unpredictable beat & wild creativity", "point": ["P", "E"] }
+                { "option": "Complex melody & deep details", "point": ["T"],"image": new URL('@/assets/pertanyaan/2-1.png', import.meta.url).href  },
+                { "option": "Lirik & emosi yang deep banget", "point": ["F"],"image": new URL('@/assets/pertanyaan/2-2.png', import.meta.url).href  },
+                { "option": "Groove & rhythm that makes me move", "point": ["S", "E"],"image": new URL('@/assets/pertanyaan/2-3.png', import.meta.url).href },
+                { "option": "Unpredictable beat & wild creativity", "point": ["P", "E"],"image": new URL('@/assets/pertanyaan/2-4.png', import.meta.url).href  }
             ]
         },
         {
             "id": 3,
             "pertanyaan": "ARTI MUSIK BUAT LO?",
             "options": [
-                { "option": "Helps me think & feel deeply", "point": ["I", "T"] },
-                { "option": "Connects with my feelings & memories", "point": ["I", "F"] },
-                { "option": "Bikin gw semangat & siap menghadapi hari", "point": ["E"] },
-                { "option": "Kebebasan berekspresi & high energy", "point": ["E", "P"] }
+                { "option": "Helps me think & feel deeply", "point": ["I", "T"],"image": new URL('@/assets/pertanyaan/3-1.png', import.meta.url).href  },
+                { "option": "Connects with my feelings & memories", "point": ["I", "F"],"image": new URL('@/assets/pertanyaan/3-2.png', import.meta.url).href  },
+                { "option": "Bikin gw semangat & siap menghadapi hari", "point": ["E"],"image": new URL('@/assets/pertanyaan/3-3.png', import.meta.url).href  },
+                { "option": "Kebebasan berekspresi & high energy", "point": ["E", "P"],"image": new URL('@/assets/pertanyaan/3-4.png', import.meta.url).href  }
             ]
         },
         {
             "id": 4,
             "pertanyaan": "KALO LU MUSISI, LO ADALAH..?",
             "options": [
-                { "option": "Composer, crafting every sound with precision", "point": ["I", "T"] },
-                { "option": "Songwriter, express deep emotions with my song", "point": ["I", "F"] },
-                { "option": "Drummer, selalu bring up the energy", "point": ["E", "F"] },
-                { "option": "Vokalis utama, owning the stage & hyping up the crowd", "point": ["E", "P"] }
+                { "option": "Composer, crafting every sound with precision", "point": ["I", "T"],"image": new URL('@/assets/pertanyaan/4-1.png', import.meta.url).href  },
+                { "option": "Songwriter, express deep emotions with my song", "point": ["I", "F"],"image": new URL('@/assets/pertanyaan/4-2.png', import.meta.url).href  },
+                { "option": "Drummer, selalu bring up the energy", "point": ["E", "F"],"image":new URL('@/assets/pertanyaan/4-3.png', import.meta.url).href  },
+                { "option": "Vokalis utama, owning the stage & hyping up the crowd", "point": ["E", "P"],"image": new URL('@/assets/pertanyaan/4-4.png', import.meta.url).href  }
             ]
         },
         {
             "id": 5,
             "pertanyaan": "PAS ADA LAGU BARU YANG LO SUKA, LO AKAN..?",
             "options": [
-                { "option": "Analisa dulu lirik, melodi dan aransemennya", "point": ["I", "T"] },
-                { "option": "Add to playlist & play it on repeat", "point": ["I", "F"] },
-                { "option": "Share ke teman & talk about it", "point": ["E", "F"] },
-                { "option": "Remix it & sing along loud!", "point": ["E", "P"] }
+                { "option": "Analisa dulu lirik, melodi dan aransemennya", "point": ["I", "T"],"image": new URL('@/assets/pertanyaan/5-1.png', import.meta.url).href  },
+                { "option": "Add to playlist & play it on repeat", "point": ["I", "F"],"image": new URL('@/assets/pertanyaan/5-2.png', import.meta.url).href  },
+                { "option": "Share ke teman & talk about it", "point": ["E", "F"],"image": new URL('@/assets/pertanyaan/5-3.png', import.meta.url).href  },
+                { "option": "Remix it & sing along loud!", "point": ["E", "P"],"image": new URL('@/assets/pertanyaan/5-4.png', import.meta.url).href }
             ]
         }
     ]
@@ -86,7 +86,7 @@ const goToNext = () => {
 
         console.log(rating);
         // router.push("/result"); // Contoh jika mau redirect
-        router.push(`/camera/${rating}`);
+        router.push(`/cameratest/${rating}`);
     }
 }
 
@@ -135,7 +135,7 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 
             <div class="options-grid" v-if="currentQuestion">
                 <button class="option-button" :class="{ active: idx === currentAnswer }" v-for="(opt, idx) in currentQuestion.options" :key="idx" @click="pickAnswer(idx)">
-                    <img src="../assets/art & sound logo.svg" class="logo" />
+                    <img :src="opt.image" class="logo" />
                     {{ opt.option }}
                 </button>
             </div>

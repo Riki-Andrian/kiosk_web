@@ -3,6 +3,25 @@ import { ref } from "vue";
 import { useRouter } from 'vue-router';
 
 const name = ref("");
+const router = useRouter(); // Menambahkan router
+
+// Fungsi untuk mengarahkan ke halaman "/pertanyaan"
+const goToNext = () => {
+    if (name.value.trim() !== "") {
+        router.push("/pertanyaan"); // Navigasi ke halaman pertanyaan
+    } else {
+        alert("Please enter your name!"); // Alert jika nama belum diisi
+    }
+};
+// Fungsi untuk menambahkan karakter ke input
+const addChar = (char) => {
+    name.value += char;
+};
+
+// Fungsi untuk menghapus karakter terakhir
+const backspace = () => {
+    name.value = name.value.slice(0, -1);
+};
 </script>
 
 <template>
@@ -18,6 +37,22 @@ const name = ref("");
             <div class="title-text">
                 <h1>Enter Your Name</h1>
                 <input v-model="name" type="text" placeholder="Type your name here" class="name-input" />
+            </div>
+
+            <div class="keyboard">
+                <div class="keyboard-row">
+                    <button v-for="key in 'QWERTYUIOP'.split('')" :key="key" @click="addChar(key)">{{ key }}</button>
+                </div>
+                <div class="keyboard-row">
+                    <button v-for="key in 'ASDFGHJKL'.split('')" :key="key" @click="addChar(key)">{{ key }}</button>
+                </div>
+                <div class="keyboard-row">
+                    <button v-for="key in 'ZXCVBNM'.split('')" :key="key" @click="addChar(key)">{{ key }}</button>
+                </div>
+                <div class="keyboard-row">
+                    <button @click="addChar(' ')" class="space-button">Space</button>
+                    <button @click="backspace">delete</button>
+                </div>
             </div>
 
             <button class="next-button" @click="goToNext">Next</button>
@@ -55,13 +90,14 @@ const name = ref("");
 
 .top-bar {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 }
 
 .logo {
     width: 80px;
     height: auto;
+    margin: 30px;
 }
 
 .title-text {
@@ -76,22 +112,22 @@ const name = ref("");
 }
 
 .name-input {
-  margin-top: 50px;
-  padding: 10px;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid white;
-  color: white;
-  font-size: 1.2rem;
-  text-align: center;
-  outline: none;
-  width: 80%;
-  max-width: 300px;
-  align-self: center;
+    margin-top: 50px;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid white;
+    color: white;
+    font-size: 1.2rem;
+    text-align: center;
+    outline: none;
+    width: 80%;
+    max-width: 300px;
+    align-self: center;
 }
 
 .name-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .next-button {
@@ -114,5 +150,39 @@ const name = ref("");
 .next-button:hover {
     background-color: #ffffff;
     transform: translateX(-50%) scale(1.05);
+}
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  margin: 5px 0;
+}
+
+.keyboard-row button {
+  margin: 0 4px;
+  padding: 10px 14px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #ffffffcc;
+  color: #333;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.keyboard-row button:hover {
+  background-color: #fff;
+}
+
+.space-button {
+  padding: 10px 60px;
+  width: 300px;
 }
 </style>
