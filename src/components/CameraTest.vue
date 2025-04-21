@@ -1,8 +1,9 @@
 <script setup>
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed, watch, nextTick } from "vue";
 import { useRouter, useRoute } from 'vue-router';
 import PreviewPicture from "./PreviewPicture.vue";
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import lottie from 'lottie-web';
 import videoSrc from "@/assets/template.mp4";
 import video1 from "@/assets/video/ENTP-ENFP.mp4";
 import video2 from "@/assets/video/ESFJ-ENFJ.mp4";
@@ -10,7 +11,7 @@ import video3 from "@/assets/video/ESTP-ESFP.mp4";
 import video4 from "@/assets/video/INFJ-INFP.mp4";
 import video5 from "@/assets/video/INTJ-INTP.mp4";
 import mld_kiosk from "@/assets/mld_kiosk.mp3"
-import loadingAnimation from '@/assets/loading.json?url';
+import loadingAnimation from '@/assets/loading.json';
 
 const router = useRouter();
 const route = useRoute();
@@ -30,13 +31,17 @@ const imageCoord = ref(null);
 const isLoading = ref(false);
 const lottieContainer = ref(null);
 
+const countdown = ref(3);
+const isCountingDown = ref(false);
+let countdownInterval = null;
+
 const loadComponent = async () => {
     await ffmpeg.load();
     console.log("FFmpeg is ready!");
-    chooseVideo();
 };
 
 onMounted(loadComponent);
+
 
 const loadCameraStream = async () => {
     try {
@@ -49,24 +54,34 @@ const loadCameraStream = async () => {
         console.error("Error accessing camera:", error);
     }
 };
-
 onMounted(loadCameraStream);
 
 const capturePhoto = () => {
     if (!cameraStream.value) return;
 
-    setTimeout(() => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+    countdown.value = 3;
+    isCountingDown.value = true;
 
-        canvas.width = cameraStream.value.videoWidth;
-        canvas.height = cameraStream.value.videoHeight;
+    countdownInterval = setInterval(() => {
+        countdown.value--;
 
-        ctx.drawImage(cameraStream.value, 0, 0, canvas.width, canvas.height);
+        if (countdown.value === 0) {
+            clearInterval(countdownInterval);
+            isCountingDown.value = false;
 
-        capturedImage.value = canvas.toDataURL("image/png");
-    }, 500);
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+
+            canvas.width = cameraStream.value.videoWidth;
+            canvas.height = cameraStream.value.videoHeight;
+
+            ctx.drawImage(cameraStream.value, 0, 0, canvas.width, canvas.height);
+
+            capturedImage.value = canvas.toDataURL("image/png");
+        }
+    }, 1000);
 };
+
 
 const retakePhoto = () => {
     capturedImage.value = null;
@@ -237,16 +252,19 @@ const process = async () => {
 };
 
 
-watch(isLoading, (val) => {
-  if (val && lottieContainer.value) {
-    lottie.loadAnimation({
-        container: lottieContainer.value,
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: loadingAnimation,
-    });
-  }
+watch(isLoading, async (val) => {
+    if (val) {
+        await nextTick();
+        if (lottieContainer.value) {
+            lottie.loadAnimation({
+                container: lottieContainer.value,
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                animationData: loadingAnimation, // pakai animationData, bukan path
+            });
+        }
+    }
 });
 
 </script>
@@ -266,21 +284,27 @@ watch(isLoading, (val) => {
                 <img src="../assets/art & sound logo.svg" class="logo" />
                 <img src="../assets/mld logo.svg" class="logo" />
             </div>
+            <div v-show="!isLoading">
+                <div class="title-text">
+                    <h1>GET YOUR ALBUM COVER.</h1>
+                    <h2>STRIKE A POSE!</h2>
+                </div>
+                <div v-if="isCountingDown" class="countdown-display">
+                    {{ countdown }}
+                </div>
 
-            <div class="title-text">
-                <h1>GET YOUR ALBUM COVER.</h1>
-                <h2>STRIKE A POSE!</h2>
-            </div>
+                <div v-if="!capturedImage" class="camera-container">
+                    <video ref="cameraStream" autoplay></video>
+                    <div class="button-wrapper">
+                        <button class="action-button" @click="capturePhoto">Take a Photo</button>
+                    </div>
+                </div>
 
-            <div v-if="!capturedImage" class="camera-container">
-                <video ref="cameraStream" autoplay></video>
-                <button class="action-button" @click="capturePhoto">Take a Photo</button>
-            </div>
-
-            <div v-else class="preview-container">
-                <PreviewPicture :image="capturedImage" />
-                <button class="action-button" @click="retakePhoto">Take another picture</button>
-                <button class="action-button" @click="process">Edit</button>
+                <div v-else class="preview-container">
+                    <PreviewPicture :image="capturedImage" />
+                    <button class="action-button" @click="retakePhoto">Take another picture</button>
+                    <button class="action-button" @click="process">Edit</button>
+                </div>
             </div>
         </div>
     </div>
@@ -336,14 +360,42 @@ watch(isLoading, (val) => {
     margin: 0;
 }
 
-.camera-container,
+
+.camera-container video {
+    width: 100%;
+    max-width: 440px;
+    border-radius: 12px;
+}
+
+.button-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+/* Ukuran preview diperkecil */
 .preview-container {
-    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    gap: 16px;
 }
+
+.preview-container img {
+    max-width: 80%;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.countdown-display {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 8px black;
+    margin: 10px 0;
+}
+
 
 video {
     width: 80%;
@@ -353,34 +405,41 @@ video {
 }
 
 .action-button {
-    background-color: #ffffffcc;
+    background-color: rgba(255, 127, 42, 100);
+    color: #fff;
     border: none;
     padding: 12px 24px;
-    border-radius: 8px;
+    border-radius: 24px;
     font-weight: bold;
     cursor: pointer;
     margin: 10px;
+    font-size: 1.3rem;
 }
+
+.action-button:hover {
+    background-color: #ffffff;
+    color: rgba(255, 127, 42, 100);
+}
+
 .loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  text-align: center;
-  padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    padding: 20px;
 }
 
 .lottie-player {
-  width: 200px;
-  height: 200px;
+    width: 200px;
+    height: 200px;
 }
-
 </style>

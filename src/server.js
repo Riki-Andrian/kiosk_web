@@ -41,7 +41,7 @@ app.post('/api/style-transfer', async (req, res) => {
                 model: "fast",
                 width: 744,
                 height: 744,
-                prompt: "",
+                prompt: "background and color tone are the same as style",
                 style_image: style_image,
                 output_format:"png",
                 output_quality: 80,

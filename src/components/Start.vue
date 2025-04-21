@@ -7,7 +7,7 @@ const router = useRouter();
 
 // Fungsi untuk mengarahkan ke halaman "/pertanyaan"
 const goToNext = () => {
-    router.push("/pertanyaan"); // Navigasi ke halaman pertanyaan
+    router.push("/form"); // Navigasi ke halaman pertanyaan
 };
 
 </script>
@@ -85,20 +85,21 @@ const goToNext = () => {
 
 .next-button {
     margin-top: 20px;
-    background-color: #ffffffcc;
+    background-color: rgba(255, 127, 42, 100);
     border: none;
-    padding: 14px 28px;
-    border-radius: 8px;
-    font-size: 1rem;
+    padding: 14px 48px;
+    border-radius: 24px;
+    font-size: 1.3rem;
     font-weight: bold;
     cursor: pointer;
-    color: #333;
+    color: #ffffff;
     z-index: 2;
     transition: background-color 0.2s, transform 0.2s;
 }
 
 .next-button:hover {
     background-color: #ffffff;
+    color: rgba(255, 127, 42, 100);;
     transform: scale(1.05);
 }
 </style>

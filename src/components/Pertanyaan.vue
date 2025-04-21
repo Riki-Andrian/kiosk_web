@@ -248,20 +248,21 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
     bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #ffffffcc;
+    background-color: rgba(255, 127, 42, 100);
     border: none;
-    padding: 14px 28px;
-    border-radius: 8px;
+    padding: 14px 88px;
+    border-radius: 24px;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    color: #333;
+    color: #ffffff;
     z-index: 2;
     transition: background-color 0.2s, transform 0.2s;
 }
 
 .next-button:hover {
     background-color: #ffffff;
+    color: rgba(255, 127, 42, 100);
     transform: translateX(-50%) scale(1.05);
 }
 </style>

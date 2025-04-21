@@ -8,10 +8,20 @@ import Start from "@/views/Start.vue";
 import Loading from "@/views/Loading.vue";
 import Result from "@/views/Result.vue";
 import CameraTest from "@/views/CameraTest.vue";
+import Idle from "@/views/Idle.vue";
+
 
 const routes = [
     {
         path: "/",
+        component: Idle,
+    },
+    {
+        path: "/start",
+        component: Start,
+    },
+    {
+        path: "/form",
         component: FormNama,
     },
     {
@@ -29,10 +39,6 @@ const routes = [
     {
         path: "/cameratest/:personality",
         component: CameraTest,
-    },
-    {
-        path: "/start",
-        component: Start,
     },
     {
         path: "/loading",
