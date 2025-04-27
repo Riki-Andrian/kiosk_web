@@ -91,6 +91,7 @@ const retakePhoto = () => {
 const styles = {
     'ENTP_ENFP': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/ENTP_ENFP.jpg',
     'ESFJ_ENFJ': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/ESFJ_ENFJ.jpg',
+    // 'ESFJ_ENFJ': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/style1/style2.jpg',
     'ESTP_ESFP': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/ESTP_ESFP.jpg',
     'INFJ_INFP': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/INFJ_INFP.jpg',
     'INTJ_INTP': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/INTJ_INTP.jpg'
@@ -204,7 +205,7 @@ const editVideo = async () => {
             "-i", overlayName,
             "-i", musik,
             "-filter_complex",
-            `[1:v] format=yuva420p, scale=320:320, fade=t=in:st=0:d=1:alpha=1 [ovl]; [0:v][ovl] overlay=${imageCoord.value}`,
+            `[1:v] format=yuva420p, scale=720:720, fade=t=in:st=0:d=1:alpha=1 [ovl]; [0:v][ovl] overlay=${imageCoord.value}`,
             "-map", "0:v",
             "-map", "2:a",
             "-c:v", "libx264",
@@ -232,8 +233,36 @@ const editVideo = async () => {
         alert("There was an error processing the video.");
     }
 };
+
+function stopCameraStream() {
+  const videoElement = cameraStream.value;
+  if (videoElement?.srcObject) {
+    videoElement.srcObject.getTracks().forEach(track => track.stop());
+    videoElement.srcObject = null;
+  }
+  if (videoElement) {
+    videoElement.pause();
+    videoElement.removeAttribute('src'); 
+    videoElement.load();
+  }
+}
+
+
+
+function clearTemporaryData() {
+  stopCameraStream();
+
+  capturedImage.value = null;
+  editedImage.value = null;
+  videoFile.value = null;
+  imageCoord.value = null;
+  personality.value = null;
+
+}
+
 const goToResultPage = () => {
     if (outputUrl.value) {
+        clearTemporaryData();
         router.push({ name: "Result", query: { videoUrl: outputUrl.value } });
     } else {
         alert("Please finish editing the video first.");

@@ -1,8 +1,13 @@
 <script setup>
-import { useRoute } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
+const router = useRouter();
 const route = useRoute();
 const videoUrl = route.query.videoUrl;
+
+function goToNext() {
+  router.replace('/');
+}
 </script>
 
 
@@ -15,13 +20,14 @@ const videoUrl = route.query.videoUrl;
         <h1>Video Result</h1>
         <video v-if="videoUrl" :src="videoUrl" controls class="responsive-video" />
         <p v-else>Video URL not found.</p>
-        <div v-if="videoUrl" class="qr-container">
-          <img src="../assets/qr.png" alt="QR Code" class="qr-code" />
-          <p class="qr-text">Scan to<br>Download</p>
+        <div v-if="videoUrl" class="qr-and-button">
+          <div class="qr-container">
+            <img src="../assets/qr.png" alt="QR Code" class="qr-code" />
+            <p class="qr-text">Scan to<br>Download</p>
+          </div>
+          <button class="next-button" @click="goToNext">Home</button>
         </div>
       </div>
-
-
     </div>
   </div>
 </template>
@@ -29,47 +35,46 @@ const videoUrl = route.query.videoUrl;
 
 <style scoped>
 .app-container {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
 }
 
 .background-image {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
 }
 
 .overlay {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-    color: white;
-    text-align: center;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  color: white;
+  text-align: center;
 }
 
 .title-text {
-    margin-top: auto;
-    margin-bottom: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
+  margin-top: auto;
+  margin-bottom: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
 }
 
 .title-text h1 {
-    font-size: 2rem;
-    margin: 0;
-    font-weight: bold;
-    text-transform: uppercase;
+  font-size: 2rem;
+  margin: 0;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
 .result-container {
@@ -86,12 +91,21 @@ const videoUrl = route.query.videoUrl;
   height: auto;
   border-radius: 10px;
 }
+
 .qr-container {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 1.5rem;
-  gap: 1rem; /* jarak antara gambar dan teks */
+  gap: 1rem;
+  /* jarak antara gambar dan teks */
+}
+
+.qr-and-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .qr-code {
@@ -106,5 +120,22 @@ const videoUrl = route.query.videoUrl;
   color: white;
   text-align: left;
   font-weight: bold;
+}
+
+.next-button {
+  background-color: rgba(255, 127, 42, 1);
+  border: none;
+  padding: 14px 88px;
+  border-radius: 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #ffffff;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.next-button:hover {
+  background-color: #ffffff;
+  color: rgba(255, 127, 42, 100);
 }
 </style>

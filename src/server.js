@@ -39,15 +39,17 @@ app.post('/api/style-transfer', async (req, res) => {
         { 
             input: {
                 model: "fast",
-                width: 744,
-                height: 744,
-                prompt: "background and color tone are the same as style",
+                width: 720,
+                height: 720,
+                prompt: "do not change the hairstyle",
                 style_image: style_image,
                 output_format:"png",
                 output_quality: 80,
                 negative_prompt: "",
                 structure_image: image,
-                number_of_images: 1
+                number_of_images: 1,
+                structure_depth_strength: 2,
+                structure_denoising_strength: 0.7
         }});
 
     res.json({ success: true, images: output[0].url() });
