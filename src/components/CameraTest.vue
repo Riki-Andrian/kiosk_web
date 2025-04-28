@@ -189,7 +189,7 @@ const editVideo = async () => {
     const musik = "musik.mp3"
 
     try {
-        //donlot imej wak
+        
         const response = await fetch(editedImage.value);
         const overlayBlob = await response.blob();
         const overlayArrayBuffer = await overlayBlob.arrayBuffer();

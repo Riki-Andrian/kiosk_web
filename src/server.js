@@ -41,7 +41,7 @@ app.post('/api/style-transfer', async (req, res) => {
                 model: "fast",
                 width: 720,
                 height: 720,
-                prompt: "do not change the hairstyle",
+                prompt: "do not change the hairstyle, do not change the face, only change the style of the image.",
                 style_image: style_image,
                 output_format:"png",
                 output_quality: 80,

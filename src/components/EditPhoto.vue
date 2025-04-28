@@ -47,7 +47,7 @@ const chooseStyle = () => {
       selectedStyle = styles['INTJ_INTP'];
       break;
     default:
-      selectedStyle = null; // Atau Anda bisa menambahkan style default jika diperlukan
+      selectedStyle = null;
       break;
   }
 };
