@@ -89,12 +89,11 @@ const retakePhoto = () => {
 }
 
 const styles = {
-    'ENTP_ENFP': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/ENTP_ENFP.jpg',
-    'ESFJ_ENFJ': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/ESFJ_ENFJ.jpg',
-    // 'ESFJ_ENFJ': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/style1/style2.jpg',
-    'ESTP_ESFP': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/ESTP_ESFP.jpg',
-    'INFJ_INFP': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/INFJ_INFP.jpg',
-    'INTJ_INTP': 'https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/styles/INTJ_INTP.jpg'
+    'ENTP_ENFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style/ENTP_ENFP.jpg',
+    'ESFJ_ENFJ': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style/ESFJ_ENFJ.jpg',
+    'ESTP_ESFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style/ESTP_ESFP.jpg',
+    'INFJ_INFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style/INFJ_INFP.jpg',
+    'INTJ_INTP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style/INTJ_INTP.jpg'
 };
 
 let selectedStyle = '';
