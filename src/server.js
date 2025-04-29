@@ -41,7 +41,7 @@ app.post('/api/style-transfer', async (req, res) => {
                 model: "fast",
                 width: 720,
                 height: 720,
-                prompt: "swap the face",
+                prompt: "do not remove any accessories",
                 style_image: style_image,
                 output_format:"png",
                 output_quality: 80,
