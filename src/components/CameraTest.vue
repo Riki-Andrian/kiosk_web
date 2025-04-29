@@ -123,7 +123,7 @@ const chooseStyle = () => {
         case "INFP":
             selectedStyle = styles['INFJ_INFP'];
             videoFile.value = video4;
-            imageCoord.value = "350:685";
+            imageCoord.value = "300:685";
             break;
         case "INTJ":
         case "INTP":
