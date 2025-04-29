@@ -19,7 +19,8 @@ app.use(express.json());
 const API_TOKEN = process.env.REPLICATE_API_TOKEN;
 
 app.post('/api/style-transfer', async (req, res) => {
-    console.log(req.body);
+    const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
+
     const replicate = new Replicate({ auth: API_TOKEN });
 
     // const input = {
@@ -41,18 +42,33 @@ app.post('/api/style-transfer', async (req, res) => {
                 model: "fast",
                 width: 720,
                 height: 720,
-                prompt: "do not remove any accessories",
+                prompt: "do not change the hairstyle and face",
                 style_image: style_image,
                 output_format:"png",
                 output_quality: 80,
-                negative_prompt: "asian face",
+                negative_prompt: "",
                 structure_image: image,
                 number_of_images: 1,
                 structure_depth_strength: 2,
                 structure_denoising_strength: 0.7
         }});
 
-    res.json({ success: true, images: output[0].url() });
+    const editedImage = output[0].url();
+    console.log(editedImage);
+
+    const swapFace = await replicate.run(
+        "codeplugtech/face-swap:278a81e7ebb22db98bcba54de985d22cc1abeead2754eb1f2af717247be69b34",
+        {
+            input: {
+            swap_image: image,
+            input_image: editedImage
+            }
+        }
+    );
+
+    console.log(swapFace);
+
+    res.json({ success: true, images: swapFace.url() });
 });
 
 app.listen(3001, () => {
