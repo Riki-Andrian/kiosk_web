@@ -59,6 +59,7 @@ const questions = ref(
     ]
 );
 
+const answers = ref([]);
 const currentQuestionIndex = ref(0);
 const currentAnswer = ref(null);
 const currentPoints = ref([]);
@@ -77,43 +78,53 @@ const points = ref({
 const goToNext = () => {
     if (currentQuestionIndex.value < questions.value.length - 1) {
         currentQuestionIndex.value++;
-        currentAnswer.value = null;
+        currentAnswer.value = answers.value[currentQuestionIndex.value] ?? null;
     } else {
-        // Nanti bisa arahkan ke hasil/halaman lain
         console.log("Quiz selesai");
-
         const rating = rateAnswers();
-
         console.log(rating);
-        // router.push("/result"); // Contoh jika mau redirect
         router.push(`/cameratest/${rating}`);
+    }
+}
+
+const goToPrevious = () => {
+    if (currentQuestionIndex.value > 0) {
+        currentQuestionIndex.value--;
+        currentAnswer.value = answers.value[currentQuestionIndex.value] ?? null;
     }
 }
 
 const pickAnswer = (optionIndex) => {
     currentAnswer.value = optionIndex;
 
-    currentPoints.value[currentQuestionIndex.value] = (currentQuestion.value.options[currentAnswer.value].point);
+    answers.value[currentQuestionIndex.value] = optionIndex;
+
+    const selected = currentQuestion.value.options[optionIndex].point;
+    currentPoints.value[currentQuestionIndex.value] = selected;
 }
 
+
 const rateAnswers = () => {
+    // Reset point sebelum hitung ulang
+    for (let key in points.value) {
+        points.value[key] = 0;
+    }
+
     currentPoints.value.forEach((point) => {
-        point.forEach((p) => {
+        point?.forEach((p) => {
             points.value[p]++;
         });
     });
 
     let result = [];
-
     result.push(points.value["I"] > points.value["E"] ? "I" : "E");
     result.push(points.value["S"] > points.value["N"] ? "S" : "N");
     result.push(points.value["T"] > points.value["F"] ? "T" : "F");
     result.push(points.value["P"] > points.value["J"] ? "P" : "J");
 
-    result = result.join('');
-
-    return result;
+    return result.join('');
 }
+
 
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value]);
 </script>
@@ -139,7 +150,11 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
                     {{ opt.option }}
                 </button>
             </div>
-            <button class="next-button" @click="goToNext">Next</button>
+            <!-- <button class="next-button" @click="goToNext">Next</button> -->
+            <div class="navigation-buttons">
+                <button class="next-button" @click="goToPrevious" :disabled="currentQuestionIndex === 0">Back</button>
+                <button class="next-button" @click="goToNext" :disabled="currentAnswer === null">Next</button>
+            </div>
             <div class="progress-bar-container">
                 <div v-for="(q, i) in questions" :key="i" class="progress-segment" :class="{
                     filled: i < currentQuestionIndex,
@@ -203,26 +218,22 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 
 .question {
     margin: 8px 0;
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: bold;
     text-transform: uppercase;
+    font-family: 'Montserrat-ExtraBold';
 }
 
 .options-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    padding: 0 28px;
+    padding: 0 5%;
     box-sizing: border-box;
 }
 
-.option-img {
-    width: 80px;
-    height: auto;
-}
-
 .option-button {
-    aspect-ratio: 3/2;
+    aspect-ratio: 1/1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -230,18 +241,19 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
     background-color: rgba(255, 255, 255, 0.9);
     border: none;
     border-radius: 12px;
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-weight: bold;
+    font-family: 'Montserrat-Bold';
     cursor: pointer;
     color: #333;
     transition: transform 0.2s, background-color 0.2s;
 }
 
 .option-button img {
-    width: 120px;
-    height: 150px;
+    margin-top: 5%;
+    width: 100px;
+    height: 100px;
     object-fit: contain;
-    margin-bottom: 8px;
 }
 
 .option-button:hover {
@@ -254,8 +266,12 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
     color: #fff;
 }
 
+.navigation-buttons {
+    display: flex;
+    justify-content: space-around;
+}
 .next-button {
-    margin-top: 20px;
+    margin-top: 1%;
     background-color: rgba(255, 127, 42, 1);
     border: none;
     padding: 12px 48px;
@@ -273,15 +289,20 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
     color: rgba(255, 127, 42, 100);
 }
 
+.next-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .progress-bar-container {
     display: flex;
     justify-content: center;
     gap: 6px;
-    margin: 16px auto 0;
     padding: 0 20px;
     width: 100%;
     max-width: 500px;
     box-sizing: border-box;
+    padding-bottom: 5%;
 }
 
 .progress-segment {
@@ -299,5 +320,4 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 .progress-segment.current {
     background-color: rgba(255, 127, 42, 0.8);
 }
-
 </style>

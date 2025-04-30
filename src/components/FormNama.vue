@@ -13,12 +13,10 @@ const goToNext = () => {
         alert("Please enter your name!");
     }
 };
-// Fungsi untuk menambahkan karakter ke input
 const addChar = (char) => {
     name.value += char;
 };
 
-// Fungsi untuk menghapus karakter terakhir
 const backspace = () => {
     name.value = name.value.slice(0, -1);
 };
@@ -86,10 +84,11 @@ const backspace = () => {
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 20px;
     box-sizing: border-box;
     color: white;
     text-align: center;
+    align-items: center;
+    justify-content: flex-start; 
 }
 
 .top-bar {
@@ -161,7 +160,11 @@ const backspace = () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 30px;
+    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;  
+    max-width: 400px;  
 }
 
 .keyboard-row {
