@@ -131,12 +131,12 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 
 <template>
     <div class="app-container">
-        <img src="../assets/Background.png" class="background-image" />
+        <img src="../assets/normal-bg.png" class="background-image" />
 
         <div class="overlay">
             <div class="top-bar">
-                <img src="../assets/Asset Art & Sound.png" class="logo" />
-                <img src="../assets/Asset MLD.png" class="logo" />
+                <img src="../assets/mld-logo.png" class="logo" />
+                <img src="../assets/art-n-sound.png" class="logo" />
             </div>
 
             <div class="title-text" v-if="currentQuestion">
@@ -152,8 +152,8 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
             </div>
             <!-- <button class="next-button" @click="goToNext">Next</button> -->
             <div class="navigation-buttons">
-                <button class="next-button" @click="goToPrevious" :disabled="currentQuestionIndex === 0">Back</button>
-                <button class="next-button" @click="goToNext" :disabled="currentAnswer === null">Next</button>
+                <button class="next-button" @click="goToPrevious" :disabled="currentQuestionIndex === 0">B A C K</button>
+                <button class="next-button" @click="goToNext" :disabled="currentAnswer === null">N E X T</button>
             </div>
             <div class="progress-bar-container">
                 <div v-for="(q, i) in questions" :key="i" class="progress-segment" :class="{
@@ -166,6 +166,12 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 </template>
 
 <style scoped>
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+*{
+    font-family: 'Montserrat', sans-serif;
+}
 .app-container {
     position: relative;
     width: 100%;
@@ -196,13 +202,52 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 
 .top-bar {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+
+    /* Animation properties */
+    animation: buttonAppear 1.5s ease-out forwards;
+    transform-origin: center;
+    filter: blur(8px);
+    opacity: 0;
+    transform: scale(0.5);
 }
 
 .logo {
-    width: 80px;
+    width: 20%;
     height: auto;
+    margin: 10px;
+}
+
+@keyframes buttonAppear {
+    0% {
+        transform: scale(0.5);
+        filter: blur(8px);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.05);
+        filter: blur(2px);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        filter: blur(0);
+        opacity: 1;
+    }
+}
+
+@keyframes buttonDisappear {
+    0% {
+        transform: scale(1);
+        filter: blur(0px);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.7); /* or go smaller if you want */
+        filter: blur(6px);
+        opacity: 0;
+    }
 }
 
 .title-text {
@@ -215,13 +260,19 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
     font-weight: lighter;
 }
 
-
 .question {
     margin: 8px 0;
     font-size: 2rem;
     font-weight: bold;
     text-transform: uppercase;
     font-family: 'Montserrat-ExtraBold';
+    color: #B32024;
+
+    animation: buttonAppear 1.5s ease-out forwards;
+    transform-origin: center;
+    filter: blur(8px);
+    opacity: 0;
+    transform: scale(0.5);
 }
 
 .options-grid {
@@ -230,6 +281,12 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
     gap: 8px;
     padding: 0 5%;
     box-sizing: border-box;
+
+    animation: buttonAppear 1.5s ease-out forwards;
+    transform-origin: center;
+    filter: blur(8px);
+    opacity: 0;
+    transform: scale(0.5);
 }
 
 .option-button {
@@ -241,7 +298,7 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
     background-color: rgba(255, 255, 255, 0.9);
     border: none;
     border-radius: 12px;
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: bold;
     font-family: 'Montserrat-Bold';
     cursor: pointer;
@@ -262,17 +319,23 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 }
 
 .option-button.active {
-    background-color: rgba(255, 127, 42, 100);
+    background-color: #B32024;
     color: #fff;
 }
 
 .navigation-buttons {
     display: flex;
     justify-content: space-around;
+
+    animation: buttonAppear 1.5s ease-out forwards;
+    transform-origin: center;
+    filter: blur(8px);
+    opacity: 0;
+    transform: scale(0.5);
 }
 .next-button {
     margin-top: 1%;
-    background-color: rgba(255, 127, 42, 1);
+    background-color: #f66200;
     border: none;
     padding: 12px 48px;
     border-radius: 24px;
