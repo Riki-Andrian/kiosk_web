@@ -298,7 +298,7 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
     background-color: rgba(255, 255, 255, 0.9);
     border: none;
     border-radius: 12px;
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: bold;
     font-family: 'Montserrat-Bold';
     cursor: pointer;
