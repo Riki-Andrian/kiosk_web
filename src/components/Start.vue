@@ -1,33 +1,127 @@
 <script setup>
-import { ref } from "vue";
-import { useRouter } from 'vue-router';
-
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import lottie from "lottie-web";
 
 const router = useRouter();
 
-// Fungsi untuk mengarahkan ke halaman "/pertanyaan"
-const goToNext = () => {
-    router.push("/form"); // Navigasi ke halaman pertanyaan
+// References for the Lottie containers
+const lottieContainer = ref(null);
+const secondLottieContainer = ref(null); // New reference for the second Lottie animation
+let lottieInstance = null;
+let secondLottieInstance = null; // New instance for the second Lottie animation
+
+// Function to navigate to the next page after playing the "start-out" animation
+const goToNext = async () => {
+    try {
+        if(lottieInstance) {
+            lottieInstance.destroy(); // Destroy the first animation instance
+        }
+
+        const outResponse = await fetch(new URL('@/assets/lottie/start-page/start-out.json', import.meta.url));
+        const outAnimationData = await outResponse.json();
+
+        lottieInstance = lottie.loadAnimation({
+            container: lottieContainer.value,
+            renderer: "svg",
+            loop: false, // Do not loop the out animation
+            autoplay: true,
+            animationData: outAnimationData,
+        });
+
+        // Destroy the current "music-idle.json" animation
+        if (secondLottieInstance) {
+            secondLottieInstance.destroy();
+        }
+
+        // Load and play the "music-out.json" animation
+        const outSecondResponse = await fetch(new URL('@/assets/lottie/start-page/music-out.json', import.meta.url));
+        const outSecondAnimationData = await outSecondResponse.json();
+
+        secondLottieInstance = lottie.loadAnimation({
+            container: secondLottieContainer.value,
+            renderer: "svg",
+            loop: false, // Do not loop the out animation
+            autoplay: true,
+            animationData: outSecondAnimationData,
+        });
+
+        // Optionally, navigate to the next page after "music-out.json" completes
+        lottieInstance.addEventListener("complete", () => {
+            router.push("/form"); // Navigate to the next page
+        });
+    } catch (error) {
+        console.error("Error switching animations in 'goToNext':", error);
+    }
 };
 
+// Initialize the "start-in" and second Lottie animations
+onMounted(async () => {
+    try {
+        // Load the first Lottie animation
+        const response = await fetch(new URL('@/assets/lottie/start-page/start-in.json', import.meta.url));
+        const animationData = await response.json();
+
+        lottieInstance = lottie.loadAnimation({
+            container: lottieContainer.value,
+            renderer: "svg",
+            loop: false,
+            autoplay: true,
+            animationData,
+        });
+
+        // Load the second Lottie animation
+        const secondResponse = await fetch(new URL('@/assets/lottie/start-page/music-in.json', import.meta.url));
+        const secondAnimationData = await secondResponse.json();
+
+        secondLottieInstance = lottie.loadAnimation({
+            container: secondLottieContainer.value,
+            renderer: "svg",
+            loop: false, // Do not loop the second animation
+            autoplay: true,
+            animationData: secondAnimationData,
+        });
+
+        // Wait for the second animation to complete
+        secondLottieInstance.addEventListener("complete", async () => {
+            // Load and play the "music-idle.json" animation
+            const idleResponse = await fetch(new URL('@/assets/lottie/start-page/music-idle.json', import.meta.url));
+            const idleAnimationData = await idleResponse.json();
+
+            secondLottieInstance.destroy(); // Destroy the second animation
+            secondLottieInstance = lottie.loadAnimation({
+                container: secondLottieContainer.value,
+                renderer: "svg",
+                loop: true, // Set to true to keep it looping
+                autoplay: true,
+                animationData: idleAnimationData,
+            });
+        });
+    } catch (error) {
+        console.error("Error loading Lottie animations:", error);
+    }
+});
 </script>
 
 <template>
     <div class="app-container">
-        <img src="../assets/Background.png" class="background-image" />
+        <img src="../assets/normal-bg.png" class="background-image" />
 
         <div class="overlay">
             <div class="top-bar">
-                <img src="../assets/Asset Art & Sound.png" class="logo" />
-                <img src="../assets/Asset MLD.png" class="logo" />
+                <img src="../assets/mld-logo.png" class="logo" />
+                <img src="../assets/art-n-sound.png" class="logo" />
             </div>
+
+            <!-- First Lottie Animation Container -->
+            <div ref="lottieContainer" class="lottie-animation"></div>
+
 
             <div class="title-text">
-                <h1>Your Music Personality</h1>
-                <button class="next-button" @click="goToNext">Next</button>
+                <button class="next-button" @click="goToNext">S T A R T</button>
             </div>
-
-
+            <!-- Second Lottie Animation Container -->
+            <div ref="secondLottieContainer" class="second-lottie-animation"></div>
         </div>
     </div>
 </template>
@@ -64,12 +158,31 @@ const goToNext = () => {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    /* Animation properties */
+    animation: blurSlideInTopBottom 1.5s ease-out forwards;
+    opacity: 0; /* Start invisible */
+    filter: blur(15px); /* Start blurred */
+    transform: translateY(-50px); /* Start from above */
+}
+
+@keyframes blurSlideInTopBottom {
+    0% {
+        opacity: 0;
+        filter: blur(15px);
+        transform: translateY(-50px);
+    }
+    100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0);
+    }
 }
 
 .logo {
-    width: 80px;
+    width: 20%;
     height: auto;
-    margin: 30px;
+    margin: 10px;
 }
 
 .title-text {
@@ -84,22 +197,35 @@ const goToNext = () => {
 }
 
 .next-button {
-    margin-top: 20px;
-    background-color: rgba(255, 127, 42, 100);
+    margin-top: -30px;
+    background-color: #f66200;
     border: none;
-    padding: 14px 48px;
-    border-radius: 24px;
-    font-size: 1.3rem;
+    padding: 14px 50px;
+    width: 250px;
+    height: 60px;
+    border-radius: 30px;
+    font-size: 1.6rem;
     font-weight: bold;
     cursor: pointer;
     color: #ffffff;
     z-index: 2;
-    transition: background-color 0.2s, transform 0.2s;
 }
 
 .next-button:hover {
-    background-color: #ffffff;
-    color: rgba(255, 127, 42, 100);;
-    transform: scale(1.05);
+    background-color: #d35400;
+    color: #ffffff;
+}
+
+.lottie-animation {
+    margin-top: 150px;
+    width: 100%;
+    height: auto;
+    align-self: center;
+}
+
+.second-lottie-animation {
+    width: 110%;
+    height: auto;
+    align-self: center;
 }
 </style>
