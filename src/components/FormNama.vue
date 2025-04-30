@@ -29,8 +29,22 @@ const goToNext = (event) => {
             router.push("/pertanyaan");
         }, 1000);
     } else {
-        alert("Please enter your name!");
-    }
+    const popup = document.getElementById('popup');
+    popup.classList.remove('hidden');
+    popup.classList.remove('hide');
+    popup.classList.add('show');
+
+    setTimeout(() => {
+        popup.classList.remove('show');
+        popup.classList.add('hide');
+
+        // Hide the popup completely after animation
+        setTimeout(() => {
+            popup.classList.add('hidden');
+        }, 500); // match buttonDisappear duration
+    }, 2000);
+}
+
 };
 
 const addChar = (char) => {
@@ -76,8 +90,8 @@ const backspace = () => {
                     </button>
                 </div>
             </div>
-
             <button class="next-button" @click="goToNext">S U B M I T</button>
+            <div id="popup" class="popup hidden">Please enter your name!</div>
         </div>
     </div>
 </template>
@@ -121,6 +135,37 @@ const backspace = () => {
     align-items: center;
     justify-content: flex-start; 
 }
+
+.popup {
+    position: absolute;
+    bottom: 20px;
+    left: 45%;
+    transform: translateX(-50%);
+    background-color: #B32024;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    z-index: 999;
+    opacity: 0;
+    transform: scale(0.7);
+    filter: blur(6px);
+    pointer-events: none;
+}
+
+.popup.show {
+    animation: buttonAppear 0.5s ease-out forwards;
+}
+
+.popup.hide {
+    animation: buttonDisappear 0.5s ease-in forwards;
+}
+
+.hidden {
+    display: none;
+}
+
 
 .top-bar {
     display: flex;
