@@ -14,25 +14,40 @@ let secondLottieInstance = null; // New instance for the second Lottie animation
 // Function to navigate to the next page after playing the "start-out" animation
 const goToNext = async () => {
     try {
-        // Destroy the current "music-idle.json" animation
-        if (secondLottieInstance) {
-            secondLottieInstance.destroy();
+        if(lottieInstance) {
+            lottieInstance.destroy(); // Destroy the first animation instance
         }
 
-        // Load and play the "music-out.json" animation
-        const outResponse = await fetch(new URL('@/assets/lottie/start-page/music-out.json', import.meta.url));
+        const outResponse = await fetch(new URL('@/assets/lottie/start-page/start-out.json', import.meta.url));
         const outAnimationData = await outResponse.json();
 
-        secondLottieInstance = lottie.loadAnimation({
-            container: secondLottieContainer.value,
+        lottieInstance = lottie.loadAnimation({
+            container: lottieContainer.value,
             renderer: "svg",
             loop: false, // Do not loop the out animation
             autoplay: true,
             animationData: outAnimationData,
         });
 
+        // Destroy the current "music-idle.json" animation
+        if (secondLottieInstance) {
+            secondLottieInstance.destroy();
+        }
+
+        // Load and play the "music-out.json" animation
+        const outSecondResponse = await fetch(new URL('@/assets/lottie/start-page/music-out.json', import.meta.url));
+        const outSecondAnimationData = await outSecondResponse.json();
+
+        secondLottieInstance = lottie.loadAnimation({
+            container: secondLottieContainer.value,
+            renderer: "svg",
+            loop: false, // Do not loop the out animation
+            autoplay: true,
+            animationData: outSecondAnimationData,
+        });
+
         // Optionally, navigate to the next page after "music-out.json" completes
-        secondLottieInstance.addEventListener("complete", () => {
+        lottieInstance.addEventListener("complete", () => {
             router.push("/form"); // Navigate to the next page
         });
     } catch (error) {
