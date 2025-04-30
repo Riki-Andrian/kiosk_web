@@ -309,8 +309,8 @@ watch(isLoading, async (val) => {
 
         <div class="overlay">
             <div class="top-bar">
-                <img src="../assets/art & sound logo.svg" class="logo" />
-                <img src="../assets/mld logo.svg" class="logo" />
+                <img src="../assets/Asset Art & Sound.png" class="logo" />
+                <img src="../assets/Asset MLD.png" class="logo" />
             </div>
             <div v-show="!isLoading">
                 <div class="title-text">
