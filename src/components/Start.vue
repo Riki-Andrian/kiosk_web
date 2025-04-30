@@ -116,7 +116,6 @@ onMounted(async () => {
             <!-- First Lottie Animation Container -->
             <div ref="lottieContainer" class="lottie-animation"></div>
 
-
             <div class="title-text">
                 <button class="next-button" @click="goToNext">S T A R T</button>
             </div>
@@ -158,25 +157,6 @@ onMounted(async () => {
     display: flex;
     justify-content: center;
     align-items: center;
-
-    /* Animation properties */
-    animation: blurSlideInTopBottom 1.5s ease-out forwards;
-    opacity: 0; /* Start invisible */
-    filter: blur(15px); /* Start blurred */
-    transform: translateY(-50px); /* Start from above */
-}
-
-@keyframes blurSlideInTopBottom {
-    0% {
-        opacity: 0;
-        filter: blur(15px);
-        transform: translateY(-50px);
-    }
-    100% {
-        opacity: 1;
-        filter: blur(0);
-        transform: translateY(0);
-    }
 }
 
 .logo {
@@ -209,6 +189,32 @@ onMounted(async () => {
     cursor: pointer;
     color: #ffffff;
     z-index: 2;
+    
+    /* Animation properties */
+    animation: buttonAppear 0.8s ease-out forwards;
+    transform-origin: center;
+    filter: blur(8px);
+    opacity: 0;
+    transform: scale(0.5);
+}
+
+/* Keyframes for the button animation */
+@keyframes buttonAppear {
+    0% {
+        transform: scale(0.5);
+        filter: blur(8px);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.05);
+        filter: blur(2px);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        filter: blur(0);
+        opacity: 1;
+    }
 }
 
 .next-button:hover {
