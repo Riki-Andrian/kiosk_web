@@ -12,6 +12,7 @@ import video4 from "@/assets/video/INFJ-INFP.mp4";
 import video5 from "@/assets/video/INTJ-INTP.mp4";
 import mld_kiosk from "@/assets/mld_kiosk.mp3"
 import loadingAnimation from '@/assets/loading.json';
+import { INTJ_INTP, ENTP_ENFP, ESFJ_ENFJ, ESTP_ESFP, INFJ_INFP } from "@/assets/music/index.js";
 
 const router = useRouter();
 const route = useRoute();
@@ -25,6 +26,7 @@ const imageUrl = computed(() => capturedImage.value);
 
 const ffmpeg = createFFmpeg({ log: true });
 const videoFile = ref(null);
+let musicFile = ref(null);
 const outputUrl = ref(null);
 const userName = ref("John Doe");
 const imageCoord = ref(null);
@@ -99,36 +101,42 @@ const styles = {
 let selectedStyle = '';
 
 const chooseStyle = () => {
+    const randomIndex = Math.floor(Math.random() * 9);
     switch (personality.value) {
         case "ENTP":
         case "ENFP":
             selectedStyle = styles['ENTP_ENFP'];
             videoFile.value = video1;
             imageCoord.value = "75:380";
+            musicFile.value = ENTP_ENFP[randomIndex];
             break;
         case "ESFJ":
         case "ENFJ":
             selectedStyle = styles['ESFJ_ENFJ'];
             videoFile.value = video2;
             imageCoord.value = "185:737";
+            musicFile = ESFJ_ENFJ[randomIndex];
             break;
         case "ESTP":
         case "ESFP":
             selectedStyle = styles['ESTP_ESFP'];
             videoFile.value = video3;
             imageCoord.value = "200:645";
+            musicFile.value = ESTP_ESFP[randomIndex];
             break;
         case "INFJ":
         case "INFP":
             selectedStyle = styles['INFJ_INFP'];
             videoFile.value = video4;
             imageCoord.value = "350:685";
+            musicFile.value = INFJ_INFP[randomIndex];
             break;
         case "INTJ":
         case "INTP":
             selectedStyle = styles['INTJ_INTP'];
             videoFile.value = video5;
             imageCoord.value = "185:350";
+            musicFile.value = INTJ_INTP[randomIndex];
             break;
         default:
             selectedStyle = null;
@@ -195,7 +203,9 @@ const editVideo = async () => {
 
         ffmpeg.FS("writeFile", videoName, await fetchFile(videoFile.value));
         ffmpeg.FS("writeFile", overlayName, new Uint8Array(overlayArrayBuffer));
-        ffmpeg.FS("writeFile", musik, await fetchFile(mld_kiosk));
+        ffmpeg.FS("writeFile", musik, await fetchFile(musicFile.value));
+
+        console.log(musicFile.value);
 
         await ffmpeg.run(
             "-i", videoName,
@@ -309,8 +319,8 @@ watch(isLoading, async (val) => {
 
         <div class="overlay">
             <div class="top-bar">
-                <img src="../assets/art & sound logo.svg" class="logo" />
-                <img src="../assets/mld logo.svg" class="logo" />
+                <img src="../assets/Asset Art & Sound.png" class="logo" />
+                <img src="../assets/Asset MLD.png" class="logo" />
             </div>
             <div v-show="!isLoading">
                 <div class="title-text">

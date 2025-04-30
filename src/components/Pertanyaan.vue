@@ -10,55 +10,56 @@ const questions = ref(
             "id": 1,
             "pertanyaan": "CARA LO NIKMATIN MUSIK?",
             "options": [
-                { "option": "Sendirian aja", "point": ["I"],"image": new URL('@/assets/pertanyaan/1-1.png', import.meta.url).href },
-                { "option": "Bareng close friends", "point": ["I", "E"],"image": new URL('@/assets/pertanyaan/1-2.png', import.meta.url).href  },
-                { "option": "Di tengah keramaian full of energy", "point": ["E"],"image":new URL('@/assets/pertanyaan/1-3.png', import.meta.url).href  },
-                { "option": "Live concerts, loud and wild!", "point": ["E"],"image": new URL('@/assets/pertanyaan/1-4.png', import.meta.url).href  }
+                { "option": "Sendirian aja", "point": ["I"], "image": new URL('@/assets/pertanyaan/1-1.png', import.meta.url).href },
+                { "option": "Bareng close friends", "point": ["I", "E"], "image": new URL('@/assets/pertanyaan/1-2.png', import.meta.url).href },
+                { "option": "Di tengah keramaian full of energy", "point": ["E"], "image": new URL('@/assets/pertanyaan/1-3.png', import.meta.url).href },
+                { "option": "Live concerts, loud and wild!", "point": ["E"], "image": new URL('@/assets/pertanyaan/1-4.png', import.meta.url).href }
             ]
         },
         {
             "id": 2,
             "pertanyaan": "LAGU KEREN BUAT LO?",
             "options": [
-                { "option": "Complex melody & deep details", "point": ["T"],"image": new URL('@/assets/pertanyaan/2-1.png', import.meta.url).href  },
-                { "option": "Lirik & emosi yang deep banget", "point": ["F"],"image": new URL('@/assets/pertanyaan/2-2.png', import.meta.url).href  },
-                { "option": "Groove & rhythm that makes me move", "point": ["S", "E"],"image": new URL('@/assets/pertanyaan/2-3.png', import.meta.url).href },
-                { "option": "Unpredictable beat & wild creativity", "point": ["P", "E"],"image": new URL('@/assets/pertanyaan/2-4.png', import.meta.url).href  }
+                { "option": "Complex melody & deep details", "point": ["T"], "image": new URL('@/assets/pertanyaan/2-1.png', import.meta.url).href },
+                { "option": "Lirik & emosi yang deep banget", "point": ["F"], "image": new URL('@/assets/pertanyaan/2-2.png', import.meta.url).href },
+                { "option": "Groove & rhythm that makes me move", "point": ["S", "E"], "image": new URL('@/assets/pertanyaan/2-3.png', import.meta.url).href },
+                { "option": "Unpredictable beat & wild creativity", "point": ["P", "E"], "image": new URL('@/assets/pertanyaan/2-4.png', import.meta.url).href }
             ]
         },
         {
             "id": 3,
             "pertanyaan": "ARTI MUSIK BUAT LO?",
             "options": [
-                { "option": "Helps me think & feel deeply", "point": ["I", "T"],"image": new URL('@/assets/pertanyaan/3-1.png', import.meta.url).href  },
-                { "option": "Connects with my feelings & memories", "point": ["I", "F"],"image": new URL('@/assets/pertanyaan/3-2.png', import.meta.url).href  },
-                { "option": "Bikin gw semangat & siap menghadapi hari", "point": ["E"],"image": new URL('@/assets/pertanyaan/3-3.png', import.meta.url).href  },
-                { "option": "Kebebasan berekspresi & high energy", "point": ["E", "P"],"image": new URL('@/assets/pertanyaan/3-4.png', import.meta.url).href  }
+                { "option": "Helps me think & feel deeply", "point": ["I", "T"], "image": new URL('@/assets/pertanyaan/3-1.png', import.meta.url).href },
+                { "option": "Connects with my feelings & memories", "point": ["I", "F"], "image": new URL('@/assets/pertanyaan/3-2.png', import.meta.url).href },
+                { "option": "Bikin gw semangat & siap menghadapi hari", "point": ["E"], "image": new URL('@/assets/pertanyaan/3-3.png', import.meta.url).href },
+                { "option": "Kebebasan berekspresi & high energy", "point": ["E", "P"], "image": new URL('@/assets/pertanyaan/3-4.png', import.meta.url).href }
             ]
         },
         {
             "id": 4,
             "pertanyaan": "KALO LU MUSISI, LO ADALAH..?",
             "options": [
-                { "option": "Composer, crafting every sound with precision", "point": ["I", "T"],"image": new URL('@/assets/pertanyaan/4-1.png', import.meta.url).href  },
-                { "option": "Songwriter, express deep emotions with my song", "point": ["I", "F"],"image": new URL('@/assets/pertanyaan/4-2.png', import.meta.url).href  },
-                { "option": "Drummer, selalu bring up the energy", "point": ["E", "F"],"image":new URL('@/assets/pertanyaan/4-3.png', import.meta.url).href  },
-                { "option": "Vokalis utama, owning the stage & hyping up the crowd", "point": ["E", "P"],"image": new URL('@/assets/pertanyaan/4-4.png', import.meta.url).href  }
+                { "option": "Composer, crafting every sound with precision", "point": ["I", "T"], "image": new URL('@/assets/pertanyaan/4-1.png', import.meta.url).href },
+                { "option": "Songwriter, express deep emotions with my song", "point": ["I", "F"], "image": new URL('@/assets/pertanyaan/4-2.png', import.meta.url).href },
+                { "option": "Drummer, selalu bring up the energy", "point": ["E", "F"], "image": new URL('@/assets/pertanyaan/4-3.png', import.meta.url).href },
+                { "option": "Vokalis utama, owning the stage & hyping up the crowd", "point": ["E", "P"], "image": new URL('@/assets/pertanyaan/4-4.png', import.meta.url).href }
             ]
         },
         {
             "id": 5,
             "pertanyaan": "PAS ADA LAGU BARU YANG LO SUKA, LO AKAN..?",
             "options": [
-                { "option": "Analisa dulu lirik, melodi dan aransemennya", "point": ["I", "T"],"image": new URL('@/assets/pertanyaan/5-1.png', import.meta.url).href  },
-                { "option": "Add to playlist & play it on repeat", "point": ["I", "F"],"image": new URL('@/assets/pertanyaan/5-2.png', import.meta.url).href  },
-                { "option": "Share ke teman & talk about it", "point": ["E", "F"],"image": new URL('@/assets/pertanyaan/5-3.png', import.meta.url).href  },
-                { "option": "Remix it & sing along loud!", "point": ["E", "P"],"image": new URL('@/assets/pertanyaan/5-4.png', import.meta.url).href }
+                { "option": "Analisa dulu lirik, melodi dan aransemennya", "point": ["I", "T"], "image": new URL('@/assets/pertanyaan/5-1.png', import.meta.url).href },
+                { "option": "Add to playlist & play it on repeat", "point": ["I", "F"], "image": new URL('@/assets/pertanyaan/5-2.png', import.meta.url).href },
+                { "option": "Share ke teman & talk about it", "point": ["E", "F"], "image": new URL('@/assets/pertanyaan/5-3.png', import.meta.url).href },
+                { "option": "Remix it & sing along loud!", "point": ["E", "P"], "image": new URL('@/assets/pertanyaan/5-4.png', import.meta.url).href }
             ]
         }
     ]
 );
 
+const answers = ref([]);
 const currentQuestionIndex = ref(0);
 const currentAnswer = ref(null);
 const currentPoints = ref([]);
@@ -77,43 +78,53 @@ const points = ref({
 const goToNext = () => {
     if (currentQuestionIndex.value < questions.value.length - 1) {
         currentQuestionIndex.value++;
-        currentAnswer.value = null;
+        currentAnswer.value = answers.value[currentQuestionIndex.value] ?? null;
     } else {
-        // Nanti bisa arahkan ke hasil/halaman lain
         console.log("Quiz selesai");
-
         const rating = rateAnswers();
-
         console.log(rating);
-        // router.push("/result"); // Contoh jika mau redirect
         router.push(`/cameratest/${rating}`);
+    }
+}
+
+const goToPrevious = () => {
+    if (currentQuestionIndex.value > 0) {
+        currentQuestionIndex.value--;
+        currentAnswer.value = answers.value[currentQuestionIndex.value] ?? null;
     }
 }
 
 const pickAnswer = (optionIndex) => {
     currentAnswer.value = optionIndex;
 
-    currentPoints.value[currentQuestionIndex.value] = (currentQuestion.value.options[currentAnswer.value].point);
+    answers.value[currentQuestionIndex.value] = optionIndex;
+
+    const selected = currentQuestion.value.options[optionIndex].point;
+    currentPoints.value[currentQuestionIndex.value] = selected;
 }
 
+
 const rateAnswers = () => {
+    // Reset point sebelum hitung ulang
+    for (let key in points.value) {
+        points.value[key] = 0;
+    }
+
     currentPoints.value.forEach((point) => {
-        point.forEach((p) => {
+        point?.forEach((p) => {
             points.value[p]++;
         });
     });
 
     let result = [];
-
     result.push(points.value["I"] > points.value["E"] ? "I" : "E");
     result.push(points.value["S"] > points.value["N"] ? "S" : "N");
     result.push(points.value["T"] > points.value["F"] ? "T" : "F");
     result.push(points.value["P"] > points.value["J"] ? "P" : "J");
 
-    result = result.join('');
-
-    return result;
+    return result.join('');
 }
+
 
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value]);
 </script>
@@ -124,22 +135,32 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 
         <div class="overlay">
             <div class="top-bar">
-                <img src="../assets/art & sound logo.svg" class="logo" />
-                <img src="../assets/mld logo.svg" class="logo" />
+                <img src="../assets/Asset Art & Sound.png" class="logo" />
+                <img src="../assets/Asset MLD.png" class="logo" />
             </div>
 
             <div class="title-text" v-if="currentQuestion">
-                <h1>WHICH ONE DESCRIBE YOU THE MOST?</h1>
                 <p class="question">{{ questions[currentQuestionIndex].pertanyaan }}</p>
             </div>
 
             <div class="options-grid" v-if="currentQuestion">
-                <button class="option-button" :class="{ active: idx === currentAnswer }" v-for="(opt, idx) in currentQuestion.options" :key="idx" @click="pickAnswer(idx)">
+                <button class="option-button" :class="{ active: idx === currentAnswer }"
+                    v-for="(opt, idx) in currentQuestion.options" :key="idx" @click="pickAnswer(idx)">
                     <img :src="opt.image" class="logo" />
                     {{ opt.option }}
                 </button>
             </div>
-            <button class="next-button" @click="goToNext">Next</button>
+            <!-- <button class="next-button" @click="goToNext">Next</button> -->
+            <div class="navigation-buttons">
+                <button class="next-button" @click="goToPrevious" :disabled="currentQuestionIndex === 0">Back</button>
+                <button class="next-button" @click="goToNext" :disabled="currentAnswer === null">Next</button>
+            </div>
+            <div class="progress-bar-container">
+                <div v-for="(q, i) in questions" :key="i" class="progress-segment" :class="{
+                    filled: i < currentQuestionIndex,
+                    current: i === currentQuestionIndex
+                }"></div>
+            </div>
         </div>
     </div>
 </template>
@@ -166,10 +187,11 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 20px;
+    padding: 16px;
     box-sizing: border-box;
     color: white;
     text-align: center;
+    justify-content: space-between;
 }
 
 .top-bar {
@@ -184,7 +206,7 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 }
 
 .title-text {
-    margin-top: 20px;
+    margin-top: 4px;
 }
 
 .title-text h1 {
@@ -195,42 +217,43 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 
 
 .question {
-    margin: 16px 0;
-    font-size: 2.5rem;
+    margin: 8px 0;
+    font-size: 2rem;
     font-weight: bold;
     text-transform: uppercase;
+    font-family: 'Montserrat-ExtraBold';
 }
 
 .options-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-top: 20px;
-    margin-left: 100px;
-    margin-right: 100px;
-    padding: 0 20px;
+    gap: 8px;
+    padding: 0 5%;
+    box-sizing: border-box;
 }
 
 .option-button {
+    aspect-ratio: 1/1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 16px;
+    padding: 8px;
     background-color: rgba(255, 255, 255, 0.9);
     border: none;
     border-radius: 12px;
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-weight: bold;
+    font-family: 'Montserrat-Bold';
     cursor: pointer;
     color: #333;
     transition: transform 0.2s, background-color 0.2s;
 }
 
 .option-button img {
-    width: 60px;
-    height: 60px;
+    margin-top: 5%;
+    width: 100px;
+    height: 100px;
     object-fit: contain;
-    margin-bottom: 8px;
 }
 
 .option-button:hover {
@@ -243,26 +266,58 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
     color: #fff;
 }
 
+.navigation-buttons {
+    display: flex;
+    justify-content: space-around;
+}
 .next-button {
-    position: fixed;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(255, 127, 42, 100);
+    margin-top: 1%;
+    background-color: rgba(255, 127, 42, 1);
     border: none;
-    padding: 14px 88px;
+    padding: 12px 48px;
     border-radius: 24px;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
     color: #ffffff;
-    z-index: 2;
     transition: background-color 0.2s, transform 0.2s;
+    align-self: center;
 }
 
 .next-button:hover {
     background-color: #ffffff;
     color: rgba(255, 127, 42, 100);
-    transform: translateX(-50%) scale(1.05);
+}
+
+.next-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.progress-bar-container {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 20px;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+    padding-bottom: 5%;
+}
+
+.progress-segment {
+    flex: 1;
+    height: 6px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    transition: background-color 0.3s ease, width 0.3s ease;
+}
+
+.progress-segment.filled {
+    background-color: #ff7f2a;
+}
+
+.progress-segment.current {
+    background-color: rgba(255, 127, 42, 0.8);
 }
 </style>

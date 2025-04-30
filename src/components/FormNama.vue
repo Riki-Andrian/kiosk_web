@@ -3,22 +3,20 @@ import { ref } from "vue";
 import { useRouter } from 'vue-router';
 
 const name = ref("");
-const router = useRouter(); // Menambahkan router
+const router = useRouter();
 
-// Fungsi untuk mengarahkan ke halaman "/pertanyaan"
+
 const goToNext = () => {
     if (name.value.trim() !== "") {
-        router.push("/pertanyaan"); // Navigasi ke halaman pertanyaan
+        router.push("/pertanyaan");
     } else {
-        alert("Please enter your name!"); // Alert jika nama belum diisi
+        alert("Please enter your name!");
     }
 };
-// Fungsi untuk menambahkan karakter ke input
 const addChar = (char) => {
     name.value += char;
 };
 
-// Fungsi untuk menghapus karakter terakhir
 const backspace = () => {
     name.value = name.value.slice(0, -1);
 };
@@ -30,8 +28,8 @@ const backspace = () => {
 
         <div class="overlay">
             <div class="top-bar">
-                <img src="../assets/art & sound logo.svg" class="logo" />
-                <img src="../assets/mld logo.svg" class="logo" />
+                <img src="../assets/Asset Art & Sound.png" class="logo" />
+                <img src="../assets/Asset MLD.png" class="logo" />
             </div>
 
             <div class="title-text">
@@ -50,12 +48,16 @@ const backspace = () => {
                     <button v-for="key in 'ZXCVBNM'.split('')" :key="key" @click="addChar(key)">{{ key }}</button>
                 </div>
                 <div class="keyboard-row">
-                    <button @click="addChar(' ')" class="space-button">Space</button>
-                    <button @click="backspace">delete</button>
+                    <button @click="addChar(' ')" class="keyboard-button space-button">
+                        <span class="button-label">Space</span>
+                    </button>
+                    <button @click="backspace" class="keyboard-button delete-button">
+                        <span class="button-label">Delete</span>
+                    </button>
                 </div>
             </div>
 
-            <button class="next-button" @click="goToNext">Next</button>
+            <button class="next-button" @click="goToNext">Submit</button>
         </div>
     </div>
 </template>
@@ -82,10 +84,11 @@ const backspace = () => {
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 20px;
     box-sizing: border-box;
     color: white;
     text-align: center;
+    align-items: center;
+    justify-content: flex-start; 
 }
 
 .top-bar {
@@ -152,38 +155,69 @@ const backspace = () => {
     color: rgba(255, 127, 42, 100);
     transform: translateX(-50%) scale(1.05);
 }
+
 .keyboard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;  
+    max-width: 400px;  
 }
 
 .keyboard-row {
-  display: flex;
-  justify-content: center;
-  margin: 5px 0;
+    display: flex;
+    justify-content: center;
+    margin: 5px 0;
 }
 
 .keyboard-row button {
-  margin: 0 4px;
-  padding: 10px 14px;
-  font-size: 1.2rem;
-  border: none;
-  border-radius: 6px;
-  background-color: #ffffffcc;
-  color: #333;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s;
+    margin: 0 4px;
+    height: 42px;
+    min-width: 42px;
+    padding: 10px 14px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #ffffffcc;
+    color: #333;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
 .keyboard-row button:hover {
-  background-color: #fff;
+    background-color: #fff;
 }
 
 .space-button {
-  padding: 10px 60px;
-  width: 300px;
+    padding: 10px 60px;
+    width: 350px;
+}
+
+.delete-button {
+    padding: 10px 40px;
+    width: 80px;
+}
+
+.keyboard-button {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 10px;
+  text-align: right;
+  vertical-align: bottom;
+}
+
+.button-label {
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  font-size: 0.8rem;
+  color: #333;
+  font-weight: bold;
 }
 </style>
