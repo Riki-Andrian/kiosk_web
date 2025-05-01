@@ -292,7 +292,7 @@ const editVideo = async () => {
             "-c:v", "libx264",
             "-preset", "veryfast",
             "-crf", "23",
-            "-threads", "4",
+            "-threads", "8",
             "-b:v", "700k",
             "-c:a", "aac",
             "-shortest",
