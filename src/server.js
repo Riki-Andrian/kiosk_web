@@ -6,8 +6,14 @@ import { send } from 'vite';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const app = express();
+import fs from 'fs';
+import path from 'path';
+import ffmpeg from 'fluent-ffmpeg';
+import { fileURLToPath } from 'url';
 
+const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 // Increase the size limit for JSON requests
 app.use(express.json({ limit: '50mb' }));
 
@@ -15,6 +21,8 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/assets', express.static(path.join(__dirname, 'src', 'assets')));
 
 const API_TOKEN = process.env.REPLICATE_API_TOKEN;
 
@@ -22,12 +30,6 @@ app.post('/api/style-transfer', async (req, res) => {
     const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
 
     const replicate = new Replicate({ auth: API_TOKEN });
-
-    // const input = {
-    //     image: req.body.image,
-    //     prompt: req.body.textContent,
-    //     style_image: req.body.style_image
-    // };
 
     const { image, style_image } = req.body;
 
@@ -69,6 +71,62 @@ app.post('/api/style-transfer', async (req, res) => {
     console.log(swapFace);
 
     res.json({ success: true, images: swapFace.url() });
+});
+
+app.post('/api/edit-video', async (req, res) => {
+    const { video, music, overlay, x, y } = req.body;
+
+    // Pastikan semua file ada
+    const videoPath = path.join(__dirname, 'src', 'assets', 'video', video);
+    const musicPath = path.join(__dirname, 'src', 'assets', 'music', music);
+    const overlayPath = path.join(__dirname, 'src', 'assets', 'assets', overlay);
+
+    console.log('Video Path:', videoPath);
+    console.log('Music Path:', musicPath);
+    console.log('Overlay Path:', overlayPath);    
+
+    if (!fs.existsSync(videoPath) || !fs.existsSync(musicPath) || !fs.existsSync(overlayPath)) {
+        return res.status(400).json({ success: false, message: "File not found" });
+    }
+
+    const outputName = path.join(__dirname, 'uploads', 'output.mp4');
+
+    try {
+        // Write file ke ffmpeg virtual filesystem
+        ffmpeg()
+            .input(videoPath)
+            .input(musicPath)
+            .input(overlayPath)
+            .inputOptions('-loop 1')
+            .complexFilter([
+                `[2:v]format=yuva420p,scale=360:360,fade=t=in:st=0:d=1:alpha=1[ovl];[0:v][ovl]overlay=${x}:${y}`,
+            ])
+            .outputOptions([
+                '-c:v libx264',
+                '-preset veryfast',
+                '-crf 23',
+                '-threads 4',
+                '-b:v 700k',
+                '-c:a aac',
+                '-shortest',
+            ])
+            .on('end', () => {
+                // Kirim hasil output ke client
+                const outputPath = path.join(__dirname, 'assets', outputName);
+                res.send({
+                    success: true,
+                    videoUrl: `/assets/${outputName}`,
+                });
+            })
+            .on('error', (err) => {
+                console.error('Error processing video:', err);
+                res.status(500).send({ success: false, message: 'Error processing video' });
+            })
+            .save(path.join(__dirname, 'assets', outputName)); // Simpan hasil di server
+    } catch (error) {
+        console.error("Error processing video:", error);
+        res.status(500).json({ success: false, message: "Error processing video" });
+    }
 });
 
 app.listen(3001, () => {
