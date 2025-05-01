@@ -12,6 +12,7 @@ import video4 from "@/assets/video/INFJ-INFP.mp4";
 import video5 from "@/assets/video/INTJ-INTP.mp4";
 import mld_kiosk from "@/assets/mld_kiosk.mp3"
 import loadingAnimation from '@/assets/loading.json';
+import { uploadVideoFirestore } from "@/firebase/firestore";
 
 const router = useRouter();
 const route = useRoute();
@@ -26,6 +27,7 @@ const imageUrl = computed(() => capturedImage.value);
 const ffmpeg = createFFmpeg({ log: true });
 const videoFile = ref(null);
 const outputUrl = ref(null);
+const downloadUrl = ref(null);
 const userName = ref("John Doe");
 const imageCoord = ref(null);
 const isLoading = ref(false);
@@ -225,8 +227,12 @@ const editVideo = async () => {
 
         const outputData = ffmpeg.FS("readFile", outputName);
         const outputBlob = new Blob([outputData.buffer], { type: "video/mp4" });
-        outputUrl.value = URL.createObjectURL(outputBlob);
 
+        downloadUrl.value = await uploadVideoFirestore(outputBlob, "test");
+
+        console.log(downloadUrl);
+
+        outputUrl.value = URL.createObjectURL(outputBlob);
     } catch (error) {
         console.error("Error processing video:", error);
         alert("There was an error processing the video.");
@@ -262,7 +268,7 @@ function clearTemporaryData() {
 const goToResultPage = () => {
     if (outputUrl.value) {
         clearTemporaryData();
-        router.push({ name: "Result", query: { videoUrl: outputUrl.value } });
+        router.push({ name: "Result", query: { videoUrl: outputUrl.value, downloadUrl: downloadUrl.value } });
     } else {
         alert("Please finish editing the video first.");
     }
