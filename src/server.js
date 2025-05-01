@@ -27,7 +27,7 @@ app.use('/assets', express.static(path.join(__dirname, 'src', 'assets')));
 const API_TOKEN = process.env.REPLICATE_API_TOKEN;
 
 app.post('/api/style-transfer', async (req, res) => {
-    const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
+    //const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
 
     const replicate = new Replicate({ auth: API_TOKEN });
 
