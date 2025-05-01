@@ -114,8 +114,8 @@ onMounted(async () => {
 }
 
 .responsive-video {
-  max-width: 90vw;
-  max-height: 70vh;
+  max-width: 80vw;
+  max-height: 60vh;
   width: auto;
   height: auto;
   border-radius: 10px;
@@ -144,8 +144,8 @@ onMounted(async () => {
 }
 
 .qr-code {
-  width: 25%;
-  height: 25%;
+  width: 60%;
+  height: 60%;
   border-radius: 8px;
 
     animation: buttonAppear 1s ease-out forwards;

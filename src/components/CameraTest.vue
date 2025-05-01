@@ -117,11 +117,11 @@ const retakePhoto = () => {
 }
 
 const styles = {
-    'ENTP_ENFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style/ENTP_ENFP.jpg',
-    'ESFJ_ENFJ': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style/ESFJ_ENFJ.jpg',
-    'ESTP_ESFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style/ESTP_ESFP.jpg',
-    'INFJ_INFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style/INFJ_INFP.jpg',
-    'INTJ_INTP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style/INTJ_INTP.jpg'
+    'ENTP_ENFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/ENTP_ENFP.jpg',
+    'ESFJ_ENFJ': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/ESFJ_ENFJ.jpg',
+    'ESTP_ESFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/ESTP_ESFP.jpg',
+    'INFJ_INFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/INFJ_INFP.jpg',
+    'INTJ_INTP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/INTJ_INTP.jpg'
 };
 
 let selectedStyle = '';
@@ -130,94 +130,46 @@ const chooseStyle = () => {
     const randomIndex = Math.floor(Math.random() * 9);
     switch (personality.value) {
         case "ENTP":
-        case "ENFP":
-            selectedStyle = styles['ENTP_ENFP'];
-            videoFile.value = video1;
-            imageCoord.value = "75:380";
-            musicFile.value = ENTP_ENFP[randomIndex];
-            break;
+            case "ENFP":
+                selectedStyle = styles['ENTP_ENFP'];
+                videoFile.value = video1;
+                imageCoord.value = "85:290";
+                musicFile.value = ENTP_ENFP[randomIndex];
+                break;
         case "ESFJ":
-        case "ENFJ":
-            selectedStyle = styles['ESFJ_ENFJ'];
-            videoFile.value = video2;
-            imageCoord.value = "185:737";
-            musicFile = ESFJ_ENFJ[randomIndex];
-            break;
+            case "ENFJ":
+                selectedStyle = styles['ESFJ_ENFJ'];
+                videoFile.value = video2;
+                imageCoord.value = "160:520";
+                musicFile.value = ESFJ_ENFJ[randomIndex];
+                break;
         case "ESTP":
-        case "ESFP":
-            selectedStyle = styles['ESTP_ESFP'];
-            videoFile.value = video3;
-            imageCoord.value = "200:645";
-            musicFile.value = ESTP_ESFP[randomIndex];
-            break;
+            case "ESFP":
+                selectedStyle = styles['ESTP_ESFP'];
+                videoFile.value = video3;
+                imageCoord.value = "200:435";
+                musicFile.value = ESTP_ESFP[randomIndex];
+                break;
         case "INFJ":
-        case "INFP":
-            selectedStyle = styles['INFJ_INFP'];
-            videoFile.value = video4;
-            imageCoord.value = "350:685";
-            musicFile.value = INFJ_INFP[randomIndex];
-            break;
+            case "INFP":
+                selectedStyle = styles['INFJ_INFP'];
+                videoFile.value = video4;
+                imageCoord.value = "200:435";
+                musicFile.value = INFJ_INFP[randomIndex];
+                break;
         case "INTJ":
-        case "INTP":
-            selectedStyle = styles['INTJ_INTP'];
-            videoFile.value = video5;
-            imageCoord.value = "185:350";
-            musicFile.value = INTJ_INTP[randomIndex];
-            break;
+            case "INTP":
+                selectedStyle = styles['INTJ_INTP'];
+                videoFile.value = video5;
+                imageCoord.value = "85:290";
+                musicFile.value = INTJ_INTP[randomIndex];
+                break;
         default:
             selectedStyle = null;
-            videoFile.value = videoSrc;
+            videoFile.value = null;
             break;
     }
 };
-
-// const chooseStyle = () => {
-//     const randomIndex = Math.floor(Math.random() * 9);
-//     const indexStr = `${randomIndex + 1}.mp3`;
-
-//     switch (personality.value) {
-//         case "ENTP":
-//         case "ENFP":
-//             selectedStyle = styles['ENTP_ENFP'];
-//             videoFile.value = "video/video1.mp4";
-//             imageCoord.value = "75:380";
-//             musicFile.value = `ENTP_ENFP/${indexStr}`;
-//             break;
-//         case "ESFJ":
-//         case "ENFJ":
-//             selectedStyle = styles['ESFJ_ENFJ'];
-//             videoFile.value = "video/video2.mp4";
-//             imageCoord.value = "185:737";
-//             musicFile.value = `ESFJ_ENFJ/${indexStr}`;
-//             break;
-//         case "ESTP":
-//         case "ESFP":
-//             selectedStyle = styles['ESTP_ESFP'];
-//             videoFile.value = "video/video3.mp4";
-//             imageCoord.value = "200:645";
-//             musicFile.value = `ESTP_ESFP/${indexStr}`;
-//             break;
-//         case "INFJ":
-//         case "INFP":
-//             selectedStyle = styles['INFJ_INFP'];
-//             videoFile.value = "video/video4.mp4";
-//             imageCoord.value = "350:685";
-//             musicFile.value = `INFJ_INFP/${indexStr}`;
-//             break;
-//         case "INTJ":
-//         case "INTP":
-//             selectedStyle = styles['INTJ_INTP'];
-//             videoFile.value = "video/video5.mp4";
-//             imageCoord.value = "185:350";
-//             musicFile.value = `INTJ_INTP/${indexStr}`;
-//             break;
-//         default:
-//             selectedStyle = null;
-//             videoFile.value = null;
-//             musicFile.value = null;
-//             break;
-//     }
-// };
 
 const editPhoto = async () => {
     try {
@@ -279,23 +231,25 @@ const editVideo = async () => {
         ffmpeg.FS("writeFile", overlayName, new Uint8Array(overlayArrayBuffer));
         ffmpeg.FS("writeFile", musik, await fetchFile(musicFile.value));
 
+        console.log("musicFile.value:", musicFile.value);
+        console.log("videoFile.value:", videoFile.value);
+
         console.log(musicFile.value);
 
         await ffmpeg.run(
             "-i", videoName,
-            "-loop", "1", 
+            "-loop", "1",
             "-t", "5",
             "-i", overlayName,
             "-i", musik,
             "-filter_complex",
-            `[1:v]format=rgba,scale=360:360,fade=t=in:st=0:d=1:alpha=1[ovl];[0:v][ovl]overlay=${imageCoord.value}:enable='between(t,0,5)'[v]`,
-            "-map", "[v]",
+            `[1:v] format=yuva420p, scale=420:420, fade=t=in:st=0:d=1:alpha=1 [ovl]; [0:v][ovl] overlay=${imageCoord.value}`,
+            "-map", "0:v",
             "-map", "2:a",
             "-c:v", "libx264",
-            "-pix_fmt", "yuv420p", // Add this for better compatibility
-            "-preset", "ultrafast",
+            "-preset", "veryfast",
             "-crf", "23",
-            "-threads", "4", 
+            "-threads", "4",
             "-b:v", "700k",
             "-c:a", "aac",
             "-shortest",
@@ -321,50 +275,6 @@ const editVideo = async () => {
         alert("There was an error processing the video.");
     }
 };
-
-// const editVideo = async () => {
-//     if (!videoFile.value || !editedImage.value || !musicFile.value) {
-//         alert("Please select a video, image overlay, and music!");
-//         return;
-//     }
-
-//     const videoName = videoFile.value;
-//     const overlayName = "overlay.png";
-//     const musicName = musicFile.value;
-//     const outputName = "output.mp4";
-    
-//     try {
-//         const formData = new FormData();
-//         formData.append("video", videoName);
-//         formData.append("music", musicName);
-//         formData.append("overlay", overlayName);
-//         formData.append("x", imageCoord.value.split(":")[0]);
-//         formData.append("y", imageCoord.value.split(":")[1]);
-
-//         // Memanggil backend API untuk memproses video
-//         const response = await fetch("http://localhost:3001/api/edit-video", {
-//             method: "POST",
-//             body: formData
-//         });
-
-//         if (!response.ok) {
-//             throw new Error(`Error: ${response.statusText}`);
-//         }
-
-//         const data = await response.json();
-//         if (data.success) {
-//             // Menampilkan hasil video setelah diproses
-//             outputUrl.value = data.videoUrl;
-//             console.log("Video URL:", data.videoUrl);
-//         } else {
-//             console.error("Failed to edit video:", data.message);
-//         }
-//     } catch (error) {
-//         console.error("Error editing video:", error);
-//         alert("There was an error processing the video.");
-//     }
-// };
-
 
 function stopCameraStream() {
   const videoElement = cameraStream.value;
