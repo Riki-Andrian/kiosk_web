@@ -73,11 +73,28 @@ const capturePhoto = () => {
 
             const canvas = document.createElement("canvas");
             const ctx = canvas.getContext("2d");
-
-            canvas.width = cameraStream.value.videoWidth;
-            canvas.height = cameraStream.value.videoHeight;
-
-            ctx.drawImage(cameraStream.value, 0, 0, canvas.width, canvas.height);
+            
+            // Get dimensions from video
+            const videoWidth = cameraStream.value.videoWidth;
+            const videoHeight = cameraStream.value.videoHeight;
+            
+            // Calculate the square size (use the smaller dimension)
+            const size = Math.min(videoWidth, videoHeight);
+            
+            // Set canvas to be 1:1 square
+            canvas.width = size;
+            canvas.height = size;
+            
+            // Calculate source position for center crop
+            const sourceX = (videoWidth - size) / 2;
+            const sourceY = (videoHeight - size) / 2;
+            
+            // Draw only the center square portion of the video onto the canvas
+            ctx.drawImage(
+                cameraStream.value, 
+                sourceX, sourceY, size, size,  // Source rectangle
+                0, 0, size, size               // Destination rectangle
+            );
 
             capturedImage.value = canvas.toDataURL("image/png");
         }
@@ -85,9 +102,16 @@ const capturePhoto = () => {
 };
 
 
+const retakeCount = ref(0);
+
 const retakePhoto = () => {
+    if (retakeCount.value >= 1) {
+        return;
+    }
+    
     capturedImage.value = null;
     loadCameraStream();
+    retakeCount.value += 1;
 }
 
 const styles = {
@@ -401,7 +425,7 @@ watch(isLoading, async (val) => {
 
 <template>
     <div class="app-container">
-        <img src="../assets/Background.png" class="background-image" />
+        <img src="../assets/normal-bg.png" class="background-image" />
 
 
         <div v-if="isLoading" class="loading-overlay">
@@ -411,29 +435,34 @@ watch(isLoading, async (val) => {
 
         <div class="overlay">
             <div class="top-bar">
-                <img src="../assets/Asset Art & Sound.png" class="logo" />
-                <img src="../assets/Asset MLD.png" class="logo" />
+                <img src="../assets/mld-logo.png" class="logo" />
+                <img src="../assets/art-n-sound.png" class="logo" />
             </div>
             <div v-show="!isLoading">
                 <div class="title-text">
-                    <h1>GET YOUR ALBUM COVER.</h1>
-                    <h2>STRIKE A POSE!</h2>
+                    <h1>STRIKE A POSE!</h1>
                 </div>
                 <div v-if="isCountingDown" class="countdown-display">
                     {{ countdown }}
                 </div>
 
                 <div v-if="!capturedImage" class="camera-container">
-                    <video ref="cameraStream" autoplay></video>
+                    <video class="camera-preview" ref="cameraStream" autoplay></video>
                     <div class="button-wrapper">
-                        <button class="action-button" @click="capturePhoto">Take a Photo</button>
+                        <button class="action-button" @click="capturePhoto">TAKE A PHOTO</button>
                     </div>
                 </div>
 
                 <div v-else class="preview-container">
-                    <PreviewPicture :image="capturedImage" />
-                    <button class="action-button" @click="retakePhoto">Take another picture</button>
-                    <button class="action-button" @click="process">Edit</button>
+                    <img :src="imageUrl" alt="Captured Image" class="preview-image" />
+                    <button 
+                        id="retake-photo" 
+                        class="action-button" 
+                        @click="retakePhoto" 
+                        :disabled="retakeCount >= 1">
+                        RE-TAKE PHOTO
+                    </button>
+                    <button class="action-button" @click="process">EDIT</button>
                 </div>
             </div>
         </div>
@@ -441,6 +470,12 @@ watch(isLoading, async (val) => {
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+*{
+    font-family: 'Montserrat', sans-serif;
+}
+
 .app-container {
     position: relative;
     width: 100%;
@@ -472,13 +507,52 @@ watch(isLoading, async (val) => {
 
 .top-bar {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+
+    /* Animation properties */
+    animation: buttonAppear 1s ease-out forwards;
+    transform-origin: center;
+    filter: blur(8px);
+    opacity: 0;
+    transform: scale(0.5);
 }
 
 .logo {
-    width: 80px;
+    width: 20%;
     height: auto;
+    margin: 10px;
+}
+
+@keyframes buttonAppear {
+    0% {
+        transform: scale(0.5);
+        filter: blur(8px);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.05);
+        filter: blur(2px);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        filter: blur(0);
+        opacity: 1;
+    }
+}
+
+@keyframes buttonDisappear {
+    0% {
+        transform: scale(1);
+        filter: blur(0px);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.7); /* or go smaller if you want */
+        filter: blur(6px);
+        opacity: 0;
+    }
 }
 
 .title-text {
@@ -488,13 +562,38 @@ watch(isLoading, async (val) => {
 .title-text h1,
 .title-text h2 {
     margin: 0;
+    color: #B32024;
+    font-weight: bold;
+
+    /* Animation properties */
+    animation: buttonAppear 1s ease-out forwards;
+    transform-origin: center;
+    filter: blur(8px);
+    opacity: 0;
+    transform: scale(0.5);
 }
 
+.camera-container video {
+    border-radius: 12px;
+    width: 400px;    /* Set a specific width */
+    height: 400px;   /* Set the same value for height */
+    object-fit: cover; /* This crops the video to fill the container */
+    /* Animation properties */
+    animation: buttonAppear 1s ease-out forwards;
+    transform-origin: center;
+    filter: blur(8px);
+    opacity: 0;
+    transform: scale(0.5);
+}
 
 .camera-container video {
-    width: 100%;
-    max-width: 440px;
     border-radius: 12px;
+}
+
+.camera-preview {
+    width: 100%;
+    border-radius: 12px;
+    margin: 20px 0;
 }
 
 .button-wrapper {
@@ -512,17 +611,22 @@ watch(isLoading, async (val) => {
 }
 
 .preview-container img {
-    max-width: 80%;
-    max-height: 400px;
-    object-fit: contain;
+    width: 400px; /* Set a specific width */
+    height: 400px; /* Set the same value for height */
     border-radius: 12px;
+    object-fit: cover; /* This crops the image to fill the container */
+    /* Animation properties */
+    animation: buttonAppear 1s ease-out forwards;
+    transform-origin: center;
+    filter: blur(8px);
+    opacity: 0;
+    transform: scale(0.5);
 }
 
 .countdown-display {
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: bold;
-    color: white;
-    text-shadow: 2px 2px 8px black;
+    color: #B32024;
     margin: 10px 0;
 }
 
@@ -535,20 +639,37 @@ video {
 }
 
 .action-button {
-    background-color: rgba(255, 127, 42, 100);
-    color: #fff;
+    margin-top: 1%;
+    background-color: #f66200;
     border: none;
-    padding: 12px 24px;
+    padding: 12px 48px;
     border-radius: 24px;
+    font-size: 1.5rem;
     font-weight: bold;
     cursor: pointer;
-    margin: 10px;
-    font-size: 1.3rem;
+    color: #ffffff;
+    transition: background-color 0.2s, transform 0.2s;
+    align-self: center;
+    width: 70%;
+
+    /* Animation properties */
+    animation: buttonAppear 1s ease-out forwards;
+    transform-origin: center;
+    filter: blur(8px);
+    opacity: 0;
+    transform: scale(0.5);
 }
 
 .action-button:hover {
     background-color: #ffffff;
     color: rgba(255, 127, 42, 100);
+}
+
+.action-button:disabled {
+    background-color: #cccccc;
+    color: #888888;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 .loading-overlay {
