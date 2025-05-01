@@ -4,6 +4,8 @@ import fetch from 'node-fetch';
 import Replicate from 'replicate';
 import { send } from 'vite';
 import dotenv from 'dotenv';
+// import { uploadVideoFirestore } from './firebase/firestore.js';
+// import { viewDepthKey } from 'vue-router';
 dotenv.config();
 
 import fs from 'fs';
@@ -35,7 +37,22 @@ app.post('/api/style-transfer', async (req, res) => {
 
     if (!image || !style_image) {
         return res.status(400).json({ success: false, error: "Missing image or style_image" });
-      }
+    }
+
+    const removeBackground = await replicate.run(
+        "851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc",
+        {
+          input: {
+            image: image,
+            format: "png",
+            reverse: false,
+            threshold: 0.98,
+            background_type: "white"
+          }
+        }
+    );
+
+    const removedBackgroundUrl = removeBackground.url();
 
     const output = await replicate.run(
         "fofr/style-transfer:f1023890703bc0a5a3a2c21b5e498833be5f6ef6e70e9daf6b9b3a4fd8309cf0", 
@@ -44,12 +61,12 @@ app.post('/api/style-transfer', async (req, res) => {
                 model: "fast",
                 width: 720,
                 height: 720,
-                prompt: "do not change the hairstyle and face",
+                prompt: "do not change hair style",
                 style_image: style_image,
                 output_format:"png",
                 output_quality: 80,
                 negative_prompt: "",
-                structure_image: image,
+                structure_image: removedBackgroundUrl,
                 number_of_images: 1,
                 structure_depth_strength: 2,
                 structure_denoising_strength: 0.7
@@ -59,10 +76,10 @@ app.post('/api/style-transfer', async (req, res) => {
     console.log(editedImage);
 
     const swapFace = await replicate.run(
-        "codeplugtech/face-swap:278a81e7ebb22db98bcba54de985d22cc1abeead2754eb1f2af717247be69b34",
+        "cdingram/face-swap:d1d6ea8c8be89d664a07a457526f7128109dee7030fdac424788d762c71ed111",
         {
             input: {
-            swap_image: image,
+            swap_image: removedBackgroundUrl,
             input_image: editedImage
             }
         }

@@ -1,13 +1,30 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { downloadVideo } from '@/firebase/firestore';
+import QRcode from "qrcode";
 
 const router = useRouter();
 const route = useRoute();
-const videoUrl = route.query.videoUrl;
+const videoUrl = ref(route.query.videoUrl);
+const downloadUrl = ref(route.query.downloadUrl);
+const qrUrl = ref(null);
 
 function goToNext() {
   router.replace('/');
 }
+
+const generateQR = async () => {
+  try {
+    qrUrl.value = await QRcode.toDataURL(downloadUrl.value);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+onMounted(async () => {
+  await generateQR();
+});
 </script>
 
 
@@ -23,10 +40,10 @@ function goToNext() {
         <p v-else>Video URL not found.</p> 
         <div v-if="videoUrl" class="qr-and-button">
           <div class="qr-container">
-            <img src="../assets/qr.png" alt="QR Code" class="qr-code" />
-            <p class="qr-text">SCAN TO<br>DOWNLOAD</p>
+            <img :src="qrUrl" alt="QR Code" class="qr-code" />
+            <p class="qr-text">Scan to<br>Download</p>
           </div>
-          <button class="next-button" @click="goToNext">Home</button>
+        <button class="next-button" @click="goToNext">Home</button>
         </div>
       </div>
     </div>
