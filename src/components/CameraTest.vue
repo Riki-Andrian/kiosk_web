@@ -281,18 +281,19 @@ const editVideo = async () => {
 
         await ffmpeg.run(
             "-i", videoName,
-            "-loop", "1",
+            "-loop", "1", 
             "-t", "5",
             "-i", overlayName,
             "-i", musik,
             "-filter_complex",
-            `[1:v] format=yuva420p, scale=360:360, fade=t=in:st=0:d=1:alpha=1 [ovl]; [0:v][ovl] overlay=${imageCoord.value}`,
-            "-map", "0:v",
+            `[1:v]format=rgba,scale=360:360,fade=t=in:st=0:d=1:alpha=1[ovl];[0:v][ovl]overlay=${imageCoord.value}:enable='between(t,0,5)'[v]`,
+            "-map", "[v]",
             "-map", "2:a",
             "-c:v", "libx264",
+            "-pix_fmt", "yuv420p", // Add this for better compatibility
             "-preset", "ultrafast",
             "-crf", "23",
-            "-threads", "4",
+            "-threads", "4", 
             "-b:v", "700k",
             "-c:a", "aac",
             "-shortest",
