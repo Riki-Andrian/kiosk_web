@@ -36,7 +36,7 @@ onMounted(async () => {
       <div class="title-text">
         <h1>YOUR RESULT</h1>
         <!--<video src="../assets/video/ENTP-ENFP.mp4" class="responsive-video" autoplay muted controls></video>-->
-        <video v-if="videoUrl" :src="videoUrl" controls class="responsive-video" />
+        <video v-if="videoUrl" :src="videoUrl" autoplay loop controls class="responsive-video" />
         <p v-else>Video URL not found.</p> 
         <div v-if="videoUrl" class="qr-and-button">
           <div class="qr-container">

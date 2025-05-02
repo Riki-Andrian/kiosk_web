@@ -48,7 +48,7 @@ app.post('/api/style-transfer', async (req, res) => {
             image: image,
             format: "png",
             reverse: false,
-            threshold: 0.98,
+            threshold: 0.9,
             background_type: 'blur'
           }
         }
