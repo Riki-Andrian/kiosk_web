@@ -99,10 +99,35 @@ const capturePhoto = () => {
             );
 
             capturedImage.value = canvas.toDataURL("image/png");
+            //classifyCapturedImage(capturedImage.value);
         }
     }, 1000);
 };
 
+// async function classifyCapturedImage(base64Image) {
+//     const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
+
+//     const response = await fetch("http://localhost:3001/classify-image", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ image: cleanedBase64 })
+//     });
+
+//     const result = await response.json();
+    
+//     const { gender, hijab } = result;
+//     if (gender === "woman") {
+//         if (hijab) {
+//             console.log("This is a woman wearing a hijab.");
+//         } else {
+//             console.log("This is a woman not wearing a hijab.");
+//         }
+//     } else {
+//         console.log("This is a man.");
+//     }
+
+//     return result;
+// }
 
 const retakeCount = ref(0);
 

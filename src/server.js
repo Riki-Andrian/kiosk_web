@@ -27,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/assets', express.static(path.join(__dirname, 'src', 'assets')));
 
 const API_TOKEN = process.env.REPLICATE_API_TOKEN;
+const VISION_TOKEN = process.env.VISION_API_KEY
 
 app.post('/api/style-transfer', async (req, res) => {
     //const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
@@ -91,6 +92,62 @@ app.post('/api/style-transfer', async (req, res) => {
 
     res.json({ success: true, images: swapFace.url() });
 });
+
+// app.post('/classify-image', async (req, res) => {
+//     const { image } = req.body;
+//     console.log("Received image:", image?.slice(0, 100)); // Don't flood console
+
+//     // Step 1: Call Google Vision API for face annotations
+//     const response = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${VISION_TOKEN}`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({
+//             requests: [{
+//                 image: { content: image },
+//                 features: [
+//                     { type: "LABEL_DETECTION", maxResults: 10 },
+//                     { type: "FACE_DETECTION" }
+//                 ]
+//             }]
+//         })
+//     });
+
+//     const data = await response.json();
+//     console.dir(data, { depth: null }); // Shows entire response clearly
+
+//     if (data.responses?.[0]?.error) {
+//         console.error("❌ Vision API Error:", data.responses[0].error);
+//     }
+
+//     // Step 2: Gender Classification
+//     let gender = "unknown";
+//     if (data.responses?.[0]?.faceAnnotations?.length > 0) {
+//         // You can infer gender based on a combination of factors:
+//         // If Google Vision detects facial features like "lips", "eyebrows", "jaw", you could infer gender.
+//         // You could also try using a separate AI model trained for gender detection.
+
+//         // Placeholder gender logic: You'd want to replace this with an actual model or logic
+//         gender = "woman"; // Assume woman for simplicity. (You'd replace with AI model/logic)
+//     }
+
+//     // Step 3: Hijab Detection (Custom Model or Heuristic)
+//     let hijab = false;
+//     if (gender === "woman") {
+//         // Here you'd implement hijab detection logic, like a simple heuristic or use a custom model
+//         // For now, you can check the label detection for "scarf", "headscarf", etc.
+//         const labels = data.responses[0].labelAnnotations || [];
+//         labels.forEach(label => {
+//             if (label.description.toLowerCase().includes("scarf") || label.description.toLowerCase().includes("headscarf")) {
+//                 hijab = true;
+//             }
+//         });
+//     }
+
+//     // Send the result back to the frontend
+//     res.json({ gender, hijab, data });
+// });
+
+  
 
 app.listen(3001, () => {
   console.log('Proxy server running on http://localhost:3001');
