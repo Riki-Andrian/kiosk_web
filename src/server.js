@@ -33,7 +33,9 @@ app.post('/api/style-transfer', async (req, res) => {
 
     const replicate = new Replicate({ auth: API_TOKEN });
 
-    const { image, style_image } = req.body;
+    const { image, style_image, style_prompt } = req.body;
+
+    console.log('ini style image nya:',style_image);
 
     if (!image || !style_image) {
         return res.status(400).json({ success: false, error: "Missing image or style_image" });
@@ -47,7 +49,7 @@ app.post('/api/style-transfer', async (req, res) => {
             format: "png",
             reverse: false,
             threshold: 0.98,
-            background_type: "white"
+            background_type: 'blur'
           }
         }
     );
@@ -61,7 +63,7 @@ app.post('/api/style-transfer', async (req, res) => {
                 model: "fast",
                 width: 720,
                 height: 720,
-                prompt: "do not change hair style",
+                prompt: style_prompt,
                 style_image: style_image,
                 output_format:"png",
                 output_quality: 80,

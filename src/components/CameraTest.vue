@@ -117,14 +117,15 @@ const retakePhoto = () => {
 }
 
 const styles = {
-    'ENTP_ENFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/ENTP_ENFP.jpg',
-    'ESFJ_ENFJ': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/ESFJ_ENFJ.jpg',
-    'ESTP_ESFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/ESTP_ESFP.jpg',
-    'INFJ_INFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/INFJ_INFP.jpg',
-    'INTJ_INTP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/INTJ_INTP.jpg'
+    'ENTP_ENFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/ENTP_ENFP.png',
+    'ESFJ_ENFJ': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/ESFJ_ENFJ.png',
+    'ESTP_ESFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/ESTP_ESFP.png',
+    'INFJ_INFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/INFJ_INFP.png',
+    'INTJ_INTP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/INTJ_INTP.png'
 };
 
 let selectedStyle = '';
+let selectedStylePrompt = '';
 
 const chooseStyle = () => {
     const randomIndex = Math.floor(Math.random() * 9);
@@ -135,6 +136,7 @@ const chooseStyle = () => {
                 videoFile.value = video1;
                 imageCoord.value = "85:290";
                 musicFile.value = ENTP_ENFP[randomIndex];
+                selectedStylePrompt = "a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.";
                 break;
         case "ESFJ":
             case "ENFJ":
@@ -142,6 +144,7 @@ const chooseStyle = () => {
                 videoFile.value = video2;
                 imageCoord.value = "160:520";
                 musicFile.value = ESFJ_ENFJ[randomIndex];
+                selectedStylePrompt = "a bold comic book-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with halftone dot patterns and radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.";
                 break;
         case "ESTP":
             case "ESFP":
@@ -149,6 +152,7 @@ const chooseStyle = () => {
                 videoFile.value = video3;
                 imageCoord.value = "200:435";
                 musicFile.value = ESTP_ESFP[randomIndex];
+                selectedStylePrompt = "A dynamic comic book-style explosion in the sky with bright orange and yellow clouds, surrounded by dramatic black speed lines. Use a halftone dot pattern in the background with a teal blue sky. The art style should be bold, vibrant, and high-energy, evoking retro pop art and vintage comic aesthetics.";
                 break;
         case "INFJ":
             case "INFP":
@@ -156,6 +160,7 @@ const chooseStyle = () => {
                 videoFile.value = video4;
                 imageCoord.value = "200:435";
                 musicFile.value = INFJ_INFP[randomIndex];
+                selectedStylePrompt = "A vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.";
                 break;
         case "INTJ":
             case "INTP":
@@ -163,6 +168,7 @@ const chooseStyle = () => {
                 videoFile.value = video5;
                 imageCoord.value = "85:290";
                 musicFile.value = INTJ_INTP[randomIndex];
+                selectedStylePrompt = "A futuristic cyberpunk cityscape under a dramatic red sky, with towering dark skyscrapers illuminated by vivid red window lights. The scene is intense and moody, with a graphic novel or comic book style featuring bold shadows and a halftone texture. The streets are empty, reflecting streaks of red light, evoking a sense of mystery and dystopia.";
                 break;
         default:
             selectedStyle = null;
@@ -182,13 +188,15 @@ const editPhoto = async () => {
         console.log("editing...");
         console.log("Image URL:", imageUrl.value);
         console.log("Selected Style:", selectedStyle);
-
+        console.log("Selected Style Prompt:", selectedStylePrompt);
+        
         const response = await fetch("http://localhost:3001/api/style-transfer", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 image: imageUrl.value,
-                style_image: selectedStyle
+                style_image: selectedStyle,
+                style_prompt: selectedStylePrompt,
             })
         });
 
@@ -288,8 +296,6 @@ function stopCameraStream() {
     videoElement.load();
   }
 }
-
-
 
 function clearTemporaryData() {
   stopCameraStream();
