@@ -152,7 +152,7 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
             </div>
             <!-- <button class="next-button" @click="goToNext">Next</button> -->
             <div class="navigation-buttons">
-                <button class="next-button" @click="goToPrevious" :disabled="currentQuestionIndex === 0">B A C K</button>
+                <button v-if="currentQuestionIndex >= 1" class="next-button" @click="goToPrevious" :disabled="currentQuestionIndex === 0">B A C K</button>
                 <button class="next-button" @click="goToNext" :disabled="currentAnswer === null">N E X T</button>
             </div>
             <div class="progress-bar-container">
@@ -294,6 +294,7 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     padding: 8px;
     background-color: rgba(255, 255, 255, 0.9);
     border: none;
