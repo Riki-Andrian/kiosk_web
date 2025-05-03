@@ -124,12 +124,23 @@ app.post('/api/classify', async (req, res) => {
         max_tokens: 1000
       });
   
-      res.json({ result: response.choices[0].message.content });
+      const usage = response.usage || {
+        prompt_tokens: 0,
+        completion_tokens: 0,
+        total_tokens: 0
+      };
+  
+      console.log("Token Usage:", usage);
+  
+      res.json({
+        result: response.choices[0].message.content,
+        usage // Include token usage in API response
+      });
     } catch (err) {
-      console.error(err);
+      console.error("Classification error:", err);
       res.status(500).send("Failed to classify image.");
     }
-  });
+  });  
 
 app.listen(3001, () => {
   console.log('Proxy server running on http://localhost:3001');

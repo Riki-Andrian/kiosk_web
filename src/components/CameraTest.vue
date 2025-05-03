@@ -147,7 +147,7 @@ const chooseStyle = () => {
     if (gender === null){
         alert("no gender detected!");
         return
-    }else{
+    } else {
     const randomIndex = Math.floor(Math.random() * 9);
     switch (personality.value) {
         case "ENTP":
@@ -156,7 +156,7 @@ const chooseStyle = () => {
                 videoFile.value = video1;
                 imageCoord.value = "85:290";
                 musicFile.value = ENTP_ENFP[randomIndex];
-                selectedStylePrompt = `a ${gender} with a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
+                selectedStylePrompt = `${gender} with a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
                 break;
         case "ESFJ":
             case "ENFJ":
