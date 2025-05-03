@@ -59,7 +59,7 @@ const loadCameraStream = async () => {
     }
 };
 onMounted(loadCameraStream);
-
+let gender = null;
 const capturePhoto = () => {
     if (!cameraStream.value) return;
 
@@ -99,35 +99,26 @@ const capturePhoto = () => {
             );
 
             capturedImage.value = canvas.toDataURL("image/png");
-            //classifyCapturedImage(capturedImage.value);
         }
     }, 1000);
 };
 
-// async function classifyCapturedImage(base64Image) {
-//     const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
+async function classifyImageClientSide(base64Image) {
+  const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
 
-//     const response = await fetch("http://localhost:3001/classify-image", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({ image: cleanedBase64 })
-//     });
+  const res = await fetch("http://localhost:3001/api/classify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      base64Image: cleanedBase64,
+      prompt: "if it's male, return: a male. if it's female, return: a female. if it's female and wearing hijab, return: a female wearing a hijab. don't return anything else."
+    })
+  });
 
-//     const result = await response.json();
-    
-//     const { gender, hijab } = result;
-//     if (gender === "woman") {
-//         if (hijab) {
-//             console.log("This is a woman wearing a hijab.");
-//         } else {
-//             console.log("This is a woman not wearing a hijab.");
-//         }
-//     } else {
-//         console.log("This is a man.");
-//     }
-
-//     return result;
-// }
+  const data = await res.json();
+  console.log(data.result);
+  gender = data.result;
+}
 
 const retakeCount = ref(0);
 
@@ -151,9 +142,12 @@ const styles = {
 
 let selectedStyle = '';
 let selectedStylePrompt = '';
-let gender = 'man';
 
 const chooseStyle = () => {
+    if (gender === null){
+        alert("no gender detected!");
+        return
+    }else{
     const randomIndex = Math.floor(Math.random() * 9);
     switch (personality.value) {
         case "ENTP":
@@ -200,6 +194,7 @@ const chooseStyle = () => {
             selectedStyle = null;
             videoFile.value = null;
             break;
+        }
     }
 };
 
@@ -346,6 +341,7 @@ const goToResultPage = () => {
 const process = async () => {
     isLoading.value = true;
     try {
+        await classifyImageClientSide(capturedImage.value);
         await editPhoto();
         await editVideo();
         goToResultPage();

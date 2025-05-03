@@ -4,6 +4,7 @@ import fetch from 'node-fetch';
 import Replicate from 'replicate';
 import { send } from 'vite';
 import dotenv from 'dotenv';
+import { AzureOpenAI} from "openai";
 // import { uploadVideoFirestore } from './firebase/firestore.js';
 // import { viewDepthKey } from 'vue-router';
 dotenv.config();
@@ -93,61 +94,42 @@ app.post('/api/style-transfer', async (req, res) => {
     res.json({ success: true, images: swapFace.url() });
 });
 
-// app.post('/classify-image', async (req, res) => {
-//     const { image } = req.body;
-//     console.log("Received image:", image?.slice(0, 100)); // Don't flood console
+const endpoint = "https://ai-dexel7zip4033ai669694789256.openai.azure.com/";
+const deployment = "gpt-4o-mini";
+const apiKey = process.env.AZURE_API_KEY;
+const apiVersion = "2024-04-01-preview";
 
-//     // Step 1: Call Google Vision API for face annotations
-//     const response = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${VISION_TOKEN}`, {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({
-//             requests: [{
-//                 image: { content: image },
-//                 features: [
-//                     { type: "LABEL_DETECTION", maxResults: 10 },
-//                     { type: "FACE_DETECTION" }
-//                 ]
-//             }]
-//         })
-//     });
+const client = new AzureOpenAI({ endpoint, apiKey, deployment, apiVersion });
 
-//     const data = await response.json();
-//     console.dir(data, { depth: null }); // Shows entire response clearly
-
-//     if (data.responses?.[0]?.error) {
-//         console.error("❌ Vision API Error:", data.responses[0].error);
-//     }
-
-//     // Step 2: Gender Classification
-//     let gender = "unknown";
-//     if (data.responses?.[0]?.faceAnnotations?.length > 0) {
-//         // You can infer gender based on a combination of factors:
-//         // If Google Vision detects facial features like "lips", "eyebrows", "jaw", you could infer gender.
-//         // You could also try using a separate AI model trained for gender detection.
-
-//         // Placeholder gender logic: You'd want to replace this with an actual model or logic
-//         gender = "woman"; // Assume woman for simplicity. (You'd replace with AI model/logic)
-//     }
-
-//     // Step 3: Hijab Detection (Custom Model or Heuristic)
-//     let hijab = false;
-//     if (gender === "woman") {
-//         // Here you'd implement hijab detection logic, like a simple heuristic or use a custom model
-//         // For now, you can check the label detection for "scarf", "headscarf", etc.
-//         const labels = data.responses[0].labelAnnotations || [];
-//         labels.forEach(label => {
-//             if (label.description.toLowerCase().includes("scarf") || label.description.toLowerCase().includes("headscarf")) {
-//                 hijab = true;
-//             }
-//         });
-//     }
-
-//     // Send the result back to the frontend
-//     res.json({ gender, hijab, data });
-// });
-
+app.post('/api/classify', async (req, res) => {
+    const { base64Image, prompt } = req.body;
   
+    try {
+      const response = await client.chat.completions.create({
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: prompt || "Describe this image." },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:image/png;base64,${base64Image}`
+                }
+              }
+            ]
+          }
+        ],
+        model: deployment,
+        max_tokens: 1000
+      });
+  
+      res.json({ result: response.choices[0].message.content });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Failed to classify image.");
+    }
+  });
 
 app.listen(3001, () => {
   console.log('Proxy server running on http://localhost:3001');
