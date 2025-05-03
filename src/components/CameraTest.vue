@@ -164,7 +164,7 @@ const chooseStyle = () => {
                 videoFile.value = video2;
                 imageCoord.value = "160:520";
                 musicFile.value = ESFJ_ENFJ[randomIndex];
-                selectedStylePrompt = `a ${gender} with a bold comic book-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with halftone dot patterns and radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines. keep maintain the face, hair, and head look same with the source of structure image. if the structure image use hijab, then put the hijab.`;
+                selectedStylePrompt = `${gender} with a bold comic book-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with halftone dot patterns and radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines. keep maintain the face, hair, and head look same with the source of structure image. if the structure image use hijab, then put the hijab.`;
                 break;
         case "ESTP":
             case "ESFP":
@@ -172,7 +172,7 @@ const chooseStyle = () => {
                 videoFile.value = video3;
                 imageCoord.value = "200:435";
                 musicFile.value = ESTP_ESFP[randomIndex];
-                selectedStylePrompt = `A ${gender} with a dynamic comic book-style explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black speed lines. Use a halftone dot pattern in the background with a caramel. The art style should be bold, vibrant, and high-energy, evoking retro pop art and vintage comic aesthetics.`;
+                selectedStylePrompt = `${gender} with a dynamic comic book-style explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black speed lines. Use a halftone dot pattern in the background with a caramel. The art style should be bold, vibrant, and high-energy, evoking retro pop art and vintage comic aesthetics.`;
                 break;
         case "INFJ":
             case "INFP":
@@ -180,7 +180,7 @@ const chooseStyle = () => {
                 videoFile.value = video4;
                 imageCoord.value = "200:435";
                 musicFile.value = INFJ_INFP[randomIndex];
-                selectedStylePrompt = `A ${gender} with a vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
+                selectedStylePrompt = `${gender} with a vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
                 break;
         case "INTJ":
             case "INTP":
@@ -188,7 +188,7 @@ const chooseStyle = () => {
                 videoFile.value = video5;
                 imageCoord.value = "85:290";
                 musicFile.value = INTJ_INTP[randomIndex];
-                selectedStylePrompt = `A ${gender} with a futuristic cyberpunk cityscape under a dramatic red sky, with towering dark skyscrapers illuminated by vivid red window lights. The scene is intense and moody, with a graphic comic book anime style featuring bold shadows and a halftone texture. The streets are empty, reflecting streaks of red light, evoking a sense of mystery and dystopia. Keep the face same as reference`;
+                selectedStylePrompt = `${gender} with a futuristic cyberpunk cityscape under a dramatic red sky, with towering dark skyscrapers illuminated by vivid red window lights. The scene is intense and moody, with a graphic comic book anime style featuring bold shadows and a halftone texture. The streets are empty, reflecting streaks of red light, evoking a sense of mystery and dystopia. Keep the face same as reference`;
                 break;
         default:
             selectedStyle = null;
