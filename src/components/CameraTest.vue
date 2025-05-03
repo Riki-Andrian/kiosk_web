@@ -178,7 +178,7 @@ const chooseStyle = () => {
             case "INFP":
                 selectedStyle = styles['INFJ_INFP'];
                 videoFile.value = video4;
-                imageCoord.value = "200:435";
+                imageCoord.value = "300:685";
                 musicFile.value = INFJ_INFP[randomIndex];
                 selectedStylePrompt = `${gender} with a vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
                 break;
