@@ -171,6 +171,7 @@ const styles = {
 
 let selectedStyle = '';
 let selectedStylePrompt = '';
+let selectedNegativePrompt = '';
 
 const chooseStyle = () => {
     if (gender === null){
@@ -186,6 +187,7 @@ const chooseStyle = () => {
                 imageCoord.value = "50:245";
                 musicFile.value = ENTP_ENFP[randomIndex];
                 selectedStylePrompt = `${gender} with a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
+                selectedNegativePrompt = "realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
                 break;
         case "ESFJ":
             case "ENFJ":
@@ -193,7 +195,8 @@ const chooseStyle = () => {
                 videoFile.value = video2;
                 imageCoord.value = "115:490";
                 musicFile.value = ESFJ_ENFJ[randomIndex];
-                selectedStylePrompt = `${gender} with a bold comic book-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with halftone dot patterns and radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines. keep maintain the face, hair, and head look same with the source of structure image. if the structure image use hijab, then put the hijab.`;
+                selectedStylePrompt = `${gender} with a bold comic book-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with halftone dot patterns and radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.`;
+                selectedNegativePrompt = "realistic, photorealistic, soft light, natural shadows, painterly, impressionism, pastel colors, low contrast, desaturated, blurry, muted tones, dull colors, smooth gradients, watercolor, cinematic, oil painting, 3D render, text, watermark, logo, blue sky, clouds, irregular layout, asymmetrical composition";
                 break;
         case "ESTP":
             case "ESFP":
@@ -202,6 +205,7 @@ const chooseStyle = () => {
                 imageCoord.value = "115:415";
                 musicFile.value = ESTP_ESFP[randomIndex];
                 selectedStylePrompt = `${gender} with a dynamic comic book-style explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black speed lines. Use a halftone dot pattern in the background with a caramel. The art style should be bold, vibrant, and high-energy, evoking retro pop art and vintage comic aesthetics.`;
+                selectedNegativePrompt = "realistic, photorealistic, soft light, blurry, painterly, impressionism, pastel colors, low contrast, smooth gradients, desaturated, natural tones, dull colors, cinematic lighting, noise, text, watermark, logo, 3D render, muted lighting, monochrome, blue sky, clouds";
                 break;
         case "INFJ":
             case "INFP":
@@ -210,6 +214,7 @@ const chooseStyle = () => {
                 imageCoord.value = "175:440";
                 musicFile.value = INFJ_INFP[randomIndex];
                 selectedStylePrompt = `${gender} with a vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
+                selectedNegativePrompt = "realistic, photographic, soft lighting, blurry, painterly, impressionist, natural colors, muted tones, watercolor, low contrast, smooth textures, noise, grain, pastel colors, blue tones, warm lighting, overcrowded, people, cluttered, text, logos, watermark, sky, clouds, sunlight";
                 break;
         case "INTJ":
             case "INTP":
@@ -217,7 +222,8 @@ const chooseStyle = () => {
                 videoFile.value = video5;
                 imageCoord.value = "125:220";
                 musicFile.value = INTJ_INTP[randomIndex];
-                selectedStylePrompt = `${gender} with a futuristic cyberpunk cityscape under a dramatic red sky, with towering dark skyscrapers illuminated by vivid red window lights. The scene is intense and moody, with a graphic comic book anime style featuring bold shadows and a halftone texture. The streets are empty, reflecting streaks of red light, evoking a sense of mystery and dystopia. Keep the face same as reference`;
+                selectedStylePrompt = `${gender} with a cityscape under a dramatic red sky, with towering dark skyscrapers illuminated by vivid red window lights. The scene is intense and moody, with a graphic comic book anime style featuring bold shadows and a halftone texture. The streets are empty, reflecting streaks of red light, evoking a sense of mystery and dystopia. The overall composition should be dynamic and visually striking, with a focus on the contrast between the dark buildings and the bright red sky.`;
+                selectedNegativePrompt = "blue sky, sunlight, daylight, natural colors, green, peaceful, realistic";
                 break;
         default:
             selectedStyle = null;
@@ -247,6 +253,7 @@ const editPhoto = async () => {
                 image: imageUrl.value,
                 style_image: selectedStyle,
                 style_prompt: selectedStylePrompt,
+                negative_prompt: selectedNegativePrompt
             })
         });
 
@@ -374,8 +381,8 @@ const process = async () => {
         console.log("Processing...");
         const detectedGender = await classifyImageClientSide(capturedImage.value);
         gender = detectedGender;
-        //await editPhoto();
-        //await editVideo();
+        await editPhoto();
+        await editVideo();
         goToResultPage();
     } finally {
         isLoading.value = false;
