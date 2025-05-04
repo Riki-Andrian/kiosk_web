@@ -65,8 +65,8 @@ app.post('/api/style-transfer', async (req, res) => {
         { 
             input: {
                 model: "fast",
-                width: 720,
-                height: 720,
+                width: 512,
+                height: 512,
                 prompt: style_prompt,
                 style_image: style_image,
                 output_format:"png",
