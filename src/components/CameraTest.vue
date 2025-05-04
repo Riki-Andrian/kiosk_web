@@ -154,7 +154,7 @@ const chooseStyle = () => {
             case "ENFP":
                 selectedStyle = styles['ENTP_ENFP'];
                 videoFile.value = video1;
-                imageCoord.value = "75:380";
+                imageCoord.value = "50:245";
                 musicFile.value = ENTP_ENFP[randomIndex];
                 selectedStylePrompt = `${gender} with a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
                 break;
@@ -162,7 +162,7 @@ const chooseStyle = () => {
             case "ENFJ":
                 selectedStyle = styles['ESFJ_ENFJ'];
                 videoFile.value = video2;
-                imageCoord.value = "185:737";
+                imageCoord.value = "115:490";
                 musicFile.value = ESFJ_ENFJ[randomIndex];
                 selectedStylePrompt = `${gender} with a bold comic book-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with halftone dot patterns and radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines. keep maintain the face, hair, and head look same with the source of structure image. if the structure image use hijab, then put the hijab.`;
                 break;
@@ -170,7 +170,7 @@ const chooseStyle = () => {
             case "ESFP":
                 selectedStyle = styles['ESTP_ESFP'];
                 videoFile.value = video3;
-                imageCoord.value = "200:645";
+                imageCoord.value = "115:415";
                 musicFile.value = ESTP_ESFP[randomIndex];
                 selectedStylePrompt = `${gender} with a dynamic comic book-style explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black speed lines. Use a halftone dot pattern in the background with a caramel. The art style should be bold, vibrant, and high-energy, evoking retro pop art and vintage comic aesthetics.`;
                 break;
@@ -178,7 +178,7 @@ const chooseStyle = () => {
             case "INFP":
                 selectedStyle = styles['INFJ_INFP'];
                 videoFile.value = video4;
-                imageCoord.value = "300:685";
+                imageCoord.value = "175:440";
                 musicFile.value = INFJ_INFP[randomIndex];
                 selectedStylePrompt = `${gender} with a vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
                 break;
@@ -186,7 +186,7 @@ const chooseStyle = () => {
             case "INTP":
                 selectedStyle = styles['INTJ_INTP'];
                 videoFile.value = video5;
-                imageCoord.value = "185:350";
+                imageCoord.value = "125:220";
                 musicFile.value = INTJ_INTP[randomIndex];
                 selectedStylePrompt = `${gender} with a futuristic cyberpunk cityscape under a dramatic red sky, with towering dark skyscrapers illuminated by vivid red window lights. The scene is intense and moody, with a graphic comic book anime style featuring bold shadows and a halftone texture. The streets are empty, reflecting streaks of red light, evoking a sense of mystery and dystopia. Keep the face same as reference`;
                 break;
@@ -272,7 +272,7 @@ const editVideo = async () => {
             "-i", overlayName,
             "-i", musik,
             "-filter_complex",
-            `[1:v] format=yuva420p, scale=720:720, fade=t=in:st=0:d=1:alpha=1 [ovl]; [0:v][ovl] overlay=${imageCoord.value}`,
+            `[1:v] format=yuva420p, scale=495:495, fade=t=in:st=0:d=1:alpha=1 [ovl]; [0:v][ovl] overlay=${imageCoord.value}`,
             "-map", "0:v",
             "-map", "2:a",
             "-c:v", "libx264",
