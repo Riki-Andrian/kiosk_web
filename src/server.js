@@ -13,6 +13,9 @@ import fs from 'fs';
 import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
 import { fileURLToPath } from 'url';
+import sharp from 'sharp';
+import createClient from "@azure-rest/ai-vision-face";
+import { AzureKeyCredential } from "@azure/core-auth";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -28,7 +31,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/assets', express.static(path.join(__dirname, 'src', 'assets')));
 
 const API_TOKEN = process.env.REPLICATE_API_TOKEN;
-const VISION_TOKEN = process.env.VISION_API_KEY
 
 app.post('/api/style-transfer', async (req, res) => {
     //const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
@@ -140,7 +142,89 @@ app.post('/api/classify', async (req, res) => {
       console.error("Classification error:", err);
       res.status(500).send("Failed to classify image.");
     }
-  });  
+  }); 
+ //------------------------------------------------------------------------------------------------------
+  const faceClient = createClient(
+    process.env.FACE_API_ENDPOINT,
+    new AzureKeyCredential(process.env.FACE_API_KEY)
+  );
+
+  app.post('/api/gender-hijab', async (req, res) => {
+  const { base64Image } = req.body;
+  if (!base64Image) return res.status(400).json({ error: 'No image provided' });
+
+  try {
+    const imageBuffer = Buffer.from(base64Image.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+
+    // Call Face API using SDK
+    const detectResponse = await faceClient.path("/detect").post({
+      contentType: "application/octet-stream",
+      queryParameters: {
+        detectionModel: "detection_03",
+        returnFaceId: false, // tidak perlu returnFaceAttributes
+      },
+      body: imageBuffer,
+    });
+    
+
+    if (detectResponse.status !== "200") {
+      console.error("Face API error:", detectResponse.body);
+      return res.status(500).json({ error: "Face API failed." });
+    }
+
+    const faces = detectResponse.body;
+
+    if (!Array.isArray(faces) || faces.length === 0) {
+      return res.json({ message: 'No face detected' });
+    }
+
+    // Sort faces to find the largest one
+    const sorted = faces.sort((a, b) => {
+      const aSize = a.faceRectangle.width * a.faceRectangle.height;
+      const bSize = b.faceRectangle.width * b.faceRectangle.height;
+      return bSize - aSize;
+    });
+
+    const mainFace = sorted[0];
+    const { gender, faceRectangle } = mainFace;
+
+    if (gender !== 'female') {
+      return res.json({ gender, hijab: null, message: 'Not a female, skipping hijab detection' });
+    }
+
+    // Crop face using sharp
+    const { top, left, width, height } = faceRectangle;
+    const croppedFace = await sharp(imageBuffer)
+      .extract({ top, left, width, height })
+      .toFormat('png')
+      .toBuffer();
+
+    // Call hijab classifier (tetap pakai fetch karena ini Custom Vision)
+    const hijabResponse = await fetch(
+      'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/a1b18e9d-0cbb-41b3-b1aa-809906172159/classify/iterations/hijab-detection-v1/image',
+      {
+        method: 'POST',
+        headers: {
+          'Prediction-Key': process.env.HIJAB_PREDICTION_KEY,
+          'Content-Type': 'application/octet-stream',
+        },
+        body: croppedFace,
+      }
+    );
+
+    const hijabResult = await hijabResponse.json();
+
+    res.json({
+      gender,
+      hijab: hijabResult.predictions,
+    });
+
+  } catch (err) {
+    console.error('Gender + Hijab detection error:', err);
+    res.status(500).json({ error: 'Failed to detect gender/hijab' });
+  }
+});
+  
 
 app.listen(3001, () => {
   console.log('Proxy server running on http://localhost:3001');

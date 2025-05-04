@@ -28,6 +28,7 @@ const imageUrl = computed(() => capturedImage.value);
 const ffmpeg = createFFmpeg({ log: true });
 const videoFile = ref(null);
 let musicFile = ref(null);
+let gender = null;
 const outputUrl = ref(null);
 const downloadUrl = ref(null);
 const userName = ref("John Doe");
@@ -59,7 +60,7 @@ const loadCameraStream = async () => {
     }
 };
 onMounted(loadCameraStream);
-let gender = null;
+
 const capturePhoto = () => {
     if (!cameraStream.value) return;
 
@@ -103,21 +104,49 @@ const capturePhoto = () => {
     }, 1000);
 };
 
+// async function classifyImageClientSide(base64Image) {
+//   const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
+
+//   const res = await fetch("http://localhost:3001/api/classify", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       base64Image: cleanedBase64,
+//       prompt: "if it's male, return: a male. if it's female, return: a female. if it's female and wearing hijab, return: a female wearing a hijab. don't return anything else."
+//     })
+//   });
+
+//   const data = await res.json();
+//   console.log(data.result);
+//   gender = data.result;
+// }
+
 async function classifyImageClientSide(base64Image) {
   const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
+  console.log("Image cleaned:", cleanedBase64);
 
-  const res = await fetch("http://localhost:3001/api/classify", {
+  const res = await fetch("http://localhost:3001/api/gender-hijab", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      base64Image: cleanedBase64,
-      prompt: "if it's male, return: a male. if it's female, return: a female. if it's female and wearing hijab, return: a female wearing a hijab. don't return anything else."
-    })
+    body: JSON.stringify({ base64Image: cleanedBase64 })
   });
 
   const data = await res.json();
-  console.log(data.result);
-  gender = data.result;
+  
+  if (data.error) {
+    console.error(data.error);
+    return;
+  }
+
+  let gender = data.gender === "female" ? "a woman" : "a man";
+  
+  // Check if female and hijab detected
+  if (data.hijab && data.hijab.some(p => p.tagName === "hijab" && p.probability > 0.5)) {
+    gender = "a woman wearing a hijab";
+  }
+
+  console.log("Detected:", gender);
+  return gender; // This is where your gender info will be
 }
 
 const retakeCount = ref(0);
@@ -326,7 +355,8 @@ function clearTemporaryData() {
   videoFile.value = null;
   imageCoord.value = null;
   personality.value = null;
-
+  gender = null;
+  selectedStyle = null;
 }
 
 const goToResultPage = () => {
@@ -341,15 +371,16 @@ const goToResultPage = () => {
 const process = async () => {
     isLoading.value = true;
     try {
-        await classifyImageClientSide(capturedImage.value);
-        await editPhoto();
-        await editVideo();
+        console.log("Processing...");
+        const detectedGender = await classifyImageClientSide(capturedImage.value);
+        gender = detectedGender;
+        //await editPhoto();
+        //await editVideo();
         goToResultPage();
     } finally {
         isLoading.value = false;
     }
 };
-
 
 watch(isLoading, async (val) => {
     if (val) {
