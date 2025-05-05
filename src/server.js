@@ -219,7 +219,7 @@ app.post('/api/style-transfer', async (req, res) => {
     //fs.writeFileSync('./cropped-face-debug.png', croppedFace);
     
     const genderCheck = await fetch(
-      'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/6206146d-0b29-44ff-be74-ef563b7ab497/classify/iterations/gender-detection-v1/image',
+      'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/009d25c8-a4a6-4d71-bd9f-674b7bb488ed/classify/iterations/hijab-detection-v2/image',
       {
         method: 'POST',
         headers: {
