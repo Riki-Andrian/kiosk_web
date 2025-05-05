@@ -155,7 +155,7 @@ app.post('/api/classify', async (req, res) => {
 
   try {
     const imageBuffer = Buffer.from(base64Image.replace(/^data:image\/\w+;base64,/, ''), 'base64');
-
+    
     // Call Face API using SDK
     const detectResponse = await faceClient.path("/detect").post({
       contentType: "application/octet-stream",
@@ -186,11 +186,7 @@ app.post('/api/classify', async (req, res) => {
     });
 
     const mainFace = sorted[0];
-    const { gender, faceRectangle } = mainFace;
-
-    if (gender !== 'female') {
-      return res.json({ gender, hijab: null, message: 'Not a female, skipping hijab detection' });
-    }
+    const { faceRectangle } = mainFace;
 
     // Crop face using sharp
     const { top, left, width, height } = faceRectangle;
@@ -199,9 +195,31 @@ app.post('/api/classify', async (req, res) => {
       .toFormat('png')
       .toBuffer();
 
+    const genderCheck = await fetch(
+      'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/6206146d-0b29-44ff-be74-ef563b7ab497/classify/iterations/gender-detection-v1/image',
+      {
+        method: 'POST',
+        headers: {
+          'Prediction-Key': process.env.HIJAB_PREDICTION_KEY,
+          'Content-Type': 'application/octet-stream',
+        },
+        body: croppedFace,
+      }
+    );
+
+    const genderCheckResult = await genderCheck.json();
+
+    const topPrediction = genderCheckResult.predictions.reduce((max, current) =>
+      current.probability > max.probability ? current : max
+    );
+
+    if(topPrediction.tagName === "man"){
+      res.json({gender: topPrediction.tagName, hijab: null, message: "Woman not detected, skipping hijab check."})
+    }
+
     // Call hijab classifier (tetap pakai fetch karena ini Custom Vision)
     const hijabResponse = await fetch(
-      'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/a1b18e9d-0cbb-41b3-b1aa-809906172159/classify/iterations/hijab-detection-v1/image',
+      'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/a1b18e9d-0cbb-41b3-b1aa-809906172159/classify/iterations/hijab-detection-v2/image',
       {
         method: 'POST',
         headers: {
@@ -214,8 +232,10 @@ app.post('/api/classify', async (req, res) => {
 
     const hijabResult = await hijabResponse.json();
 
+    console.log(hijabResult.predictions);
+
     res.json({
-      gender,
+      gender: topPrediction.tagName,
       hijab: hijabResult.predictions,
     });
 
@@ -225,7 +245,6 @@ app.post('/api/classify', async (req, res) => {
   }
 });
   
-
 app.listen(3001, () => {
   console.log('Proxy server running on http://localhost:3001');
 });

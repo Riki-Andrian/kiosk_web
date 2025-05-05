@@ -138,7 +138,7 @@ async function classifyImageClientSide(base64Image) {
     return;
   }
 
-  let gender = data.gender === "female" ? "a woman" : "a man";
+  let gender = data.gender === "woman" ? "a woman" : "a man";
   
   // Check if female and hijab detected
   if (data.hijab && data.hijab.some(p => p.tagName === "hijab" && p.probability > 0.5)) {
