@@ -52,7 +52,7 @@ app.post('/api/style-transfer', async (req, res) => {
             image: image,
             format: "png",
             reverse: false,
-            threshold: 0.9,
+            threshold: 0.99,
             background_type: 'blur'
           }
         }
@@ -96,54 +96,54 @@ app.post('/api/style-transfer', async (req, res) => {
     res.json({ success: true, images: swapFace.url() });
 });
 
-const endpoint = "https://ai-dexel7zip4033ai669694789256.openai.azure.com/";
-const deployment = "gpt-4o-mini";
-const apiKey = process.env.AZURE_API_KEY;
-const apiVersion = "2024-04-01-preview";
+// const endpoint = "https://ai-dexel7zip4033ai669694789256.openai.azure.com/";
+// const deployment = "gpt-4o-mini";
+// const apiKey = process.env.AZURE_API_KEY;
+// const apiVersion = "2024-04-01-preview";
 
-const client = new AzureOpenAI({ endpoint, apiKey, deployment, apiVersion });
+// const client = new AzureOpenAI({ endpoint, apiKey, deployment, apiVersion });
 
-app.post('/api/classify', async (req, res) => {
-    const { base64Image, prompt } = req.body;
+// app.post('/api/classify', async (req, res) => {
+//     const { base64Image, prompt } = req.body;
   
-    try {
-      const response = await client.chat.completions.create({
-        messages: [
-          {
-            role: "user",
-            content: [
-              { type: "text", text: prompt || "Describe this image." },
-              {
-                type: "image_url",
-                image_url: {
-                  url: `data:image/png;base64,${base64Image}`
-                }
-              }
-            ]
-          }
-        ],
-        model: deployment,
-        max_tokens: 1000
-      });
+//     try {
+//       const response = await client.chat.completions.create({
+//         messages: [
+//           {
+//             role: "user",
+//             content: [
+//               { type: "text", text: prompt || "Describe this image." },
+//               {
+//                 type: "image_url",
+//                 image_url: {
+//                   url: `data:image/png;base64,${base64Image}`
+//                 }
+//               }
+//             ]
+//           }
+//         ],
+//         model: deployment,
+//         max_tokens: 1000
+//       });
   
-      const usage = response.usage || {
-        prompt_tokens: 0,
-        completion_tokens: 0,
-        total_tokens: 0
-      };
+//       const usage = response.usage || {
+//         prompt_tokens: 0,
+//         completion_tokens: 0,
+//         total_tokens: 0
+//       };
   
-      console.log("Token Usage:", usage);
+//       console.log("Token Usage:", usage);
   
-      res.json({
-        result: response.choices[0].message.content,
-        usage // Include token usage in API response
-      });
-    } catch (err) {
-      console.error("Classification error:", err);
-      res.status(500).send("Failed to classify image.");
-    }
-  }); 
- //------------------------------------------------------------------------------------------------------
+//       res.json({
+//         result: response.choices[0].message.content,
+//         usage // Include token usage in API response
+//       });
+//     } catch (err) {
+//       console.error("Classification error:", err);
+//       res.status(500).send("Failed to classify image.");
+//     }
+//   }); 
+//  //------------------------------------------------------------------------------------------------------
   const faceClient = createClient(
     process.env.FACE_API_ENDPOINT,
     new AzureKeyCredential(process.env.FACE_API_KEY)
@@ -188,13 +188,36 @@ app.post('/api/classify', async (req, res) => {
     const mainFace = sorted[0];
     const { faceRectangle } = mainFace;
 
-    // Crop face using sharp
     const { top, left, width, height } = faceRectangle;
-    const croppedFace = await sharp(imageBuffer)
-      .extract({ top, left, width, height })
+
+    // Buat instance sharp untuk akses metadata
+    const sharpImage = sharp(imageBuffer);
+    const metadata = await sharpImage.metadata();
+    
+    const padding = 150;
+    const imgWidth = metadata.width;
+    const imgHeight = metadata.height;
+    
+    // Hitung area crop yang diperbesar, tapi tetap dalam batas gambar
+    const paddedTop = Math.max(0, top - padding);
+    const paddedLeft = Math.max(0, left - padding);
+    const paddedWidth = Math.min(width + padding * 2, imgWidth - paddedLeft);
+    const paddedHeight = Math.min(height + padding * 2, imgHeight - paddedTop);
+    
+    // Crop wajah dengan padding
+    const croppedFace = await sharpImage
+      .extract({
+        top: paddedTop,
+        left: paddedLeft,
+        width: paddedWidth,
+        height: paddedHeight,
+      })
       .toFormat('png')
       .toBuffer();
-
+    
+    // Simpan untuk debug
+    //fs.writeFileSync('./cropped-face-debug.png', croppedFace);
+    
     const genderCheck = await fetch(
       'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/6206146d-0b29-44ff-be74-ef563b7ab497/classify/iterations/gender-detection-v1/image',
       {
