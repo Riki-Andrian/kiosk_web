@@ -104,23 +104,6 @@ const capturePhoto = () => {
     }, 1000);
 };
 
-// async function classifyImageClientSide(base64Image) {
-//   const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
-
-//   const res = await fetch("http://localhost:3001/api/classify", {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({
-//       base64Image: cleanedBase64,
-//       prompt: "if it's male, return: a male. if it's female, return: a female. if it's female and wearing hijab, return: a female wearing a hijab. don't return anything else."
-//     })
-//   });
-
-//   const data = await res.json();
-//   console.log(data.result);
-//   gender = data.result;
-// }
-
 async function classifyImageClientSide(base64Image) {
   const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
   console.log("Image cleaned:", cleanedBase64);
@@ -222,8 +205,8 @@ const chooseStyle = () => {
                 videoFile.value = video5;
                 imageCoord.value = "125:220";
                 musicFile.value = INTJ_INTP[randomIndex];
-                selectedStylePrompt = `${gender} on a Dystopian cityscape under a vivid red sky, dramatic comic book style, tall dark skyscrapers with glowing red windows, intense halftone texture, strong bold black shadows, retro pop art aesthetic, moody atmosphere, empty streets with red light reflections, dynamic perspective, symmetrical urban layout, high contrast, graphic novel illustration`;
-                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, anime style, text, watermark, signature, low resolution, asymmetry";
+                selectedStylePrompt = `${gender} with a comic book-style sky with a bright, vivid red background and red background city scape. include retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle red shading and be spread across a dynamic diagonal composition.`;
+                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, text, watermark, signature, low resolution, asymmetry";
                 break;
         default:
             selectedStyle = null;
@@ -313,7 +296,7 @@ const editVideo = async () => {
             "-map", "0:v",
             "-map", "2:a",
             "-c:v", "libx264",
-            "-preset", "veryfast",
+            "-preset", "ultrafast",
             "-crf", "23",
             "-threads", "4",
             "-b:v", "700k",
