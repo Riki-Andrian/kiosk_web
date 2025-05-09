@@ -38,7 +38,7 @@ const questions = ref(
         },
         {
             "id": 4,
-            "pertanyaan": "KALO LU MUSISI, LO ADALAH..?",
+            "pertanyaan": "KALO LO MUSISI, LO ADALAH..?",
             "options": [
                 { "option": "Composer, crafting every sound with precision", "point": ["I", "T"], "image": new URL('@/assets/pertanyaan/4-1.png', import.meta.url).href },
                 { "option": "Songwriter, express deep emotions with my song", "point": ["I", "F"], "image": new URL('@/assets/pertanyaan/4-2.png', import.meta.url).href },
