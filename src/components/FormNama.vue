@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 
 const name = ref("");
 const router = useRouter();
+const gender = ref("");
 
 const goToNext = (event) => {
     if (event) event.preventDefault();
@@ -29,21 +30,21 @@ const goToNext = (event) => {
             router.push("/pertanyaan");
         }, 1000);
     } else {
-    const popup = document.getElementById('popup');
-    popup.classList.remove('hidden');
-    popup.classList.remove('hide');
-    popup.classList.add('show');
+        const popup = document.getElementById('popup');
+        popup.classList.remove('hidden');
+        popup.classList.remove('hide');
+        popup.classList.add('show');
 
-    setTimeout(() => {
-        popup.classList.remove('show');
-        popup.classList.add('hide');
-
-        // Hide the popup completely after animation
         setTimeout(() => {
-            popup.classList.add('hidden');
-        }, 500); // match buttonDisappear duration
-    }, 2000);
-}
+            popup.classList.remove('show');
+            popup.classList.add('hide');
+
+            // Hide the popup completely after animation
+            setTimeout(() => {
+                popup.classList.add('hidden');
+            }, 500); // match buttonDisappear duration
+        }, 2000);
+    }
 
 };
 
@@ -54,6 +55,12 @@ const addChar = (char) => {
 const backspace = () => {
     name.value = name.value.slice(0, -1);
 };
+
+
+const selectGender = (value) => {
+    gender.value = value;
+};
+
 </script>
 
 <template>
@@ -69,7 +76,16 @@ const backspace = () => {
             <div class="title-text">
                 <h1 class="enter-name">Enter Your Name</h1>
                 <input v-model="name" type="text" placeholder="Type your name here" class="name-input" />
+                <div class="gender-selection">
+                    <button :class="{ active: gender === 'Laki-laki' }" @click="selectGender('Laki-laki')">
+                        Laki-laki
+                    </button>
+                    <button :class="{ active: gender === 'Perempuan' }" @click="selectGender('Perempuan')">
+                        Perempuan
+                    </button>
+                </div>
             </div>
+
 
             <div class="keyboard">
                 <div class="keyboard-row">
@@ -99,9 +115,10 @@ const backspace = () => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
-*{
+* {
     font-family: 'Montserrat', sans-serif;
 }
+
 .app-container {
     position: relative;
     width: 100%;
@@ -116,6 +133,7 @@ const backspace = () => {
     object-fit: cover;
     z-index: 0;
 }
+
 .enter-name {
     font-family: 'Montserrat', sans-serif;
     font-size: 0.5rem;
@@ -133,7 +151,7 @@ const backspace = () => {
     color: white;
     text-align: center;
     align-items: center;
-    justify-content: flex-start; 
+    justify-content: flex-start;
 }
 
 .popup {
@@ -247,7 +265,7 @@ const backspace = () => {
     color: #ffffff;
     z-index: 2;
     font-weight: 600;
-    
+
     /* Animation properties */
     animation: buttonAppear 1.5s ease-out forwards;
     transform-origin: center;
@@ -257,7 +275,7 @@ const backspace = () => {
 }
 
 .disappear {
-  animation: buttonDisappear 1s ease-out forwards !important;
+    animation: buttonDisappear 1s ease-out forwards !important;
 }
 
 
@@ -268,11 +286,13 @@ const backspace = () => {
         filter: blur(8px);
         opacity: 0;
     }
+
     70% {
         transform: scale(1.05);
         filter: blur(2px);
         opacity: 0.8;
     }
+
     100% {
         transform: scale(1);
         filter: blur(0);
@@ -286,8 +306,10 @@ const backspace = () => {
         filter: blur(0px);
         opacity: 1;
     }
+
     100% {
-        transform: scale(0.7); /* or go smaller if you want */
+        transform: scale(0.7);
+        /* or go smaller if you want */
         filter: blur(6px);
         opacity: 0;
     }
@@ -356,22 +378,45 @@ const backspace = () => {
 }
 
 .keyboard-button {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  padding: 10px;
-  text-align: right;
-  vertical-align: bottom;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 10px;
+    text-align: right;
+    vertical-align: bottom;
 }
 
 .button-label {
-  position: absolute;
-  bottom: 4px;
-  right: 6px;
-  font-size: 0.8rem;
-  background-color: #ffffff;
-  color: #B32024;
-  font-weight: bold;
+    position: absolute;
+    bottom: 4px;
+    right: 6px;
+    font-size: 0.8rem;
+    background-color: #ffffff;
+    color: #B32024;
+    font-weight: bold;
 }
+
+.gender-selection {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 10px 0;
+}
+
+.gender-selection button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.gender-selection button.active {
+  background-color: #B32024;
+  color: white;
+}
+
 </style>
