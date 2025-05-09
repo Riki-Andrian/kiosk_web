@@ -52,7 +52,7 @@ app.post('/api/style-transfer', async (req, res) => {
             image: image,
             format: "png",
             reverse: false,
-            threshold: 0.9,
+            threshold: 0.99,
             background_type: 'blur'
           }
         }
@@ -65,8 +65,8 @@ app.post('/api/style-transfer', async (req, res) => {
         { 
             input: {
                 model: "fast",
-                width: 720,
-                height: 720,
+                width: 512,
+                height: 512,
                 prompt: style_prompt,
                 style_image: style_image,
                 output_format:"png",
@@ -96,54 +96,54 @@ app.post('/api/style-transfer', async (req, res) => {
     res.json({ success: true, images: swapFace.url() });
 });
 
-const endpoint = "https://ai-dexel7zip4033ai669694789256.openai.azure.com/";
-const deployment = "gpt-4o-mini";
-const apiKey = process.env.AZURE_API_KEY;
-const apiVersion = "2024-04-01-preview";
+// const endpoint = "https://ai-dexel7zip4033ai669694789256.openai.azure.com/";
+// const deployment = "gpt-4o-mini";
+// const apiKey = process.env.AZURE_API_KEY;
+// const apiVersion = "2024-04-01-preview";
 
-const client = new AzureOpenAI({ endpoint, apiKey, deployment, apiVersion });
+// const client = new AzureOpenAI({ endpoint, apiKey, deployment, apiVersion });
 
-app.post('/api/classify', async (req, res) => {
-    const { base64Image, prompt } = req.body;
+// app.post('/api/classify', async (req, res) => {
+//     const { base64Image, prompt } = req.body;
   
-    try {
-      const response = await client.chat.completions.create({
-        messages: [
-          {
-            role: "user",
-            content: [
-              { type: "text", text: prompt || "Describe this image." },
-              {
-                type: "image_url",
-                image_url: {
-                  url: `data:image/png;base64,${base64Image}`
-                }
-              }
-            ]
-          }
-        ],
-        model: deployment,
-        max_tokens: 1000
-      });
+//     try {
+//       const response = await client.chat.completions.create({
+//         messages: [
+//           {
+//             role: "user",
+//             content: [
+//               { type: "text", text: prompt || "Describe this image." },
+//               {
+//                 type: "image_url",
+//                 image_url: {
+//                   url: `data:image/png;base64,${base64Image}`
+//                 }
+//               }
+//             ]
+//           }
+//         ],
+//         model: deployment,
+//         max_tokens: 1000
+//       });
   
-      const usage = response.usage || {
-        prompt_tokens: 0,
-        completion_tokens: 0,
-        total_tokens: 0
-      };
+//       const usage = response.usage || {
+//         prompt_tokens: 0,
+//         completion_tokens: 0,
+//         total_tokens: 0
+//       };
   
-      console.log("Token Usage:", usage);
+//       console.log("Token Usage:", usage);
   
-      res.json({
-        result: response.choices[0].message.content,
-        usage // Include token usage in API response
-      });
-    } catch (err) {
-      console.error("Classification error:", err);
-      res.status(500).send("Failed to classify image.");
-    }
-  }); 
- //------------------------------------------------------------------------------------------------------
+//       res.json({
+//         result: response.choices[0].message.content,
+//         usage // Include token usage in API response
+//       });
+//     } catch (err) {
+//       console.error("Classification error:", err);
+//       res.status(500).send("Failed to classify image.");
+//     }
+//   }); 
+//  //------------------------------------------------------------------------------------------------------
   const faceClient = createClient(
     process.env.FACE_API_ENDPOINT,
     new AzureKeyCredential(process.env.FACE_API_KEY)
@@ -155,7 +155,7 @@ app.post('/api/classify', async (req, res) => {
 
   try {
     const imageBuffer = Buffer.from(base64Image.replace(/^data:image\/\w+;base64,/, ''), 'base64');
-
+    
     // Call Face API using SDK
     const detectResponse = await faceClient.path("/detect").post({
       contentType: "application/octet-stream",
@@ -186,22 +186,63 @@ app.post('/api/classify', async (req, res) => {
     });
 
     const mainFace = sorted[0];
-    const { gender, faceRectangle } = mainFace;
+    const { faceRectangle } = mainFace;
 
-    if (gender !== 'female') {
-      return res.json({ gender, hijab: null, message: 'Not a female, skipping hijab detection' });
-    }
-
-    // Crop face using sharp
     const { top, left, width, height } = faceRectangle;
-    const croppedFace = await sharp(imageBuffer)
-      .extract({ top, left, width, height })
+
+    // Buat instance sharp untuk akses metadata
+    const sharpImage = sharp(imageBuffer);
+    const metadata = await sharpImage.metadata();
+    
+    const padding = 150;
+    const imgWidth = metadata.width;
+    const imgHeight = metadata.height;
+    
+    // Hitung area crop yang diperbesar, tapi tetap dalam batas gambar
+    const paddedTop = Math.max(0, top - padding);
+    const paddedLeft = Math.max(0, left - padding);
+    const paddedWidth = Math.min(width + padding * 2, imgWidth - paddedLeft);
+    const paddedHeight = Math.min(height + padding * 2, imgHeight - paddedTop);
+    
+    // Crop wajah dengan padding
+    const croppedFace = await sharpImage
+      .extract({
+        top: paddedTop,
+        left: paddedLeft,
+        width: paddedWidth,
+        height: paddedHeight,
+      })
       .toFormat('png')
       .toBuffer();
+    
+    // Simpan untuk debug
+    //fs.writeFileSync('./cropped-face-debug.png', croppedFace);
+    
+    const genderCheck = await fetch(
+      'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/009d25c8-a4a6-4d71-bd9f-674b7bb488ed/classify/iterations/hijab-detection-v2/image',
+      {
+        method: 'POST',
+        headers: {
+          'Prediction-Key': process.env.HIJAB_PREDICTION_KEY,
+          'Content-Type': 'application/octet-stream',
+        },
+        body: croppedFace,
+      }
+    );
+
+    const genderCheckResult = await genderCheck.json();
+
+    const topPrediction = genderCheckResult.predictions.reduce((max, current) =>
+      current.probability > max.probability ? current : max
+    );
+
+    if(topPrediction.tagName === "man"){
+      res.json({gender: topPrediction.tagName, hijab: null, message: "Woman not detected, skipping hijab check."})
+    }
 
     // Call hijab classifier (tetap pakai fetch karena ini Custom Vision)
     const hijabResponse = await fetch(
-      'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/a1b18e9d-0cbb-41b3-b1aa-809906172159/classify/iterations/hijab-detection-v1/image',
+      'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/a1b18e9d-0cbb-41b3-b1aa-809906172159/classify/iterations/hijab-detection-v2/image',
       {
         method: 'POST',
         headers: {
@@ -214,8 +255,10 @@ app.post('/api/classify', async (req, res) => {
 
     const hijabResult = await hijabResponse.json();
 
+    console.log(hijabResult.predictions);
+
     res.json({
-      gender,
+      gender: topPrediction.tagName,
       hijab: hijabResult.predictions,
     });
 
@@ -225,7 +268,6 @@ app.post('/api/classify', async (req, res) => {
   }
 });
   
-
 app.listen(3001, () => {
   console.log('Proxy server running on http://localhost:3001');
 });

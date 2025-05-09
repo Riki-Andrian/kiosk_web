@@ -313,7 +313,6 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
     height: 100px;
     object-fit: contain;
 }
-
 .option-button:hover {
     background-color: rgba(255, 127, 42, 100);
     color: #fff;
@@ -322,6 +321,14 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 .option-button.active {
     background-color: #B32024;
     color: #fff;
+}
+
+.option-button img:hover {
+    filter: brightness(0) saturate(100%) invert(100%);
+}
+
+.option-button img:active {
+    filter: brightness(0) saturate(100%) invert(100%);
 }
 
 .navigation-buttons {
@@ -334,6 +341,7 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
     opacity: 0;
     transform: scale(0.5);
 }
+
 .next-button {
     margin-top: 1%;
     background-color: #f66200;

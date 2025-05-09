@@ -141,7 +141,7 @@ onMounted(async () => {
     position: absolute;
     left: 5%; /* Align to the left */
     bottom: 5%; /* Distance from the bottom */
-    width: 50%; /* Adjust width as needed */
+    width: 40%; /* Adjust width as needed */
     height: auto;
     margin: 0; /* Remove any margin */
     z-index: 2;

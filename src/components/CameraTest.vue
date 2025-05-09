@@ -104,23 +104,6 @@ const capturePhoto = () => {
     }, 1000);
 };
 
-// async function classifyImageClientSide(base64Image) {
-//   const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
-
-//   const res = await fetch("http://localhost:3001/api/classify", {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({
-//       base64Image: cleanedBase64,
-//       prompt: "if it's male, return: a male. if it's female, return: a female. if it's female and wearing hijab, return: a female wearing a hijab. don't return anything else."
-//     })
-//   });
-
-//   const data = await res.json();
-//   console.log(data.result);
-//   gender = data.result;
-// }
-
 async function classifyImageClientSide(base64Image) {
   const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
   console.log("Image cleaned:", cleanedBase64);
@@ -138,11 +121,11 @@ async function classifyImageClientSide(base64Image) {
     return;
   }
 
-  let gender = data.gender === "female" ? "a woman" : "a man";
+  let gender = data.gender === "woman" ? "a single woman" : "a single man";
   
   // Check if female and hijab detected
   if (data.hijab && data.hijab.some(p => p.tagName === "hijab" && p.probability > 0.5)) {
-    gender = "a woman wearing a hijab";
+    gender = "a single woman wearing a hijab";
   }
 
   console.log("Detected:", gender);
@@ -187,7 +170,7 @@ const chooseStyle = () => {
                 imageCoord.value = "75:365";
                 musicFile.value = ENTP_ENFP[randomIndex];
                 selectedStylePrompt = `${gender} with a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
-                selectedNegativePrompt = "realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
+                selectedNegativePrompt = "2 person, two humans, multiple people, non human object, faceless human, realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
                 break;
         case "ESFJ":
             case "ENFJ":
@@ -196,7 +179,7 @@ const chooseStyle = () => {
                 imageCoord.value = "170:735";
                 musicFile.value = ESFJ_ENFJ[randomIndex];
                 selectedStylePrompt = `${gender} on a bold comic book-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with halftone dot patterns and radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.`;
-                selectedNegativePrompt = "realistic, photorealistic, soft light, natural shadows, painterly, impressionism, pastel colors, low contrast, desaturated, blurry, muted tones, dull colors, smooth gradients, watercolor, cinematic, oil painting, 3D render, text, watermark, logo, blue sky, clouds, irregular layout, asymmetrical composition";
+                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, natural shadows, painterly, impressionism, pastel colors, low contrast, desaturated, blurry, muted tones, dull colors, smooth gradients, watercolor, cinematic, oil painting, 3D render, text, watermark, logo, blue sky, clouds, irregular layout, asymmetrical composition";
                 break;
         case "ESTP":
             case "ESFP":
@@ -205,7 +188,7 @@ const chooseStyle = () => {
                 imageCoord.value = "170:625";
                 musicFile.value = ESTP_ESFP[randomIndex];
                 selectedStylePrompt = `${gender} on a dynamic comic book-style explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black speed lines. Use a halftone dot pattern in the background with a caramel. The art style should be bold, vibrant, and high-energy, evoking retro pop art and vintage comic aesthetics.`;
-                selectedNegativePrompt = "realistic, photorealistic, soft light, blurry, painterly, impressionism, pastel colors, low contrast, smooth gradients, desaturated, natural tones, dull colors, cinematic lighting, noise, text, watermark, logo, 3D render, muted lighting, monochrome, blue sky, clouds";
+                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, blurry, painterly, impressionism, pastel colors, low contrast, smooth gradients, desaturated, natural tones, dull colors, cinematic lighting, noise, text, watermark, logo, 3D render, muted lighting, monochrome, blue sky, clouds";
                 break;
         case "INFJ":
             case "INFP":
@@ -214,7 +197,7 @@ const chooseStyle = () => {
                 imageCoord.value = "265:660";
                 musicFile.value = INFJ_INFP[randomIndex];
                 selectedStylePrompt = `${gender} on a vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
-                selectedNegativePrompt = "realistic, photographic, soft lighting, blurry, painterly, impressionist, natural colors, muted tones, watercolor, low contrast, smooth textures, noise, grain, pastel colors, blue tones, warm lighting, overcrowded, people, cluttered, text, logos, watermark, sky, clouds, sunlight";
+                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photographic, soft lighting, blurry, painterly, impressionist, natural colors, muted tones, watercolor, low contrast, smooth textures, noise, grain, pastel colors, blue tones, warm lighting, overcrowded, people, cluttered, text, logos, watermark, sky, clouds, sunlight";
                 break;
         case "INTJ":
             case "INTP":
@@ -222,8 +205,8 @@ const chooseStyle = () => {
                 videoFile.value = video5;
                 imageCoord.value = "185:330";
                 musicFile.value = INTJ_INTP[randomIndex];
-                selectedStylePrompt = `${gender} on a Dystopian cityscape under a vivid red sky, dramatic comic book style, tall dark skyscrapers with glowing red windows, intense halftone texture, strong bold black shadows, retro pop art aesthetic, moody atmosphere, empty streets with red light reflections, dynamic perspective, symmetrical urban layout, high contrast, graphic novel illustration`;
-                selectedNegativePrompt = "realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, anime style, text, watermark, signature, low resolution, asymmetry";
+                selectedStylePrompt = `${gender} with a comic book-style sky with a bright, vivid red background and red background city scape. include retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle red shading and be spread across a dynamic diagonal composition.`;
+                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, text, watermark, signature, low resolution, asymmetry";
                 break;
         default:
             selectedStyle = null;
@@ -313,7 +296,7 @@ const editVideo = async () => {
             "-map", "0:v",
             "-map", "2:a",
             "-c:v", "libx264",
-            "-preset", "veryfast",
+            "-preset", "ultrafast",
             "-crf", "23",
             "-threads", "4",
             "-b:v", "700k",
