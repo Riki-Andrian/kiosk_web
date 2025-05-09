@@ -10,6 +10,8 @@ const goToNext = (event) => {
     if (event) event.preventDefault();
 
     if (name.value.trim() !== "") {
+        localStorage.setItem("name", name.value);
+
         const selectors = [
             '.top-bar',
             '.enter-name',
@@ -59,6 +61,7 @@ const backspace = () => {
 
 const selectGender = (value) => {
     gender.value = value;
+    localStorage.setItem('gender', value);
 };
 
 </script>
@@ -77,10 +80,10 @@ const selectGender = (value) => {
                 <h1 class="enter-name">Enter Your Name</h1>
                 <input v-model="name" type="text" placeholder="Type your name here" class="name-input" />
                 <div class="gender-selection">
-                    <button :class="{ active: gender === 'Laki-laki' }" @click="selectGender('Laki-laki')">
+                    <button :class="{ active: gender === 'lanang' }" @click="selectGender('lanang')">
                         Laki-laki
                     </button>
-                    <button :class="{ active: gender === 'Perempuan' }" @click="selectGender('Perempuan')">
+                    <button :class="{ active: gender === 'wedok' }" @click="selectGender('wedok')">
                         Perempuan
                     </button>
                 </div>
