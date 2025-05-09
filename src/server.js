@@ -218,27 +218,27 @@ app.post('/api/style-transfer', async (req, res) => {
     // Simpan untuk debug
     //fs.writeFileSync('./cropped-face-debug.png', croppedFace);
     
-    const genderCheck = await fetch(
-      'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/009d25c8-a4a6-4d71-bd9f-674b7bb488ed/classify/iterations/hijab-detection-v2/image',
-      {
-        method: 'POST',
-        headers: {
-          'Prediction-Key': process.env.HIJAB_PREDICTION_KEY,
-          'Content-Type': 'application/octet-stream',
-        },
-        body: croppedFace,
-      }
-    );
+    // const genderCheck = await fetch(
+    //   'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/009d25c8-a4a6-4d71-bd9f-674b7bb488ed/classify/iterations/hijab-detection-v2/image',
+    //   {
+    //     method: 'POST',
+    //     headers: {
+    //       'Prediction-Key': process.env.HIJAB_PREDICTION_KEY,
+    //       'Content-Type': 'application/octet-stream',
+    //     },
+    //     body: croppedFace,
+    //   }
+    // );
 
-    const genderCheckResult = await genderCheck.json();
+    // const genderCheckResult = await genderCheck.json();
 
-    const topPrediction = genderCheckResult.predictions.reduce((max, current) =>
-      current.probability > max.probability ? current : max
-    );
+    // const topPrediction = genderCheckResult.predictions.reduce((max, current) =>
+    //   current.probability > max.probability ? current : max
+    // );
 
-    if(topPrediction.tagName === "man"){
-      res.json({gender: topPrediction.tagName, hijab: null, message: "Woman not detected, skipping hijab check."})
-    }
+    // if(topPrediction.tagName === "man"){
+    //   res.json({gender: topPrediction.tagName, hijab: null, message: "Woman not detected, skipping hijab check."})
+    // }
 
     // Call hijab classifier (tetap pakai fetch karena ini Custom Vision)
     const hijabResponse = await fetch(
@@ -258,13 +258,11 @@ app.post('/api/style-transfer', async (req, res) => {
     console.log(hijabResult.predictions);
 
     res.json({
-      gender: topPrediction.tagName,
       hijab: hijabResult.predictions,
     });
 
   } catch (err) {
-    console.error('Gender + Hijab detection error:', err);
-    res.status(500).json({ error: 'Failed to detect gender/hijab' });
+    res.status(500).json({ error: 'Failed to detect hijab' });
   }
 });
   
