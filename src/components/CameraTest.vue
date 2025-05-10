@@ -153,11 +153,11 @@ const retakePhoto = () => {
 }
 
 const styles = {
-    'ENTP_ENFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/ENTP_ENFP.png',
-    'ESFJ_ENFJ': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/ESFJ_ENFJ.png',
-    'ESTP_ESFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/ESTP_ESFP.png',
-    'INFJ_INFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/INFJ_INFP.png',
-    'INTJ_INTP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/INTJ_INTP.png'
+    'ENTP_ENFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/ENTP_ENFP.png',
+    'ESFJ_ENFJ': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/ESFJ_ENFJ.png',
+    'ESTP_ESFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/ESTP_ESFP.png',
+    'INFJ_INFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/INFJ_INFP.png',
+    'INTJ_INTP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style2/INTJ_INTP.png'
 };
 
 let selectedStyle = '';

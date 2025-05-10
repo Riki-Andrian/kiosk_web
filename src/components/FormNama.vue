@@ -17,7 +17,8 @@ const goToNext = (event) => {
             '.enter-name',
             '.name-input',
             '.next-button',
-            '.keyboard'
+            '.keyboard',
+            '.gender-selection'
         ];
 
         const elementsToAnimate = selectors.flatMap(selector =>
@@ -77,14 +78,14 @@ const selectGender = (value) => {
             </div>
 
             <div class="title-text">
-                <h1 class="enter-name">Enter Your Name</h1>
+                <h1 class="enter-name">Masukkan Nama Anda</h1>
                 <input v-model="name" type="text" placeholder="Type your name here" class="name-input" />
                 <div class="gender-selection">
                     <button :class="{ active: gender === 'lanang' }" @click="selectGender('lanang')">
-                        Laki-laki
+                        LAKI-LAKI
                     </button>
                     <button :class="{ active: gender === 'wedok' }" @click="selectGender('wedok')">
-                        Perempuan
+                        PEREMPUAN
                     </button>
                 </div>
             </div>
@@ -110,7 +111,7 @@ const selectGender = (value) => {
                 </div>
             </div>
             <button class="next-button" @click="goToNext">S U B M I T</button>
-            <div id="popup" class="popup hidden">Please enter your name!</div>
+            <div id="popup" class="popup hidden">Mohon Masukkan Nama!</div>
         </div>
     </div>
 </template>
@@ -405,6 +406,13 @@ const selectGender = (value) => {
   justify-content: center;
   gap: 1rem;
   margin: 10px 0;
+  margin-top: 5%;
+
+  animation: buttonAppear 1.5s ease-out forwards;
+    transform-origin: center;
+    filter: blur(8px);
+    opacity: 0;
+    transform: scale(0.5);
 }
 
 .gender-selection button {
@@ -415,6 +423,7 @@ const selectGender = (value) => {
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s ease;
+  width: 80%;
 }
 
 .gender-selection button.active {
