@@ -14,7 +14,6 @@ import mld_kiosk from "@/assets/mld_kiosk.mp3"
 import loadingAnimation from '@/assets/loading.json';
 import { uploadVideoFirestore } from "@/firebase/firestore";
 import { INTJ_INTP, ENTP_ENFP, ESFJ_ENFJ, ESTP_ESFP, INFJ_INFP } from "@/assets/music/index.js";
-import { uuid } from "uuidv4";
 
 const router = useRouter();
 const route = useRoute();
@@ -323,8 +322,7 @@ const editVideo = async () => {
         const outputData = ffmpeg.FS("readFile", outputName);
         const outputBlob = new Blob([outputData.buffer], { type: "video/mp4" });
 
-        const uid = uuid();
-        const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}-${uid}.mp4`;
+        const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}.mp4`;
         downloadUrl.value = await uploadVideoFirestore(outputBlob, fileNameWithUuid);
 
         console.log(downloadUrl);
