@@ -320,12 +320,10 @@ const editVideo = async () => {
         const outputBlob = new Blob([outputData.buffer], { type: "video/mp4" });
 
         const uid = v4();
-        const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}+${uid}`;
+        const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}${uid}`;
         const uploadVideo = await uploadVideoFirestore(outputBlob, fileNameWithUuid);
 
-        if(uploadVideo) {
-            downloadUrl.value = fileNameWithUuid
-        }
+        if(uploadVideo) downloadUrl.value = fileNameWithUuid;
 
         outputUrl.value = URL.createObjectURL(outputBlob);
     } catch (error) {
@@ -363,7 +361,7 @@ const goToResultPage = () => {
     if (outputUrl.value) {
         clearTemporaryData();
 
-        const functionUrl = `https://getvideo-jvbmtds7iq-uc.a.run.app/?name=${outputUrl.value}`
+        const functionUrl = `https://getvideo-jvbmtds7iq-uc.a.run.app/?name=${downloadUrl.value}`
 
         router.push({ name: "Result", query: { videoUrl: outputUrl.value, downloadUrl: functionUrl } });
     } else {
