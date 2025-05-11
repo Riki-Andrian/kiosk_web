@@ -10,6 +10,7 @@ import video2 from "@/assets/video/ESFJ-ENFJ.mp4";
 import video3 from "@/assets/video/ESTP-ESFP.mp4";
 import video4 from "@/assets/video/INFJ-INFP.mp4";
 import video5 from "@/assets/video/INTJ-INTP.mp4";
+import aiResult from "@/editedResult/resultAI.jpeg";
 import mld_kiosk from "@/assets/mld_kiosk.mp3"
 import loadingAnimation from '@/assets/loading.json';
 import { uploadVideoFirestore } from "@/firebase/firestore";
@@ -277,6 +278,7 @@ const editVideo = async () => {
 
     try {
         
+        //const response = aiResult;
         const response = await fetch(editedImage.value);
         const overlayBlob = await response.blob();
         const overlayArrayBuffer = await overlayBlob.arrayBuffer();
