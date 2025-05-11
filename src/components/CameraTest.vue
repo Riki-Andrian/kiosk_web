@@ -14,6 +14,7 @@ import mld_kiosk from "@/assets/mld_kiosk.mp3"
 import loadingAnimation from '@/assets/loading.json';
 import { uploadVideoFirestore } from "@/firebase/firestore";
 import { INTJ_INTP, ENTP_ENFP, ESFJ_ENFJ, ESTP_ESFP, INFJ_INFP } from "@/assets/music/index.js";
+import { v4 } from "uuid";
 
 const router = useRouter();
 const route = useRoute();
@@ -171,15 +172,14 @@ const chooseStyle = () => {
     } else {
     const randomIndex = Math.floor(Math.random() * 9);
     switch (personality.value) {
-        case "ENTP":
-            case "ENFP":
-                selectedStyle = styles['ENTP_ENFP'];
-                videoFile.value = video1;
-                imageCoord.value = "75:365";
-                musicFile.value = ENTP_ENFP[randomIndex];
-                selectedStylePrompt = `${genderPrompt} with a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
-                selectedNegativePrompt = "2 person, two humans, multiple people, non human object, faceless human, realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
-                break;
+        default:
+            selectedStyle = styles['ENTP_ENFP'];
+            videoFile.value = video1;
+            imageCoord.value = "75:365";
+            musicFile.value = ENTP_ENFP[randomIndex];
+            selectedStylePrompt = `${genderPrompt} with a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
+            selectedNegativePrompt = "2 person, two humans, multiple people, non human object, faceless human, realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
+            break;
         case "ESFJ":
             case "ENFJ":
                 selectedStyle = styles['ESFJ_ENFJ'];
@@ -322,10 +322,13 @@ const editVideo = async () => {
         const outputData = ffmpeg.FS("readFile", outputName);
         const outputBlob = new Blob([outputData.buffer], { type: "video/mp4" });
 
-        const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}.mp4`;
-        downloadUrl.value = await uploadVideoFirestore(outputBlob, fileNameWithUuid);
+        const uid = v4();
+        const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}+${uid}`;
+        const uploadVideo = await uploadVideoFirestore(outputBlob, fileNameWithUuid);
 
-        console.log(downloadUrl);
+        if(uploadVideo) {
+            downloadUrl.value = fileNameWithUuid
+        }
 
         outputUrl.value = URL.createObjectURL(outputBlob);
     } catch (error) {
@@ -362,7 +365,10 @@ function clearTemporaryData() {
 const goToResultPage = () => {
     if (outputUrl.value) {
         clearTemporaryData();
-        router.push({ name: "Result", query: { videoUrl: outputUrl.value, downloadUrl: downloadUrl.value } });
+
+        const functionUrl = `https://getvideo-jvbmtds7iq-uc.a.run.app/?name=${outputUrl.value}`
+
+        router.push({ name: "Result", query: { videoUrl: outputUrl.value, downloadUrl: functionUrl } });
     } else {
         alert("Please finish editing the video first.");
     }
