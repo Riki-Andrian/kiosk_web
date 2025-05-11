@@ -16,6 +16,7 @@ import { fileURLToPath } from 'url';
 import sharp from 'sharp';
 import createClient from "@azure-rest/ai-vision-face";
 import { AzureKeyCredential } from "@azure/core-auth";
+import { readFile } from 'fs/promises';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -81,19 +82,19 @@ app.post('/api/style-transfer', async (req, res) => {
     const editedImage = output[0].url();
     console.log(editedImage);
 
-    const swapFace = await replicate.run(
-        "cdingram/face-swap:d1d6ea8c8be89d664a07a457526f7128109dee7030fdac424788d762c71ed111",
-        {
-            input: {
-            swap_image: removedBackgroundUrl,
-            input_image: editedImage
-            }
-        }
-    );
+    // const swapFace = await replicate.run(
+    //     "cdingram/face-swap:d1d6ea8c8be89d664a07a457526f7128109dee7030fdac424788d762c71ed111",
+    //     {
+    //         input: {
+    //         swap_image: removedBackgroundUrl,
+    //         input_image: editedImage
+    //         }
+    //     }
+    // );
 
-    console.log(swapFace);
+    const faceswapResult = await swapFace(removedBackgroundUrl, editedImage)
 
-    res.json({ success: true, images: swapFace.url() });
+    res.json({ success: true, images: faceswapResult });
 });
 
 // const endpoint = "https://ai-dexel7zip4033ai669694789256.openai.azure.com/";
@@ -265,6 +266,54 @@ app.post('/api/style-transfer', async (req, res) => {
     res.status(500).json({ error: 'Failed to detect hijab' });
   }
 });
+
+const swapFace = async (srcImg, targetImg) => {
+  console.log("urls: " + srcImg + " " + targetImg);
+
+  const base64srcImg = await imageFileToBase64(srcImg);
+  const base64targetImg = await imageFileToBase64(targetImg);
+
+  const data = {
+    "source_img":base64srcImg,
+    "target_img": base64targetImg,
+    "input_faces_index": 0,
+    "source_faces_index": 0,
+    "face_restore": "codeformer-v0.1.0.pth",
+    "base64": false
+  };
+
+  try {
+    const response = await fetch("https://api.segmind.com/v1/faceswap-v2", {
+      method: 'POST',
+      headers: {
+        'x-api-key': process.env.SEGMIND_API_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    console.log(responseData);
+    return responseData;
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
+}
+
+const imageFileToBase64 = async (url) => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
+    const buffer = await response.arrayBuffer();
+    return Buffer.from(buffer).toString('base64');
+  } catch (error) {
+    throw new Error(`Error fetching image URL: ${error.message}`);
+  }
+};
   
 app.listen(3001, () => {
   console.log('Proxy server running on http://localhost:3001');
