@@ -32,6 +32,11 @@ app.use('/assets', express.static(path.join(__dirname, 'src', 'assets')));
 
 const API_TOKEN = process.env.REPLICATE_API_TOKEN;
 
+  const faceClient = createClient(
+    process.env.FACE_API_ENDPOINT,
+    new AzureKeyCredential(process.env.FACE_API_KEY)
+  );
+
 app.post('/api/style-transfer', async (req, res) => {
     //const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
 
@@ -95,59 +100,6 @@ app.post('/api/style-transfer', async (req, res) => {
 
     res.json({ success: true, images: swapFace.url() });
 });
-
-// const endpoint = "https://ai-dexel7zip4033ai669694789256.openai.azure.com/";
-// const deployment = "gpt-4o-mini";
-// const apiKey = process.env.AZURE_API_KEY;
-// const apiVersion = "2024-04-01-preview";
-
-// const client = new AzureOpenAI({ endpoint, apiKey, deployment, apiVersion });
-
-// app.post('/api/classify', async (req, res) => {
-//     const { base64Image, prompt } = req.body;
-  
-//     try {
-//       const response = await client.chat.completions.create({
-//         messages: [
-//           {
-//             role: "user",
-//             content: [
-//               { type: "text", text: prompt || "Describe this image." },
-//               {
-//                 type: "image_url",
-//                 image_url: {
-//                   url: `data:image/png;base64,${base64Image}`
-//                 }
-//               }
-//             ]
-//           }
-//         ],
-//         model: deployment,
-//         max_tokens: 1000
-//       });
-  
-//       const usage = response.usage || {
-//         prompt_tokens: 0,
-//         completion_tokens: 0,
-//         total_tokens: 0
-//       };
-  
-//       console.log("Token Usage:", usage);
-  
-//       res.json({
-//         result: response.choices[0].message.content,
-//         usage // Include token usage in API response
-//       });
-//     } catch (err) {
-//       console.error("Classification error:", err);
-//       res.status(500).send("Failed to classify image.");
-//     }
-//   }); 
-//  //------------------------------------------------------------------------------------------------------
-  const faceClient = createClient(
-    process.env.FACE_API_ENDPOINT,
-    new AzureKeyCredential(process.env.FACE_API_KEY)
-  );
 
   app.post('/api/gender-hijab', async (req, res) => {
   const { base64Image } = req.body;
@@ -217,28 +169,6 @@ app.post('/api/style-transfer', async (req, res) => {
     
     // Simpan untuk debug
     //fs.writeFileSync('./cropped-face-debug.png', croppedFace);
-    
-    // const genderCheck = await fetch(
-    //   'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/009d25c8-a4a6-4d71-bd9f-674b7bb488ed/classify/iterations/hijab-detection-v2/image',
-    //   {
-    //     method: 'POST',
-    //     headers: {
-    //       'Prediction-Key': process.env.HIJAB_PREDICTION_KEY,
-    //       'Content-Type': 'application/octet-stream',
-    //     },
-    //     body: croppedFace,
-    //   }
-    // );
-
-    // const genderCheckResult = await genderCheck.json();
-
-    // const topPrediction = genderCheckResult.predictions.reduce((max, current) =>
-    //   current.probability > max.probability ? current : max
-    // );
-
-    // if(topPrediction.tagName === "man"){
-    //   res.json({gender: topPrediction.tagName, hijab: null, message: "Woman not detected, skipping hijab check."})
-    // }
 
     // Call hijab classifier (tetap pakai fetch karena ini Custom Vision)
     const hijabResponse = await fetch(
