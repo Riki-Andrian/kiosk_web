@@ -9,7 +9,7 @@ import { AzureOpenAI } from "openai";
 // import { viewDepthKey } from 'vue-router';
 dotenv.config();
 
-import fs from 'fs';
+import fs, { writeFile } from 'fs';
 import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
 import multer from 'multer';
@@ -18,6 +18,8 @@ import { exec } from 'child_process';
 import sharp from 'sharp';
 import createClient from "@azure-rest/ai-vision-face";
 import { AzureKeyCredential } from "@azure/core-auth";
+import { readFile } from 'fs/promises';
+import { file } from 'tmp';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -35,6 +37,11 @@ app.use("/output", express.static(path.join(__dirname, "output")));
 const upload = multer({ dest: "uploads/" });
 
 const API_TOKEN = process.env.REPLICATE_API_TOKEN;
+
+  const faceClient = createClient(
+    process.env.FACE_API_ENDPOINT,
+    new AzureKeyCredential(process.env.FACE_API_KEY)
+  );
 
 app.post('/api/style-transfer', async (req, res) => {
   //const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
@@ -101,10 +108,6 @@ app.post('/api/style-transfer', async (req, res) => {
   res.json({ success: true, images: swapFace.url() });
 
 });
-const faceClient = createClient(
-  process.env.FACE_API_ENDPOINT,
-  new AzureKeyCredential(process.env.FACE_API_KEY)
-);
 
 app.post('/api/gender-hijab', async (req, res) => {
   const { base64Image } = req.body;
@@ -175,28 +178,6 @@ app.post('/api/gender-hijab', async (req, res) => {
     // Simpan untuk debug
     //fs.writeFileSync('./cropped-face-debug.png', croppedFace);
 
-    const genderCheck = await fetch(
-      'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/6206146d-0b29-44ff-be74-ef563b7ab497/classify/iterations/gender-detection-v1/image',
-      {
-        method: 'POST',
-        headers: {
-          'Prediction-Key': process.env.HIJAB_PREDICTION_KEY,
-          'Content-Type': 'application/octet-stream',
-        },
-        body: croppedFace,
-      }
-    );
-
-    const genderCheckResult = await genderCheck.json();
-
-    const topPrediction = genderCheckResult.predictions.reduce((max, current) =>
-      current.probability > max.probability ? current : max
-    );
-
-    if (topPrediction.tagName === "man") {
-      res.json({ gender: topPrediction.tagName, hijab: null, message: "Woman not detected, skipping hijab check." })
-    }
-
     // Call hijab classifier (tetap pakai fetch karena ini Custom Vision)
     const hijabResponse = await fetch(
       'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/a1b18e9d-0cbb-41b3-b1aa-809906172159/classify/iterations/hijab-detection-v2/image',
@@ -215,91 +196,147 @@ app.post('/api/gender-hijab', async (req, res) => {
     console.log(hijabResult.predictions);
 
     res.json({
-      gender: topPrediction.tagName,
       hijab: hijabResult.predictions,
     });
 
   } catch (err) {
-    console.error('Gender + Hijab detection error:', err);
-    res.status(500).json({ error: 'Failed to detect gender/hijab' });
+    res.status(500).json({ error: 'Failed to detect hijab' });
   }
 });
 
-app.post("/api/process-video", async (req, res) => {
-  const { imageCoord } = req.body;
-  const outputPath = path.join(__dirname, "output/output.mp4");
+const swapFace = async (srcImg, targetImg) => {
+  console.log("urls: " + srcImg + " " + targetImg);
 
-  const inputVideo = path.join(__dirname, "assets/video/ENTP-ENFP.mp4");
-  const music = path.join(__dirname, "assets/music/ENTP_ENFP/1.mp3");
-  const img = path.join(__dirname, "assets/Idle.png");
+  const base64srcImg = await imageFileToBase64(srcImg);
+  const base64targetImg = await imageFileToBase64(targetImg);
 
-  const imageOverlayFilter = `[1:v]format=yuva420p,scale=495:495,fade=t=in:st=0:d=1:alpha=1[ovl];[0:v][ovl]overlay=${imageCoord}`;
+  const data = {
+    "source_img":base64srcImg,
+    "target_img": base64targetImg,
+    "input_faces_index": 0,
+    "source_faces_index": 0,
+    "face_restore": "codeformer-v0.1.0.pth",
+    "base64": false
+  };
 
   try {
-        ffmpeg()
-      .input(inputVideo) // 0:v
-      .input(img)        // 1:v (image)
-      .inputOptions([    // ini untuk gambar
-        "-loop 1"
-      ])
-      .input(music)      // 2:a
-      .inputOptions([
-        "-t 10" // durasi overlay-nya
-      ])
-      .complexFilter([
-        {
-          filter: "format",
-          options: "yuva420p",
-          inputs: "[1:v]",
-          outputs: "fmt"
-        },
-        {
-          filter: "scale",
-          options: "495:495",
-          inputs: "fmt",
-          outputs: "scl"
-        },
-        {
-          filter: "fade",
-          options: "t=in:st=0:d=1:alpha=1",
-          inputs: "scl",
-          outputs: "ovl"
-        },
-        {
-          filter: "overlay",
-          options: imageCoord,
-          inputs: ["0:v", "ovl"],
-          outputs: "final"
-        }
-      ])
-      .outputOptions([
-        "-map [final]",
-        "-map 2:a",
-        "-c:v libx264",
-        "-preset veryfast",
-        "-crf 23",
-        "-threads 4",
-        "-b:v 700k",
-        "-c:a aac",
-        "-shortest"
-      ])
-      .save(outputPath)
-      .on("end", () => {
-        const videoUrl = `/output/output.mp4`;
-        return res.json({ success: true, url: videoUrl });
-      })
-      .on("error", (err) => {
-        console.error("FFmpeg error:", err.message);
-        if (!res.headersSent) {
-          return res.status(500).send("Video processing failed.");
-        }
-      });
-  } catch (err) {
-    console.error("Server error:", err);
-    if (!res.headersSent) {
-      res.status(500).json({ error: "Server processing error" });
+    const response = await fetch("https://api.segmind.com/v1/faceswap-v2", {
+      method: 'POST',
+      headers: {
+        'x-api-key': process.env.SEGMIND_API_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const responseData = await response.json();
+    console.log(responseData);
+    return responseData;
+  } catch (error) {
+    console.error('Error:', error.message);
   }
+}
+
+const imageFileToBase64 = async (url) => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
+    const buffer = await response.arrayBuffer();
+    return Buffer.from(buffer).toString('base64');
+  } catch (error) {
+    throw new Error(`Error fetching image URL: ${error.message}`);
+  }
+};
+
+app.post("/api/process-video", async (req, res) => {
+  const { imageCoord, overlayImageUrl } = req.body;
+  const outputPath = path.join(__dirname, "output/output.mp4");
+
+  const buffer = Buffer.from(overlayImageUrl, 'base64');
+  let imagePath;
+
+  file({ postfix: '.png' }, (err, imagePath, fd, cleanupCallback) => {
+    if(err) throw err;
+
+    writeFile(imagePath, buffer, (err) => {
+      if (err) throw err;
+
+      const inputVideo = path.join(__dirname, "assets/video/ENTP-ENFP.mp4");
+      const music = path.join(__dirname, "assets/music/ENTP_ENFP/1.mp3");
+    
+      const imageOverlayFilter = `[1:v]format=yuva420p,scale=495:495,fade=t=in:st=0:d=1:alpha=1[ovl];[0:v][ovl]overlay=${imageCoord}`;
+    
+      try {
+            ffmpeg()
+          .input(inputVideo) // 0:v
+          .input(imagePath)        // 1:v (image)
+          .inputOptions([    // ini untuk gambar
+            "-loop 1"
+          ])
+          .input(music)      // 2:a
+          .inputOptions([
+            "-t 10" // durasi overlay-nya
+          ])
+          .complexFilter([
+            {
+              filter: "format",
+              options: "yuva420p",
+              inputs: "[1:v]",
+              outputs: "fmt"
+            },
+            {
+              filter: "scale",
+              options: "495:495",
+              inputs: "fmt",
+              outputs: "scl"
+            },
+            {
+              filter: "fade",
+              options: "t=in:st=0:d=1:alpha=1",
+              inputs: "scl",
+              outputs: "ovl"
+            },
+            {
+              filter: "overlay",
+              options: imageCoord,
+              inputs: ["0:v", "ovl"],
+              outputs: "final"
+            }
+          ])
+          .outputOptions([
+            "-map [final]",
+            "-map 2:a",
+            "-c:v libx264",
+            "-preset veryfast",
+            "-crf 23",
+            "-threads 4",
+            "-b:v 700k",
+            "-c:a aac",
+            "-shortest"
+          ])
+          .save(outputPath)
+          .on("end", () => {
+            const videoUrl = `/output/output.mp4`;
+            return res.json({ success: true, url: videoUrl });
+          })
+          .on("error", (err) => {
+            console.error("FFmpeg error:", err.message);
+            if (!res.headersSent) {
+              return res.status(500).send("Video processing failed.");
+            }
+          });
+      } catch (err) {
+        console.error("Server error:", err);
+        if (!res.headersSent) {
+          res.status(500).json({ error: "Server processing error" });
+        }
+      }
+    })
+  })
 });
 
 

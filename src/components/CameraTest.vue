@@ -15,13 +15,15 @@ import mld_kiosk from "@/assets/mld_kiosk.mp3"
 import loadingAnimation from '@/assets/loading.json';
 import { uploadVideoFirestore } from "@/firebase/firestore";
 import { INTJ_INTP, ENTP_ENFP, ESFJ_ENFJ, ESTP_ESFP, INFJ_INFP } from "@/assets/music/index.js";
+import { v4 } from "uuid";
 
 const router = useRouter();
 const route = useRoute();
 
 const cameraStream = ref(null);
 const capturedImage = ref(null);
-
+const name = ref(localStorage.getItem("name") || null);
+const gender = ref(localStorage.getItem("gender") || null);
 const personality = ref(route.params.personality);
 const editedImage = ref(null);
 const imageUrl = computed(() => capturedImage.value);
@@ -29,10 +31,8 @@ const imageUrl = computed(() => capturedImage.value);
 const ffmpeg = createFFmpeg({ log: true });
 const videoFile = ref(null);
 let musicFile = ref(null);
-let gender = null;
 const outputUrl = ref(null);
 const downloadUrl = ref(null);
-const userName = ref("John Doe");
 const imageCoord = ref(null);
 const isLoading = ref(false);
 const lottieContainer = ref(null);
@@ -40,8 +40,16 @@ const lottieContainer = ref(null);
 const countdown = ref(3);
 const isCountingDown = ref(false);
 let countdownInterval = null;
+let genderPrompt = "";
 
 const loadComponent = async () => {
+    console.log(`Name: ${name.value}, Gender: ${gender.value}`);
+
+    if (!name.value || !gender.value) {
+        router.push('/');
+        return;
+    }
+
     await ffmpeg.load();
     console.log("FFmpeg is ready!");
 };
@@ -105,23 +113,6 @@ const capturePhoto = () => {
     }, 1000);
 };
 
-// async function classifyImageClientSide(base64Image) {
-//   const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
-
-//   const res = await fetch("http://localhost:3001/api/classify", {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({
-//       base64Image: cleanedBase64,
-//       prompt: "if it's male, return: a male. if it's female, return: a female. if it's female and wearing hijab, return: a female wearing a hijab. don't return anything else."
-//     })
-//   });
-
-//   const data = await res.json();
-//   console.log(data.result);
-//   gender = data.result;
-// }
-
 async function classifyImageClientSide(base64Image) {
     const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
     console.log("Image cleaned:", cleanedBase64);
@@ -134,20 +125,16 @@ async function classifyImageClientSide(base64Image) {
 
     const data = await res.json();
 
-    if (data.error) {
-        console.error(data.error);
-        return;
-    }
+  if(gender.value === "lanang") {
+    return "a single man"
+  }
+  
+  // Check if female and hijab detected
+  if (data.hijab && data.hijab.some(p => p.tagName === "hijab" && p.probability > 0.5)) {
+    return "a single woman wearing a hijab";
+  }
 
-    let gender = data.gender === "woman" ? "a single woman" : "a single man";
-
-    // Check if female and hijab detected
-    if (data.hijab && data.hijab.some(p => p.tagName === "hijab" && p.probability > 0.5)) {
-        gender = "a single woman wearing a hijab";
-    }
-
-    console.log("Detected:", gender);
-    return gender; // This is where your gender info will be
+  return "a single woman"
 }
 
 const retakeCount = ref(0);
@@ -161,13 +148,14 @@ const retakePhoto = () => {
     loadCameraStream();
     retakeCount.value += 1;
 }
+const randomIndex34 = Math.random() < 0.5 ? 3 : 4;
 
 const styles = {
-    'ENTP_ENFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/ENTP_ENFP.png',
-    'ESFJ_ENFJ': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/ESFJ_ENFJ.png',
-    'ESTP_ESFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/ESTP_ESFP.png',
-    'INFJ_INFP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/INFJ_INFP.png',
-    'INTJ_INTP': 'https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style3/INTJ_INTP.png'
+    'ENTP_ENFP': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style${randomIndex34}/ENTP_ENFP.png`,
+    'ESFJ_ENFJ': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style${randomIndex34}/ESFJ_ENFJ.png`,
+    'ESTP_ESFP': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style${randomIndex34}/ESTP_ESFP.png`,
+    'INFJ_INFP': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style${randomIndex34}/INFJ_INFP.png`,
+    'INTJ_INTP': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style${randomIndex34}/INTJ_INTP.png`
 };
 
 let selectedStyle = '';
@@ -175,62 +163,57 @@ let selectedStylePrompt = '';
 let selectedNegativePrompt = '';
 
 const chooseStyle = () => {
-    // if (gender === null) {
-    //     alert("no gender detected!");
-    //     return
-    // } else {
-    editedImage.value = foto;
+    if (genderPrompt === null){
+        alert("no gender detected!");
+        return
+    } else {
     const randomIndex = Math.floor(Math.random() * 9);
     switch (personality.value) {
-        case "ENTP":
-        case "ENFP":
+        default:
             selectedStyle = styles['ENTP_ENFP'];
             videoFile.value = video1;
             imageCoord.value = "50:245";
             musicFile.value = ENTP_ENFP[randomIndex];
-            selectedStylePrompt = `${gender} with a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
+            selectedStylePrompt = `${genderPrompt} with a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
             selectedNegativePrompt = "2 person, two humans, multiple people, non human object, faceless human, realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
             break;
         case "ESFJ":
-        case "ENFJ":
-            selectedStyle = styles['ESFJ_ENFJ'];
-            videoFile.value = video2;
-            imageCoord.value = "115:490";
-            musicFile.value = ESFJ_ENFJ[randomIndex];
-            selectedStylePrompt = `${gender} on a bold comic book-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with halftone dot patterns and radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.`;
-            selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, natural shadows, painterly, impressionism, pastel colors, low contrast, desaturated, blurry, muted tones, dull colors, smooth gradients, watercolor, cinematic, oil painting, 3D render, text, watermark, logo, blue sky, clouds, irregular layout, asymmetrical composition";
-            break;
+            case "ENFJ":
+                selectedStyle = styles['ESFJ_ENFJ'];
+                videoFile.value = video2;
+                imageCoord.value = "115:490";
+                musicFile.value = ESFJ_ENFJ[randomIndex];
+                selectedStylePrompt = `${genderPrompt} on a bold comic book-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with halftone dot patterns and radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.`;
+                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, natural shadows, painterly, impressionism, pastel colors, low contrast, desaturated, blurry, muted tones, dull colors, smooth gradients, watercolor, cinematic, oil painting, 3D render, text, watermark, logo, blue sky, clouds, irregular layout, asymmetrical composition";
+                break;
         case "ESTP":
-        case "ESFP":
-            selectedStyle = styles['ESTP_ESFP'];
-            videoFile.value = video3;
-            imageCoord.value = "115:415";
-            musicFile.value = ESTP_ESFP[randomIndex];
-            selectedStylePrompt = `${gender} on a dynamic comic book-style explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black speed lines. Use a halftone dot pattern in the background with a caramel. The art style should be bold, vibrant, and high-energy, evoking retro pop art and vintage comic aesthetics.`;
-            selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, blurry, painterly, impressionism, pastel colors, low contrast, smooth gradients, desaturated, natural tones, dull colors, cinematic lighting, noise, text, watermark, logo, 3D render, muted lighting, monochrome, blue sky, clouds";
-            break;
+            case "ESFP":
+                selectedStyle = styles['ESTP_ESFP'];
+                videoFile.value = video3;
+                imageCoord.value = "115:415";
+                musicFile.value = ESTP_ESFP[randomIndex];
+                selectedStylePrompt = `${genderPrompt} on a dynamic comic book-style explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black speed lines. Use a halftone dot pattern in the background with a caramel. The art style should be bold, vibrant, and high-energy, evoking retro pop art and vintage comic aesthetics.`;
+                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, blurry, painterly, impressionism, pastel colors, low contrast, smooth gradients, desaturated, natural tones, dull colors, cinematic lighting, noise, text, watermark, logo, 3D render, muted lighting, monochrome, blue sky, clouds";
+                break;
         case "INFJ":
-        case "INFP":
-            selectedStyle = styles['INFJ_INFP'];
-            videoFile.value = video4;
-            imageCoord.value = "175:440";
-            musicFile.value = INFJ_INFP[randomIndex];
-            selectedStylePrompt = `${gender} on a vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
-            selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photographic, soft lighting, blurry, painterly, impressionist, natural colors, muted tones, watercolor, low contrast, smooth textures, noise, grain, pastel colors, blue tones, warm lighting, overcrowded, people, cluttered, text, logos, watermark, sky, clouds, sunlight";
-            break;
+            case "INFP":
+                selectedStyle = styles['INFJ_INFP'];
+                videoFile.value = video4;
+                imageCoord.value = "175:440";
+                musicFile.value = INFJ_INFP[randomIndex];
+                selectedStylePrompt = `${genderPrompt} on a vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
+                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photographic, soft lighting, blurry, painterly, impressionist, natural colors, muted tones, watercolor, low contrast, smooth textures, noise, grain, pastel colors, blue tones, warm lighting, overcrowded, people, cluttered, text, logos, watermark, sky, clouds, sunlight";
+                break;
         case "INTJ":
-        case "INTP":
-            selectedStyle = styles['INTJ_INTP'];
-            videoFile.value = video5;
-            imageCoord.value = "125:220";
-            musicFile.value = INTJ_INTP[randomIndex];
-            selectedStylePrompt = `${gender} on a Dystopian cityscape under a vivid red sky, dramatic comic book style, tall dark skyscrapers with glowing red windows, intense halftone texture, strong bold black shadows, retro pop art aesthetic, moody atmosphere, empty streets with red light reflections, dynamic perspective, symmetrical urban layout, high contrast, graphic novel illustration`;
-            selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, anime style, text, watermark, signature, low resolution, asymmetry";
-            break;
-        default:
-            selectedStyle = null;
-            videoFile.value = null;
-            break;
+            case "INTP":
+                selectedStyle = styles['INTJ_INTP'];
+                videoFile.value = video5;
+                imageCoord.value = "125:220";
+                musicFile.value = INTJ_INTP[randomIndex];
+                selectedStylePrompt = `${genderPrompt} with a comic book-style sky with a bright, vivid red background and red background city scape. include retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle red shading and be spread across a dynamic diagonal composition.`;
+                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, text, watermark, signature, low resolution, asymmetry";
+                break;
+        }
     }
     //    }
 };
@@ -346,21 +329,16 @@ const editPhoto = async () => {
 
 
 const editVideo = async () => {
-    // if (!videoFile.value || !editedImage.value) {
-    //     alert("Please select a video and an image!");
-    //     return;
-    // }
-
-    // const imageBlob = await fetch(editedImage.value).then(res => res.blob());
-    // const base64Image = await blobToBase64(imageBlob);
+    const imageBlob = await fetch(editedImage.value).then(res => res.blob());
+    const base64Image = await blobToBase64(imageBlob);
 
     try {
         const response = await fetch("http://localhost:3001/api/process-video", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                //overlayImageUrl: base64Image,  // blob URL atau URL hasil style-transfer
-                imageCoord: imageCoord.value         // posisi overlay, misalnya "10:10"
+                overlayImageUrl: base64Image,
+                imageCoord: imageCoord.value
             })
         });
 
@@ -401,19 +379,22 @@ function stopCameraStream() {
 function clearTemporaryData() {
     stopCameraStream();
 
-    capturedImage.value = null;
-    editedImage.value = null;
-    videoFile.value = null;
-    imageCoord.value = null;
-    personality.value = null;
-    gender = null;
-    selectedStyle = null;
+  capturedImage.value = null;
+  editedImage.value = null;
+  videoFile.value = null;
+  imageCoord.value = null;
+  personality.value = null;
+  genderPrompt = null;
+  selectedStyle = null;
 }
 
 const goToResultPage = () => {
     if (outputUrl.value) {
         clearTemporaryData();
-        router.push({ name: "Result", query: { videoUrl: outputUrl.value, downloadUrl: downloadUrl.value } });
+
+        const functionUrl = `https://getvideo-jvbmtds7iq-uc.a.run.app/?name=${downloadUrl.value}`
+
+        router.push({ name: "Result", query: { videoUrl: outputUrl.value, downloadUrl: functionUrl } });
     } else {
         alert("Please finish editing the video first.");
     }
@@ -423,9 +404,9 @@ const process = async () => {
     isLoading.value = true;
     try {
         // console.log("Processing...");
-        // const detectedGender = await classifyImageClientSide(capturedImage.value);
-        // gender = detectedGender;
-        // await editPhoto();
+        const detectedGender = await classifyImageClientSide(capturedImage.value);
+        genderPrompt = detectedGender;
+        await editPhoto();
         await editVideo();
         goToResultPage();
     } finally {
