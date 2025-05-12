@@ -253,9 +253,7 @@ const imageFileToBase64 = async (url) => {
 };
 
 app.post("/api/process-video", async (req, res) => {
-  const { imageCoord, overlayImageUrl } = req.body;
-  const outputPath = path.join(__dirname, "output/output.mp4");
-
+  const { imageCoord, overlayImageUrl, personalityStyle } = req.body;
   const buffer = Buffer.from(overlayImageUrl, 'base64');
   let imagePath;
 
@@ -265,80 +263,49 @@ app.post("/api/process-video", async (req, res) => {
     writeFile(imagePath, buffer, (err) => {
       if (err) throw err;
 
-      const inputVideo = path.join(__dirname, "assets/video/ENTP-ENFP.mp4");
-      const music = path.join(__dirname, "assets/music/ENTP_ENFP/1.mp3");
+      const selectedNumber = Math.floor(Math.random() * 9) + 1;
 
-      const imageOverlayFilter = `[1:v]format=yuva420p,scale=495:495,fade=t=in:st=0:d=1:alpha=1[ovl];[0:v][ovl]overlay=${imageCoord}`;
+      const inputVideo = path.join(__dirname, `assets/video/${personalityStyle}.mp4`);
+      const music = path.join(__dirname, `assets/music/${personalityStyle}/${selectedNumber}.mp3`);
 
-      try {
-        ffmpeg()
-          .input(inputVideo) // 0:v
-          .input(imagePath)        // 1:v (image)
-          .inputOptions([    // ini untuk gambar
-            "-loop 1"
-          ])
-          .inputOptions([
-            "-t 5" // durasi overlay-nya
-          ])
-          .input(music)      // 2:a
-          .complexFilter([
-            {
-              filter: "format",
-              options: "yuva420p",
-              inputs: "[1:v]",
-              outputs: "fmt"
-            },
-            {
-              filter: "scale",
-              options: "745:745",
-              inputs: "fmt",
-              outputs: "scl"
-            },
-            {
-              filter: "fade",
-              options: "t=in:st=0:d=1:alpha=1",
-              inputs: "scl",
-              outputs: "ovl"
-            },
-            {
-              filter: "overlay",
-              options: imageCoord,
-              inputs: ["0:v", "ovl"],
-              outputs: "final"
-            }
-          ])
-          .outputOptions([
-            "-map [final]",
-            "-map 2:a",
-            "-c:v libx264",
-            "-preset veryfast",
-            "-crf 23",
-            "-threads 4",
-            "-b:v 700k",
-            "-c:a aac",
-            "-shortest"
-          ])
-          .save(outputPath)
-          .on("end", () => {
-            const videoUrl = `/output/output.mp4`;
-            return res.json({ success: true, url: videoUrl });
-          })
-          .on("error", (err) => {
-            console.error("FFmpeg error:", err.message);
-            if (!res.headersSent) {
-              return res.status(500).send("Video processing failed.");
-            }
-          });
-      } catch (err) {
-        console.error("Server error:", err);
-        if (!res.headersSent) {
-          res.status(500).json({ error: "Server processing error" });
-        }
-      }
-    })
-  })
+      res.setHeader("Content-Type", "video/mp4");
+      res.setHeader("Content-Disposition", "inline; filename=output.mp4");
+
+      ffmpeg()
+        .input(inputVideo)
+        .input(imagePath)
+        .inputOptions(["-loop 1"])
+        .input(music)
+        .inputOptions(["-t 10"])
+        .complexFilter([
+          { filter: "format", options: "yuva420p", inputs: "[1:v]", outputs: "fmt" },
+          { filter: "scale", options: "745:745", inputs: "fmt", outputs: "scl" },
+          { filter: "fade", options: "t=in:st=0:d=1:alpha=1", inputs: "scl", outputs: "ovl" },
+          { filter: "overlay", options: imageCoord, inputs: ["0:v", "ovl"], outputs: "final" }
+        ])
+        .outputOptions([
+          "-map [final]",
+          "-map 2:a",
+          "-c:v libx264",
+          "-preset veryfast",
+          "-crf 23",
+          "-threads 4",
+          "-b:v 700k",
+          "-c:a aac",
+          "-shortest",
+          "-movflags frag_keyframe+empty_moov" // critical for MP4 streaming
+        ])
+        .format('mp4')
+        .on("error", (err) => {
+          console.error("FFmpeg error:", err.message);
+          if (!res.headersSent) {
+            res.status(500).send("Video processing failed.");
+          }
+        })
+        .pipe(res, { end: true });
+    });
+  });
 });
-
 
 app.listen(3001, () => {
   console.log('Proxy server running on http://localhost:3001');

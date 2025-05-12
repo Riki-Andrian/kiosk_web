@@ -1,20 +1,10 @@
 <script setup>
 import { ref, onMounted, computed, watch, nextTick } from "vue";
 import { useRouter, useRoute } from 'vue-router';
-import PreviewPicture from "./PreviewPicture.vue";
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import lottie from 'lottie-web';
-import videoSrc from "@/assets/template.mp4";
-import video1 from "@/assets/video1/ENTP-ENFP.mp4";
-import video2 from "@/assets/video1/ESFJ-ENFJ.mp4";
-import video3 from "@/assets/video1/ESTP-ESFP.mp4";
-import video4 from "@/assets/video1/INFJ-INFP.mp4";
-import video5 from "@/assets/video1/INTJ-INTP.mp4";
-import foto from "@/assets/Idle.png"
-import mld_kiosk from "@/assets/mld_kiosk.mp3"
 import loadingAnimation from '@/assets/loading.json';
 import { uploadVideoFirestore } from "@/firebase/firestore";
-import { INTJ_INTP, ENTP_ENFP, ESFJ_ENFJ, ESTP_ESFP, INFJ_INFP } from "@/assets/music/index.js";
 import { v4 } from "uuid";
 
 const router = useRouter();
@@ -168,54 +158,48 @@ const chooseStyle = () => {
         return
     } else {
     const randomIndex = Math.floor(Math.random() * 9);
-    switch (personality.value) {
-        default:
-            selectedStyle = styles['ENTP_ENFP'];
-            videoFile.value = video1;
-            imageCoord.value = "75:365";
-            musicFile.value = ENTP_ENFP[randomIndex];
-            selectedStylePrompt = `${genderPrompt} with a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
-            selectedNegativePrompt = "2 person, two humans, multiple people, non human object, faceless human, realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
-            break;
-        case "ESFJ":
-            case "ENFJ":
-                selectedStyle = styles['ESFJ_ENFJ'];
-                videoFile.value = video2;
-                imageCoord.value = "170:735";
-                musicFile.value = ESFJ_ENFJ[randomIndex];
-                selectedStylePrompt = `${genderPrompt} on a bold comic book-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with halftone dot patterns and radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.`;
-                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, natural shadows, painterly, impressionism, pastel colors, low contrast, desaturated, blurry, muted tones, dull colors, smooth gradients, watercolor, cinematic, oil painting, 3D render, text, watermark, logo, blue sky, clouds, irregular layout, asymmetrical composition";
-                break;
-        case "ESTP":
-            case "ESFP":
-                selectedStyle = styles['ESTP_ESFP'];
-                videoFile.value = video3;
-                imageCoord.value = "170:625";
-                musicFile.value = ESTP_ESFP[randomIndex];
-                selectedStylePrompt = `${genderPrompt} on a dynamic comic book-style explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black speed lines. Use a halftone dot pattern in the background with a caramel. The art style should be bold, vibrant, and high-energy, evoking retro pop art and vintage comic aesthetics.`;
-                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, blurry, painterly, impressionism, pastel colors, low contrast, smooth gradients, desaturated, natural tones, dull colors, cinematic lighting, noise, text, watermark, logo, 3D render, muted lighting, monochrome, blue sky, clouds";
-                break;
-        case "INFJ":
-            case "INFP":
-                selectedStyle = styles['INFJ_INFP'];
-                videoFile.value = video4;
-                imageCoord.value = "265:660";
-                musicFile.value = INFJ_INFP[randomIndex];
-                selectedStylePrompt = `${genderPrompt} on a vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
-                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photographic, soft lighting, blurry, painterly, impressionist, natural colors, muted tones, watercolor, low contrast, smooth textures, noise, grain, pastel colors, blue tones, warm lighting, overcrowded, people, cluttered, text, logos, watermark, sky, clouds, sunlight";
-                break;
-        case "INTJ":
-            case "INTP":
-                selectedStyle = styles['INTJ_INTP'];
-                videoFile.value = video5;
-                imageCoord.value = "185:330";
-                musicFile.value = INTJ_INTP[randomIndex];
-                selectedStylePrompt = `${genderPrompt} with a comic book-style sky with a bright, vivid red background and red background city scape. include retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle red shading and be spread across a dynamic diagonal composition.`;
-                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, text, watermark, signature, low resolution, asymmetry";
+        switch (personality.value) {
+            case "ESFJ":
+                case "ENFJ":
+                    selectedStyle = styles['ESFJ_ENFJ'];
+                    musicFile.value = 'ESFJ-ENFJ';
+                    imageCoord.value = "170:735";
+                    selectedStylePrompt = `${genderPrompt} on a bold comic book-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with halftone dot patterns and radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.`;
+                    selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, natural shadows, painterly, impressionism, pastel colors, low contrast, desaturated, blurry, muted tones, dull colors, smooth gradients, watercolor, cinematic, oil painting, 3D render, text, watermark, logo, blue sky, clouds, irregular layout, asymmetrical composition";
+                    break;
+            case "ESTP":
+                case "ESFP":
+                    selectedStyle = styles['ESTP_ESFP'];
+                    musicFile.value = 'ESTP-ESFP';
+                    imageCoord.value = "170:625";
+                    selectedStylePrompt = `${genderPrompt} on a dynamic comic book-style explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black speed lines. Use a halftone dot pattern in the background with a caramel. The art style should be bold, vibrant, and high-energy, evoking retro pop art and vintage comic aesthetics.`;
+                    selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, blurry, painterly, impressionism, pastel colors, low contrast, smooth gradients, desaturated, natural tones, dull colors, cinematic lighting, noise, text, watermark, logo, 3D render, muted lighting, monochrome, blue sky, clouds";
+                    break;
+            case "INFJ":
+                case "INFP":
+                    selectedStyle = styles['INFJ_INFP'];
+                    musicFile.value = 'INFJ-INFP';
+                    imageCoord.value = "265:660";
+                    selectedStylePrompt = `${genderPrompt} on a vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
+                    selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photographic, soft lighting, blurry, painterly, impressionist, natural colors, muted tones, watercolor, low contrast, smooth textures, noise, grain, pastel colors, blue tones, warm lighting, overcrowded, people, cluttered, text, logos, watermark, sky, clouds, sunlight";
+                    break;
+            case "INTJ":
+                case "INTP":
+                    selectedStyle = styles['INTJ_INTP'];
+                    musicFile.value = 'INTJ-INTP';
+                    imageCoord.value = "185:330";
+                    selectedStylePrompt = `${genderPrompt} with a comic book-style sky with a bright, vivid red background and red background city scape. include retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle red shading and be spread across a dynamic diagonal composition.`;
+                    selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, text, watermark, signature, low resolution, asymmetry";
+                    break;
+            default:
+                selectedStyle = styles['ENTP_ENFP'];
+                musicFile.value = 'ENTP-ENFP';
+                imageCoord.value = "75:365";
+                selectedStylePrompt = `${genderPrompt} with a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
+                selectedNegativePrompt = "2 person, two humans, multiple people, non human object, faceless human, realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
                 break;
         }
     }
-    //    }
 };
 
 const editPhoto = async () => {
@@ -337,16 +321,26 @@ const editVideo = async () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
+                imageCoord: imageCoord.value,
                 overlayImageUrl: base64Image,
-                imageCoord: imageCoord.value
+                personalityStyle: musicFile.value
             })
         });
 
-        const data = await response.json();
-        if (data.success) {
-            outputUrl.value = data.url;
-        }
+        const videoBlob = await response.blob();
+        const blobUrl = URL.createObjectURL(videoBlob);
 
+        if(blobUrl){
+            outputUrl.value = blobUrl;
+
+            const uid = v4();
+            const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}${uid}`;
+            const uploadVideo = await uploadVideoFirestore(videoBlob, fileNameWithUuid);
+
+            if(uploadVideo) downloadUrl.value = fileNameWithUuid;
+        } else {
+            throw new Error('Error while processing blob');
+        }
     } catch (error) {
         console.error("Error processing video:", error);
         alert("There was an error processing the video.");
