@@ -10,6 +10,7 @@ import video2 from "@/assets/video1/ESFJ-ENFJ.mp4";
 import video3 from "@/assets/video1/ESTP-ESFP.mp4";
 import video4 from "@/assets/video1/INFJ-INFP.mp4";
 import video5 from "@/assets/video1/INTJ-INTP.mp4";
+import foto from "@/assets/Idle.png"
 import mld_kiosk from "@/assets/mld_kiosk.mp3"
 import loadingAnimation from '@/assets/loading.json';
 import { uploadVideoFirestore } from "@/firebase/firestore";
@@ -76,25 +77,25 @@ const capturePhoto = () => {
 
             const canvas = document.createElement("canvas");
             const ctx = canvas.getContext("2d");
-            
+
             // Get dimensions from video
             const videoWidth = cameraStream.value.videoWidth;
             const videoHeight = cameraStream.value.videoHeight;
-            
+
             // Calculate the square size (use the smaller dimension)
             const size = Math.min(videoWidth, videoHeight);
-            
+
             // Set canvas to be 1:1 square
             canvas.width = size;
             canvas.height = size;
-            
+
             // Calculate source position for center crop
             const sourceX = (videoWidth - size) / 2;
             const sourceY = (videoHeight - size) / 2;
-            
+
             // Draw only the center square portion of the video onto the canvas
             ctx.drawImage(
-                cameraStream.value, 
+                cameraStream.value,
                 sourceX, sourceY, size, size,  // Source rectangle
                 0, 0, size, size               // Destination rectangle
             );
@@ -122,31 +123,31 @@ const capturePhoto = () => {
 // }
 
 async function classifyImageClientSide(base64Image) {
-  const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
-  console.log("Image cleaned:", cleanedBase64);
+    const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
+    console.log("Image cleaned:", cleanedBase64);
 
-  const res = await fetch("http://localhost:3001/api/gender-hijab", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ base64Image: cleanedBase64 })
-  });
+    const res = await fetch("http://localhost:3001/api/gender-hijab", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ base64Image: cleanedBase64 })
+    });
 
-  const data = await res.json();
-  
-  if (data.error) {
-    console.error(data.error);
-    return;
-  }
+    const data = await res.json();
 
-  let gender = data.gender === "woman" ? "a single woman" : "a single man";
-  
-  // Check if female and hijab detected
-  if (data.hijab && data.hijab.some(p => p.tagName === "hijab" && p.probability > 0.5)) {
-    gender = "a single woman wearing a hijab";
-  }
+    if (data.error) {
+        console.error(data.error);
+        return;
+    }
 
-  console.log("Detected:", gender);
-  return gender; // This is where your gender info will be
+    let gender = data.gender === "woman" ? "a single woman" : "a single man";
+
+    // Check if female and hijab detected
+    if (data.hijab && data.hijab.some(p => p.tagName === "hijab" && p.probability > 0.5)) {
+        gender = "a single woman wearing a hijab";
+    }
+
+    console.log("Detected:", gender);
+    return gender; // This is where your gender info will be
 }
 
 const retakeCount = ref(0);
@@ -155,7 +156,7 @@ const retakePhoto = () => {
     if (retakeCount.value >= 1) {
         return;
     }
-    
+
     capturedImage.value = null;
     loadCameraStream();
     retakeCount.value += 1;
@@ -174,63 +175,64 @@ let selectedStylePrompt = '';
 let selectedNegativePrompt = '';
 
 const chooseStyle = () => {
-    if (gender === null){
-        alert("no gender detected!");
-        return
-    } else {
+    // if (gender === null) {
+    //     alert("no gender detected!");
+    //     return
+    // } else {
+    editedImage.value = foto;
     const randomIndex = Math.floor(Math.random() * 9);
     switch (personality.value) {
         case "ENTP":
-            case "ENFP":
-                selectedStyle = styles['ENTP_ENFP'];
-                videoFile.value = video1;
-                imageCoord.value = "50:245";
-                musicFile.value = ENTP_ENFP[randomIndex];
-                selectedStylePrompt = `${gender} with a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
-                selectedNegativePrompt = "2 person, two humans, multiple people, non human object, faceless human, realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
-                break;
+        case "ENFP":
+            selectedStyle = styles['ENTP_ENFP'];
+            videoFile.value = video1;
+            imageCoord.value = "50:245";
+            musicFile.value = ENTP_ENFP[randomIndex];
+            selectedStylePrompt = `${gender} with a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
+            selectedNegativePrompt = "2 person, two humans, multiple people, non human object, faceless human, realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
+            break;
         case "ESFJ":
-            case "ENFJ":
-                selectedStyle = styles['ESFJ_ENFJ'];
-                videoFile.value = video2;
-                imageCoord.value = "115:490";
-                musicFile.value = ESFJ_ENFJ[randomIndex];
-                selectedStylePrompt = `${gender} on a bold comic book-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with halftone dot patterns and radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.`;
-                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, natural shadows, painterly, impressionism, pastel colors, low contrast, desaturated, blurry, muted tones, dull colors, smooth gradients, watercolor, cinematic, oil painting, 3D render, text, watermark, logo, blue sky, clouds, irregular layout, asymmetrical composition";
-                break;
+        case "ENFJ":
+            selectedStyle = styles['ESFJ_ENFJ'];
+            videoFile.value = video2;
+            imageCoord.value = "115:490";
+            musicFile.value = ESFJ_ENFJ[randomIndex];
+            selectedStylePrompt = `${gender} on a bold comic book-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with halftone dot patterns and radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.`;
+            selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, natural shadows, painterly, impressionism, pastel colors, low contrast, desaturated, blurry, muted tones, dull colors, smooth gradients, watercolor, cinematic, oil painting, 3D render, text, watermark, logo, blue sky, clouds, irregular layout, asymmetrical composition";
+            break;
         case "ESTP":
-            case "ESFP":
-                selectedStyle = styles['ESTP_ESFP'];
-                videoFile.value = video3;
-                imageCoord.value = "115:415";
-                musicFile.value = ESTP_ESFP[randomIndex];
-                selectedStylePrompt = `${gender} on a dynamic comic book-style explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black speed lines. Use a halftone dot pattern in the background with a caramel. The art style should be bold, vibrant, and high-energy, evoking retro pop art and vintage comic aesthetics.`;
-                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, blurry, painterly, impressionism, pastel colors, low contrast, smooth gradients, desaturated, natural tones, dull colors, cinematic lighting, noise, text, watermark, logo, 3D render, muted lighting, monochrome, blue sky, clouds";
-                break;
+        case "ESFP":
+            selectedStyle = styles['ESTP_ESFP'];
+            videoFile.value = video3;
+            imageCoord.value = "115:415";
+            musicFile.value = ESTP_ESFP[randomIndex];
+            selectedStylePrompt = `${gender} on a dynamic comic book-style explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black speed lines. Use a halftone dot pattern in the background with a caramel. The art style should be bold, vibrant, and high-energy, evoking retro pop art and vintage comic aesthetics.`;
+            selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, blurry, painterly, impressionism, pastel colors, low contrast, smooth gradients, desaturated, natural tones, dull colors, cinematic lighting, noise, text, watermark, logo, 3D render, muted lighting, monochrome, blue sky, clouds";
+            break;
         case "INFJ":
-            case "INFP":
-                selectedStyle = styles['INFJ_INFP'];
-                videoFile.value = video4;
-                imageCoord.value = "175:440";
-                musicFile.value = INFJ_INFP[randomIndex];
-                selectedStylePrompt = `${gender} on a vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
-                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photographic, soft lighting, blurry, painterly, impressionist, natural colors, muted tones, watercolor, low contrast, smooth textures, noise, grain, pastel colors, blue tones, warm lighting, overcrowded, people, cluttered, text, logos, watermark, sky, clouds, sunlight";
-                break;
+        case "INFP":
+            selectedStyle = styles['INFJ_INFP'];
+            videoFile.value = video4;
+            imageCoord.value = "175:440";
+            musicFile.value = INFJ_INFP[randomIndex];
+            selectedStylePrompt = `${gender} on a vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
+            selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photographic, soft lighting, blurry, painterly, impressionist, natural colors, muted tones, watercolor, low contrast, smooth textures, noise, grain, pastel colors, blue tones, warm lighting, overcrowded, people, cluttered, text, logos, watermark, sky, clouds, sunlight";
+            break;
         case "INTJ":
-            case "INTP":
-                selectedStyle = styles['INTJ_INTP'];
-                videoFile.value = video5;
-                imageCoord.value = "125:220";
-                musicFile.value = INTJ_INTP[randomIndex];
-                selectedStylePrompt = `${gender} on a Dystopian cityscape under a vivid red sky, dramatic comic book style, tall dark skyscrapers with glowing red windows, intense halftone texture, strong bold black shadows, retro pop art aesthetic, moody atmosphere, empty streets with red light reflections, dynamic perspective, symmetrical urban layout, high contrast, graphic novel illustration`;
-                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, anime style, text, watermark, signature, low resolution, asymmetry";
-                break;
+        case "INTP":
+            selectedStyle = styles['INTJ_INTP'];
+            videoFile.value = video5;
+            imageCoord.value = "125:220";
+            musicFile.value = INTJ_INTP[randomIndex];
+            selectedStylePrompt = `${gender} on a Dystopian cityscape under a vivid red sky, dramatic comic book style, tall dark skyscrapers with glowing red windows, intense halftone texture, strong bold black shadows, retro pop art aesthetic, moody atmosphere, empty streets with red light reflections, dynamic perspective, symmetrical urban layout, high contrast, graphic novel illustration`;
+            selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, anime style, text, watermark, signature, low resolution, asymmetry";
+            break;
         default:
             selectedStyle = null;
             videoFile.value = null;
             break;
-        }
     }
+    //    }
 };
 
 const editPhoto = async () => {
@@ -246,7 +248,7 @@ const editPhoto = async () => {
         console.log("Selected Style:", selectedStyle);
         console.log("Selected Style Prompt:", selectedStylePrompt);
         console.log("Selected Negative Prompt:", selectedNegativePrompt);
-        
+
         const response = await fetch("http://localhost:3001/api/style-transfer", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -276,95 +278,136 @@ const editPhoto = async () => {
     }
 };
 
-const editVideo = async () => {
-    if (!videoFile.value || !editedImage.value) {
-        alert("Please select a video and an image!");
-        return;
-    }
+// const editVideo = async () => {
+//     if (!videoFile.value || !editedImage.value) {
+//         alert("Please select a video and an image!");
+//         return;
+//     }
 
-    const videoName = "input.mp4";
-    const overlayName = "overlay.png";
-    const outputName = "output.mp4";
-    const musik = "musik.mp3"
+//     const videoName = "input.mp4";
+//     const overlayName = "overlay.png";
+//     const outputName = "output.mp4";
+//     const musik = "musik.mp3"
+
+//     try {
+
+//         const response = await fetch(editedImage.value);
+//         const overlayBlob = await response.blob();
+//         const overlayArrayBuffer = await overlayBlob.arrayBuffer();
+
+//         ffmpeg.FS("writeFile", videoName, await fetchFile(videoFile.value));
+//         ffmpeg.FS("writeFile", overlayName, new Uint8Array(overlayArrayBuffer));
+//         ffmpeg.FS("writeFile", musik, await fetchFile(musicFile.value));
+
+//         console.log("musicFile.value:", musicFile.value);
+//         console.log("videoFile.value:", videoFile.value);
+
+//         console.log(musicFile.value);
+
+//         await ffmpeg.run(
+//             "-i", videoName,
+//             "-loop", "1",
+//             "-t", "5",
+//             "-i", overlayName,
+//             "-i", musik,
+//             "-filter_complex",
+//             `[1:v] format=yuva420p, scale=495:495, fade=t=in:st=0:d=1:alpha=1 [ovl]; [0:v][ovl] overlay=${imageCoord.value}`,
+//             "-map", "0:v",
+//             "-map", "2:a",
+//             "-c:v", "libx264",
+//             "-preset", "veryfast",
+//             "-crf", "23",
+//             "-threads", "4",
+//             "-b:v", "700k",
+//             "-c:a", "aac",
+//             "-shortest",
+//             outputName
+//         );
+
+//         const files = ffmpeg.FS("readdir", "/");
+//         if (!files.includes(outputName)) {
+//             console.error("Output file not found after processing.");
+//             return;
+//         }
+
+//         const outputData = ffmpeg.FS("readFile", outputName);
+//         const outputBlob = new Blob([outputData.buffer], { type: "video/mp4" });
+
+//         // downloadUrl.value = await uploadVideoFirestore(outputBlob, "test");
+
+//         // console.log(downloadUrl);
+
+//         outputUrl.value = URL.createObjectURL(outputBlob);
+//     } catch (error) {
+//         console.error("Error processing video:", error);
+//         alert("There was an error processing the video.");
+//     }
+// };
+
+
+const editVideo = async () => {
+    // if (!videoFile.value || !editedImage.value) {
+    //     alert("Please select a video and an image!");
+    //     return;
+    // }
+
+    // const imageBlob = await fetch(editedImage.value).then(res => res.blob());
+    // const base64Image = await blobToBase64(imageBlob);
 
     try {
-        
-        const response = await fetch(editedImage.value);
-        const overlayBlob = await response.blob();
-        const overlayArrayBuffer = await overlayBlob.arrayBuffer();
+        const response = await fetch("http://localhost:3001/api/process-video", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                //overlayImageUrl: base64Image,  // blob URL atau URL hasil style-transfer
+                imageCoord: imageCoord.value         // posisi overlay, misalnya "10:10"
+            })
+        });
 
-        ffmpeg.FS("writeFile", videoName, await fetchFile(videoFile.value));
-        ffmpeg.FS("writeFile", overlayName, new Uint8Array(overlayArrayBuffer));
-        ffmpeg.FS("writeFile", musik, await fetchFile(musicFile.value));
-
-        console.log("musicFile.value:", musicFile.value);
-        console.log("videoFile.value:", videoFile.value);
-
-        console.log(musicFile.value);
-
-        await ffmpeg.run(
-            "-i", videoName,
-            "-loop", "1",
-            "-t", "5",
-            "-i", overlayName,
-            "-i", musik,
-            "-filter_complex",
-            `[1:v] format=yuva420p, scale=495:495, fade=t=in:st=0:d=1:alpha=1 [ovl]; [0:v][ovl] overlay=${imageCoord.value}`,
-            "-map", "0:v",
-            "-map", "2:a",
-            "-c:v", "libx264",
-            "-preset", "veryfast",
-            "-crf", "23",
-            "-threads", "4",
-            "-b:v", "700k",
-            "-c:a", "aac",
-            "-shortest",
-            outputName
-        );
-
-        const files = ffmpeg.FS("readdir", "/");
-        if (!files.includes(outputName)) {
-            console.error("Output file not found after processing.");
-            return;
+        const data = await response.json();
+        if (data.success) {
+            outputUrl.value = data.url;
         }
 
-        const outputData = ffmpeg.FS("readFile", outputName);
-        const outputBlob = new Blob([outputData.buffer], { type: "video/mp4" });
-
-        downloadUrl.value = await uploadVideoFirestore(outputBlob, "test");
-
-        console.log(downloadUrl);
-
-        outputUrl.value = URL.createObjectURL(outputBlob);
     } catch (error) {
         console.error("Error processing video:", error);
         alert("There was an error processing the video.");
     }
 };
 
+
+function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(',')[1]); // Remove the data:image/... prefix
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+}
+
 function stopCameraStream() {
-  const videoElement = cameraStream.value;
-  if (videoElement?.srcObject) {
-    videoElement.srcObject.getTracks().forEach(track => track.stop());
-    videoElement.srcObject = null;
-  }
-  if (videoElement) {
-    videoElement.pause();
-    videoElement.removeAttribute('src'); 
-    videoElement.load();
-  }
+    const videoElement = cameraStream.value;
+    if (videoElement?.srcObject) {
+        videoElement.srcObject.getTracks().forEach(track => track.stop());
+        videoElement.srcObject = null;
+    }
+    if (videoElement) {
+        videoElement.pause();
+        videoElement.removeAttribute('src');
+        videoElement.load();
+    }
 }
 
 function clearTemporaryData() {
-  stopCameraStream();
+    stopCameraStream();
 
-  capturedImage.value = null;
-  editedImage.value = null;
-  videoFile.value = null;
-  imageCoord.value = null;
-  personality.value = null;
-  gender = null;
-  selectedStyle = null;
+    capturedImage.value = null;
+    editedImage.value = null;
+    videoFile.value = null;
+    imageCoord.value = null;
+    personality.value = null;
+    gender = null;
+    selectedStyle = null;
 }
 
 const goToResultPage = () => {
@@ -379,10 +422,10 @@ const goToResultPage = () => {
 const process = async () => {
     isLoading.value = true;
     try {
-        console.log("Processing...");
-        const detectedGender = await classifyImageClientSide(capturedImage.value);
-        gender = detectedGender;
-        await editPhoto();
+        // console.log("Processing...");
+        // const detectedGender = await classifyImageClientSide(capturedImage.value);
+        // gender = detectedGender;
+        // await editPhoto();
         await editVideo();
         goToResultPage();
     } finally {
@@ -439,11 +482,7 @@ watch(isLoading, async (val) => {
 
                 <div v-else class="preview-container">
                     <img :src="imageUrl" alt="Captured Image" class="preview-image" />
-                    <button 
-                        id="retake-photo" 
-                        class="action-button" 
-                        @click="retakePhoto" 
-                        :disabled="retakeCount >= 1">
+                    <button id="retake-photo" class="action-button" @click="retakePhoto" :disabled="retakeCount >= 1">
                         RE-TAKE PHOTO
                     </button>
                     <button class="action-button" @click="process">S U B M I T</button>
@@ -456,7 +495,7 @@ watch(isLoading, async (val) => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
-*{
+* {
     font-family: 'Montserrat', sans-serif;
 }
 
@@ -514,11 +553,13 @@ watch(isLoading, async (val) => {
         filter: blur(8px);
         opacity: 0;
     }
+
     70% {
         transform: scale(1.05);
         filter: blur(2px);
         opacity: 0.8;
     }
+
     100% {
         transform: scale(1);
         filter: blur(0);
@@ -532,8 +573,10 @@ watch(isLoading, async (val) => {
         filter: blur(0px);
         opacity: 1;
     }
+
     100% {
-        transform: scale(0.7); /* or go smaller if you want */
+        transform: scale(0.7);
+        /* or go smaller if you want */
         filter: blur(6px);
         opacity: 0;
     }
@@ -559,9 +602,12 @@ watch(isLoading, async (val) => {
 
 .camera-container video {
     border-radius: 12px;
-    width: 400px;    /* Set a specific width */
-    height: 400px;   /* Set the same value for height */
-    object-fit: cover; /* This crops the video to fill the container */
+    width: 400px;
+    /* Set a specific width */
+    height: 400px;
+    /* Set the same value for height */
+    object-fit: cover;
+    /* This crops the video to fill the container */
     /* Animation properties */
     animation: buttonAppear 1s ease-out forwards;
     transform-origin: center;
@@ -595,10 +641,13 @@ watch(isLoading, async (val) => {
 }
 
 .preview-container img {
-    width: 400px; /* Set a specific width */
-    height: 400px; /* Set the same value for height */
+    width: 400px;
+    /* Set a specific width */
+    height: 400px;
+    /* Set the same value for height */
     border-radius: 12px;
-    object-fit: cover; /* This crops the image to fill the container */
+    object-fit: cover;
+    /* This crops the image to fill the container */
     /* Animation properties */
     animation: buttonAppear 1s ease-out forwards;
     transform-origin: center;

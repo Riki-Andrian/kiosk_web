@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import Replicate from 'replicate';
 import { send } from 'vite';
 import dotenv from 'dotenv';
-import { AzureOpenAI} from "openai";
+import { AzureOpenAI } from "openai";
 // import { uploadVideoFirestore } from './firebase/firestore.js';
 // import { viewDepthKey } from 'vue-router';
 dotenv.config();
@@ -12,7 +12,9 @@ dotenv.config();
 import fs from 'fs';
 import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
+import multer from 'multer';
 import { fileURLToPath } from 'url';
+import { exec } from 'child_process';
 import sharp from 'sharp';
 import createClient from "@azure-rest/ai-vision-face";
 import { AzureKeyCredential } from "@azure/core-auth";
@@ -29,133 +31,88 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/assets', express.static(path.join(__dirname, 'src', 'assets')));
+app.use("/output", express.static(path.join(__dirname, "output")));
+const upload = multer({ dest: "uploads/" });
 
 const API_TOKEN = process.env.REPLICATE_API_TOKEN;
 
 app.post('/api/style-transfer', async (req, res) => {
-    //const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
+  //const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
 
-    const replicate = new Replicate({ auth: API_TOKEN });
+  const replicate = new Replicate({ auth: API_TOKEN });
 
-    const { image, style_image, style_prompt, negative_prompt } = req.body;
+  const { image, style_image, style_prompt, negative_prompt } = req.body;
 
-    console.log('ini style image nya:',style_image);
+  console.log('ini style image nya:', style_image);
 
-    if (!image || !style_image) {
-        return res.status(400).json({ success: false, error: "Missing image or style_image" });
+  if (!image || !style_image) {
+    return res.status(400).json({ success: false, error: "Missing image or style_image" });
+  }
+
+  const removeBackground = await replicate.run(
+    "851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc",
+    {
+      input: {
+        image: image,
+        format: "png",
+        reverse: false,
+        threshold: 0.99,
+        background_type: 'blur'
+      }
     }
-
-    const removeBackground = await replicate.run(
-        "851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc",
-        {
-          input: {
-            image: image,
-            format: "png",
-            reverse: false,
-            threshold: 0.99,
-            background_type: 'blur'
-          }
-        }
-    );
-
-    const removedBackgroundUrl = removeBackground.url();
-
-    const output = await replicate.run(
-        "fofr/style-transfer:f1023890703bc0a5a3a2c21b5e498833be5f6ef6e70e9daf6b9b3a4fd8309cf0", 
-        { 
-            input: {
-                model: "fast",
-                width: 512,
-                height: 512,
-                prompt: style_prompt,
-                style_image: style_image,
-                output_format:"png",
-                output_quality: 80,
-                negative_prompt: negative_prompt,
-                structure_image: removedBackgroundUrl,
-                number_of_images: 1,
-                structure_depth_strength: 2,
-                structure_denoising_strength: 0.7
-        }});
-
-    const editedImage = output[0].url();
-    console.log(editedImage);
-
-    const swapFace = await replicate.run(
-        "cdingram/face-swap:d1d6ea8c8be89d664a07a457526f7128109dee7030fdac424788d762c71ed111",
-        {
-            input: {
-            swap_image: removedBackgroundUrl,
-            input_image: editedImage
-            }
-        }
-    );
-
-    console.log(swapFace);
-
-    res.json({ success: true, images: swapFace.url() });
-});
-
-// const endpoint = "https://ai-dexel7zip4033ai669694789256.openai.azure.com/";
-// const deployment = "gpt-4o-mini";
-// const apiKey = process.env.AZURE_API_KEY;
-// const apiVersion = "2024-04-01-preview";
-
-// const client = new AzureOpenAI({ endpoint, apiKey, deployment, apiVersion });
-
-// app.post('/api/classify', async (req, res) => {
-//     const { base64Image, prompt } = req.body;
-  
-//     try {
-//       const response = await client.chat.completions.create({
-//         messages: [
-//           {
-//             role: "user",
-//             content: [
-//               { type: "text", text: prompt || "Describe this image." },
-//               {
-//                 type: "image_url",
-//                 image_url: {
-//                   url: `data:image/png;base64,${base64Image}`
-//                 }
-//               }
-//             ]
-//           }
-//         ],
-//         model: deployment,
-//         max_tokens: 1000
-//       });
-  
-//       const usage = response.usage || {
-//         prompt_tokens: 0,
-//         completion_tokens: 0,
-//         total_tokens: 0
-//       };
-  
-//       console.log("Token Usage:", usage);
-  
-//       res.json({
-//         result: response.choices[0].message.content,
-//         usage // Include token usage in API response
-//       });
-//     } catch (err) {
-//       console.error("Classification error:", err);
-//       res.status(500).send("Failed to classify image.");
-//     }
-//   }); 
-//  //------------------------------------------------------------------------------------------------------
-  const faceClient = createClient(
-    process.env.FACE_API_ENDPOINT,
-    new AzureKeyCredential(process.env.FACE_API_KEY)
   );
 
-  app.post('/api/gender-hijab', async (req, res) => {
+  const removedBackgroundUrl = removeBackground.url();
+
+  const output = await replicate.run(
+    "fofr/style-transfer:f1023890703bc0a5a3a2c21b5e498833be5f6ef6e70e9daf6b9b3a4fd8309cf0",
+    {
+      input: {
+        model: "fast",
+        width: 512,
+        height: 512,
+        prompt: style_prompt,
+        style_image: style_image,
+        output_format: "png",
+        output_quality: 80,
+        negative_prompt: negative_prompt,
+        structure_image: removedBackgroundUrl,
+        number_of_images: 1,
+        structure_depth_strength: 2,
+        structure_denoising_strength: 0.7
+      }
+    });
+
+  const editedImage = output[0].url();
+  console.log(editedImage);
+
+  const swapFace = await replicate.run(
+    "cdingram/face-swap:d1d6ea8c8be89d664a07a457526f7128109dee7030fdac424788d762c71ed111",
+    {
+      input: {
+        swap_image: removedBackgroundUrl,
+        input_image: editedImage
+      }
+    }
+  );
+
+  console.log(swapFace);
+
+  res.json({ success: true, images: swapFace.url() });
+
+});
+const faceClient = createClient(
+  process.env.FACE_API_ENDPOINT,
+  new AzureKeyCredential(process.env.FACE_API_KEY)
+);
+
+app.post('/api/gender-hijab', async (req, res) => {
   const { base64Image } = req.body;
   if (!base64Image) return res.status(400).json({ error: 'No image provided' });
 
   try {
     const imageBuffer = Buffer.from(base64Image.replace(/^data:image\/\w+;base64,/, ''), 'base64');
-    
+
     // Call Face API using SDK
     const detectResponse = await faceClient.path("/detect").post({
       contentType: "application/octet-stream",
@@ -165,7 +122,7 @@ app.post('/api/style-transfer', async (req, res) => {
       },
       body: imageBuffer,
     });
-    
+
 
     if (detectResponse.status !== "200") {
       console.error("Face API error:", detectResponse.body);
@@ -193,17 +150,17 @@ app.post('/api/style-transfer', async (req, res) => {
     // Buat instance sharp untuk akses metadata
     const sharpImage = sharp(imageBuffer);
     const metadata = await sharpImage.metadata();
-    
+
     const padding = 150;
     const imgWidth = metadata.width;
     const imgHeight = metadata.height;
-    
+
     // Hitung area crop yang diperbesar, tapi tetap dalam batas gambar
     const paddedTop = Math.max(0, top - padding);
     const paddedLeft = Math.max(0, left - padding);
     const paddedWidth = Math.min(width + padding * 2, imgWidth - paddedLeft);
     const paddedHeight = Math.min(height + padding * 2, imgHeight - paddedTop);
-    
+
     // Crop wajah dengan padding
     const croppedFace = await sharpImage
       .extract({
@@ -214,10 +171,10 @@ app.post('/api/style-transfer', async (req, res) => {
       })
       .toFormat('png')
       .toBuffer();
-    
+
     // Simpan untuk debug
     //fs.writeFileSync('./cropped-face-debug.png', croppedFace);
-    
+
     const genderCheck = await fetch(
       'https://hijabdetection-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/6206146d-0b29-44ff-be74-ef563b7ab497/classify/iterations/gender-detection-v1/image',
       {
@@ -236,8 +193,8 @@ app.post('/api/style-transfer', async (req, res) => {
       current.probability > max.probability ? current : max
     );
 
-    if(topPrediction.tagName === "man"){
-      res.json({gender: topPrediction.tagName, hijab: null, message: "Woman not detected, skipping hijab check."})
+    if (topPrediction.tagName === "man") {
+      res.json({ gender: topPrediction.tagName, hijab: null, message: "Woman not detected, skipping hijab check." })
     }
 
     // Call hijab classifier (tetap pakai fetch karena ini Custom Vision)
@@ -267,11 +224,89 @@ app.post('/api/style-transfer', async (req, res) => {
     res.status(500).json({ error: 'Failed to detect gender/hijab' });
   }
 });
-  
+
+app.post("/api/process-video", async (req, res) => {
+  const { imageCoord } = req.body;
+  const outputPath = path.join(__dirname, "output/output.mp4");
+
+  const inputVideo = path.join(__dirname, "assets/video/ENTP-ENFP.mp4");
+  const music = path.join(__dirname, "assets/music/ENTP_ENFP/1.mp3");
+  const img = path.join(__dirname, "assets/Idle.png");
+
+  const imageOverlayFilter = `[1:v]format=yuva420p,scale=495:495,fade=t=in:st=0:d=1:alpha=1[ovl];[0:v][ovl]overlay=${imageCoord}`;
+
+  try {
+        ffmpeg()
+      .input(inputVideo) // 0:v
+      .input(img)        // 1:v (image)
+      .inputOptions([    // ini untuk gambar
+        "-loop 1"
+      ])
+      .input(music)      // 2:a
+      .inputOptions([
+        "-t 10" // durasi overlay-nya
+      ])
+      .complexFilter([
+        {
+          filter: "format",
+          options: "yuva420p",
+          inputs: "[1:v]",
+          outputs: "fmt"
+        },
+        {
+          filter: "scale",
+          options: "495:495",
+          inputs: "fmt",
+          outputs: "scl"
+        },
+        {
+          filter: "fade",
+          options: "t=in:st=0:d=1:alpha=1",
+          inputs: "scl",
+          outputs: "ovl"
+        },
+        {
+          filter: "overlay",
+          options: imageCoord,
+          inputs: ["0:v", "ovl"],
+          outputs: "final"
+        }
+      ])
+      .outputOptions([
+        "-map [final]",
+        "-map 2:a",
+        "-c:v libx264",
+        "-preset veryfast",
+        "-crf 23",
+        "-threads 4",
+        "-b:v 700k",
+        "-c:a aac",
+        "-shortest"
+      ])
+      .save(outputPath)
+      .on("end", () => {
+        const videoUrl = `/output/output.mp4`;
+        return res.json({ success: true, url: videoUrl });
+      })
+      .on("error", (err) => {
+        console.error("FFmpeg error:", err.message);
+        if (!res.headersSent) {
+          return res.status(500).send("Video processing failed.");
+        }
+      });
+  } catch (err) {
+    console.error("Server error:", err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Server processing error" });
+    }
+  }
+});
+
+
 app.listen(3001, () => {
   console.log('Proxy server running on http://localhost:3001');
 });
 
 app.get('/', (req, res) => {
-    res.json("Hello world");
+  res.json("Hello world");
 })
