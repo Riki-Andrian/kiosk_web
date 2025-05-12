@@ -255,9 +255,10 @@ const imageFileToBase64 = async (url) => {
 app.post("/api/process-video", async (req, res) => {
   const { imageCoord, overlayImageUrl, personalityStyle } = req.body;
   const buffer = Buffer.from(overlayImageUrl, 'base64');
+  let imagePath;
 
   file({ postfix: '.png' }, (err, imagePath, fd, cleanupCallback) => {
-    if (err) throw err;
+    if(err) throw err;
 
     writeFile(imagePath, buffer, (err) => {
       if (err) throw err;
