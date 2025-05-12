@@ -262,8 +262,10 @@ app.post("/api/process-video", async (req, res) => {
     writeFile(imagePath, buffer, (err) => {
       if (err) throw err;
 
+      const selectedNumber = Math.floor(Math.random() * 9) + 1;
+
       const inputVideo = path.join(__dirname, `assets/video/${personalityStyle}.mp4`);
-      const music = path.join(__dirname, `assets/music/${personalityStyle}/1.mp3`);
+      const music = path.join(__dirname, `assets/music/${personalityStyle}/${selectedNumber}.mp3`);
 
       res.setHeader("Content-Type", "video/mp4");
       res.setHeader("Content-Disposition", "inline; filename=output.mp4");
