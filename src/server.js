@@ -38,10 +38,10 @@ const upload = multer({ dest: "uploads/" });
 
 const API_TOKEN = process.env.REPLICATE_API_TOKEN;
 
-  const faceClient = createClient(
-    process.env.FACE_API_ENDPOINT,
-    new AzureKeyCredential(process.env.FACE_API_KEY)
-  );
+const faceClient = createClient(
+  process.env.FACE_API_ENDPOINT,
+  new AzureKeyCredential(process.env.FACE_API_KEY)
+);
 
 app.post('/api/style-transfer', async (req, res) => {
   //const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
@@ -211,7 +211,7 @@ const swapFace = async (srcImg, targetImg) => {
   const base64targetImg = await imageFileToBase64(targetImg);
 
   const data = {
-    "source_img":base64srcImg,
+    "source_img": base64srcImg,
     "target_img": base64targetImg,
     "input_faces_index": 0,
     "source_faces_index": 0,
@@ -260,27 +260,27 @@ app.post("/api/process-video", async (req, res) => {
   let imagePath;
 
   file({ postfix: '.png' }, (err, imagePath, fd, cleanupCallback) => {
-    if(err) throw err;
+    if (err) throw err;
 
     writeFile(imagePath, buffer, (err) => {
       if (err) throw err;
 
       const inputVideo = path.join(__dirname, "assets/video/ENTP-ENFP.mp4");
       const music = path.join(__dirname, "assets/music/ENTP_ENFP/1.mp3");
-    
+
       const imageOverlayFilter = `[1:v]format=yuva420p,scale=495:495,fade=t=in:st=0:d=1:alpha=1[ovl];[0:v][ovl]overlay=${imageCoord}`;
-    
+
       try {
-            ffmpeg()
+        ffmpeg()
           .input(inputVideo) // 0:v
           .input(imagePath)        // 1:v (image)
           .inputOptions([    // ini untuk gambar
             "-loop 1"
           ])
-          .input(music)      // 2:a
           .inputOptions([
-            "-t 10" // durasi overlay-nya
+            "-t 5" // durasi overlay-nya
           ])
+          .input(music)      // 2:a
           .complexFilter([
             {
               filter: "format",
@@ -290,7 +290,7 @@ app.post("/api/process-video", async (req, res) => {
             },
             {
               filter: "scale",
-              options: "495:495",
+              options: "745:745",
               inputs: "fmt",
               outputs: "scl"
             },
