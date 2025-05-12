@@ -253,7 +253,7 @@ const imageFileToBase64 = async (url) => {
 };
 
 app.post("/api/process-video", async (req, res) => {
-  const { imageCoord, overlayImageUrl } = req.body;
+  const { imageCoord, overlayImageUrl, personalityStyle } = req.body;
   const buffer = Buffer.from(overlayImageUrl, 'base64');
 
   file({ postfix: '.png' }, (err, imagePath, fd, cleanupCallback) => {
@@ -262,8 +262,8 @@ app.post("/api/process-video", async (req, res) => {
     writeFile(imagePath, buffer, (err) => {
       if (err) throw err;
 
-      const inputVideo = path.join(__dirname, "assets/video/ENTP-ENFP.mp4");
-      const music = path.join(__dirname, "assets/music/ENTP_ENFP/1.mp3");
+      const inputVideo = path.join(__dirname, `assets/video/${personalityStyle}.mp4`);
+      const music = path.join(__dirname, `assets/music/${personalityStyle}/1.mp3`);
 
       res.setHeader("Content-Type", "video/mp4");
       res.setHeader("Content-Disposition", "inline; filename=output.mp4");
