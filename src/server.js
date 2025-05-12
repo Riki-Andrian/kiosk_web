@@ -9,7 +9,7 @@ import { AzureOpenAI } from "openai";
 // import { viewDepthKey } from 'vue-router';
 dotenv.config();
 
-import fs from 'fs';
+import fs, { writeFile } from 'fs';
 import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
 import multer from 'multer';
@@ -19,6 +19,7 @@ import sharp from 'sharp';
 import createClient from "@azure-rest/ai-vision-face";
 import { AzureKeyCredential } from "@azure/core-auth";
 import { readFile } from 'fs/promises';
+import { file } from 'tmp';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -107,10 +108,6 @@ app.post('/api/style-transfer', async (req, res) => {
   res.json({ success: true, images: swapFace.url() });
 
 });
-const faceClient = createClient(
-  process.env.FACE_API_ENDPOINT,
-  new AzureKeyCredential(process.env.FACE_API_KEY)
-);
 
 app.post('/api/gender-hijab', async (req, res) => {
   const { base64Image } = req.body;
@@ -253,83 +250,93 @@ const imageFileToBase64 = async (url) => {
   } catch (error) {
     throw new Error(`Error fetching image URL: ${error.message}`);
   }
-});
+};
 
 app.post("/api/process-video", async (req, res) => {
-  const { imageCoord } = req.body;
+  const { imageCoord, overlayImageUrl } = req.body;
   const outputPath = path.join(__dirname, "output/output.mp4");
 
-  const inputVideo = path.join(__dirname, "assets/video/ENTP-ENFP.mp4");
-  const music = path.join(__dirname, "assets/music/ENTP_ENFP/1.mp3");
-  const img = path.join(__dirname, "assets/Idle.png");
+  const buffer = Buffer.from(overlayImageUrl, 'base64');
+  let imagePath;
 
-  const imageOverlayFilter = `[1:v]format=yuva420p,scale=495:495,fade=t=in:st=0:d=1:alpha=1[ovl];[0:v][ovl]overlay=${imageCoord}`;
+  file({ postfix: '.png' }, (err, imagePath, fd, cleanupCallback) => {
+    if(err) throw err;
 
-  try {
-        ffmpeg()
-      .input(inputVideo) // 0:v
-      .input(img)        // 1:v (image)
-      .inputOptions([    // ini untuk gambar
-        "-loop 1"
-      ])
-      .input(music)      // 2:a
-      .inputOptions([
-        "-t 10" // durasi overlay-nya
-      ])
-      .complexFilter([
-        {
-          filter: "format",
-          options: "yuva420p",
-          inputs: "[1:v]",
-          outputs: "fmt"
-        },
-        {
-          filter: "scale",
-          options: "495:495",
-          inputs: "fmt",
-          outputs: "scl"
-        },
-        {
-          filter: "fade",
-          options: "t=in:st=0:d=1:alpha=1",
-          inputs: "scl",
-          outputs: "ovl"
-        },
-        {
-          filter: "overlay",
-          options: imageCoord,
-          inputs: ["0:v", "ovl"],
-          outputs: "final"
-        }
-      ])
-      .outputOptions([
-        "-map [final]",
-        "-map 2:a",
-        "-c:v libx264",
-        "-preset veryfast",
-        "-crf 23",
-        "-threads 4",
-        "-b:v 700k",
-        "-c:a aac",
-        "-shortest"
-      ])
-      .save(outputPath)
-      .on("end", () => {
-        const videoUrl = `/output/output.mp4`;
-        return res.json({ success: true, url: videoUrl });
-      })
-      .on("error", (err) => {
-        console.error("FFmpeg error:", err.message);
+    writeFile(imagePath, buffer, (err) => {
+      if (err) throw err;
+
+      const inputVideo = path.join(__dirname, "assets/video/ENTP-ENFP.mp4");
+      const music = path.join(__dirname, "assets/music/ENTP_ENFP/1.mp3");
+    
+      const imageOverlayFilter = `[1:v]format=yuva420p,scale=495:495,fade=t=in:st=0:d=1:alpha=1[ovl];[0:v][ovl]overlay=${imageCoord}`;
+    
+      try {
+            ffmpeg()
+          .input(inputVideo) // 0:v
+          .input(imagePath)        // 1:v (image)
+          .inputOptions([    // ini untuk gambar
+            "-loop 1"
+          ])
+          .input(music)      // 2:a
+          .inputOptions([
+            "-t 10" // durasi overlay-nya
+          ])
+          .complexFilter([
+            {
+              filter: "format",
+              options: "yuva420p",
+              inputs: "[1:v]",
+              outputs: "fmt"
+            },
+            {
+              filter: "scale",
+              options: "495:495",
+              inputs: "fmt",
+              outputs: "scl"
+            },
+            {
+              filter: "fade",
+              options: "t=in:st=0:d=1:alpha=1",
+              inputs: "scl",
+              outputs: "ovl"
+            },
+            {
+              filter: "overlay",
+              options: imageCoord,
+              inputs: ["0:v", "ovl"],
+              outputs: "final"
+            }
+          ])
+          .outputOptions([
+            "-map [final]",
+            "-map 2:a",
+            "-c:v libx264",
+            "-preset veryfast",
+            "-crf 23",
+            "-threads 4",
+            "-b:v 700k",
+            "-c:a aac",
+            "-shortest"
+          ])
+          .save(outputPath)
+          .on("end", () => {
+            const videoUrl = `/output/output.mp4`;
+            return res.json({ success: true, url: videoUrl });
+          })
+          .on("error", (err) => {
+            console.error("FFmpeg error:", err.message);
+            if (!res.headersSent) {
+              return res.status(500).send("Video processing failed.");
+            }
+          });
+      } catch (err) {
+        console.error("Server error:", err);
         if (!res.headersSent) {
-          return res.status(500).send("Video processing failed.");
+          res.status(500).json({ error: "Server processing error" });
         }
-      });
-  } catch (err) {
-    console.error("Server error:", err);
-    if (!res.headersSent) {
-      res.status(500).json({ error: "Server processing error" });
-    }
-  }
+      }
+    })
+  })
 });
 
 
