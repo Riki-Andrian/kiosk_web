@@ -179,6 +179,7 @@ const chooseStyle = () => {
                 case "INFP":
                     selectedStyle = styles['INFJ_INFP'];
                     musicFile.value = 'INFJ-INFP';
+                    imageCoord.value = "265:660";
                     selectedStylePrompt = `${genderPrompt} on a vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
                     selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photographic, soft lighting, blurry, painterly, impressionist, natural colors, muted tones, watercolor, low contrast, smooth textures, noise, grain, pastel colors, blue tones, warm lighting, overcrowded, people, cluttered, text, logos, watermark, sky, clouds, sunlight";
                     break;
@@ -320,9 +321,9 @@ const editVideo = async () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                personalityStyle: musicFile.value,
+                imageCoord: imageCoord.value,
                 overlayImageUrl: base64Image,
-                imageCoord: imageCoord.value
+                personalityStyle: musicFile.value
             })
         });
 
