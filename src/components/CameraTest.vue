@@ -234,9 +234,7 @@ const editPhoto = async () => {
         const data = await response.json();
         if (data.success) {
             console.log(data.images);
-            const imageResponse = await fetch(data.images);
-            const blob = await imageResponse.blob();
-            editedImage.value = URL.createObjectURL(blob);
+            editedImage.value = data.images;
         } else {
             console.error('Error applying style transfer:', data.error);
         }
@@ -313,8 +311,7 @@ const editPhoto = async () => {
 
 
 const editVideo = async () => {
-    const imageBlob = await fetch(editedImage.value).then(res => res.blob());
-    const base64Image = await blobToBase64(imageBlob);
+    const base64Image = editedImage.value;
 
     try {
         const response = await fetch("http://localhost:3001/api/process-video", {
