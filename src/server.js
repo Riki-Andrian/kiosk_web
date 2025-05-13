@@ -38,10 +38,10 @@ const upload = multer({ dest: "uploads/" });
 
 const API_TOKEN = process.env.REPLICATE_API_TOKEN;
 
-  const faceClient = createClient(
-    process.env.FACE_API_ENDPOINT,
-    new AzureKeyCredential(process.env.FACE_API_KEY)
-  );
+const faceClient = createClient(
+  process.env.FACE_API_ENDPOINT,
+  new AzureKeyCredential(process.env.FACE_API_KEY)
+);
 
 app.post('/api/style-transfer', async (req, res) => {
   //const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
@@ -107,6 +107,100 @@ app.post('/api/style-transfer', async (req, res) => {
 
   res.json({ success: true, images: swapFace.url() });
 
+  // const swapFace = async (srcImg, targetImg) => {
+  //   console.log("urls: " + srcImg + " " + targetImg);
+
+  //   const base64srcImg = await imageFileToBase64(srcImg);
+  //   const base64targetImg = await imageFileToBase64(targetImg);
+
+  //   const data = {
+  //     "source_img": base64srcImg,
+  //     "target_img": base64targetImg,
+  //     "input_faces_index": 0,
+  //     "source_faces_index": 0,
+  //     "face_restore": "codeformer-v0.1.0.pth",
+  //     "base64": true // Get base64 response
+  //   };
+
+  //   try {
+  //     const response = await fetch("https://api.segmind.com/v1/faceswap-v2", {
+  //       method: 'POST',
+  //       headers: {
+  //         'x-api-key': process.env.SEGMIND_API_KEY,
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify(data)
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+
+  //     // Check the content type to determine how to handle the response
+  //     const contentType = response.headers.get('content-type');
+
+  //     if (contentType && contentType.includes('application/json')) {
+  //       // Handle JSON response
+  //       const responseData = await response.json();
+
+  //       // Save the image to a file if it contains an image
+  //       if (responseData.image) {
+
+  //         const filename = `resultAI.jpeg`;
+  //         const filePath = path.join(__dirname, 'editedResult', filename);
+
+  //         // Remove the data:image prefix if it exists
+  //         let base64Data = responseData.image;
+  //         if (base64Data.startsWith('data:')) {
+  //           base64Data = base64Data.split(',')[1];
+  //         }
+
+  //         // Write the file
+  //         fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
+
+  //         // Create a URL to the saved file
+  //         const fileUrl = `/${filename}`; // Adjust this based on your server setup
+
+  //         return {
+  //           image: fileUrl,
+  //           originalResponse: responseData
+  //         };
+  //       }
+
+  //       return responseData;
+  //     } else if (contentType && contentType.includes('image/')) {
+  //       // Handle binary image response
+  //       const imageBuffer = await response.arrayBuffer();
+  //       const base64Image = Buffer.from(imageBuffer).toString('base64');
+
+  //       // Generate a unique filename
+  //       const filename = `resultAI.jpeg`;
+  //       const filePath = path.join(__dirname, 'editedResult', filename);
+
+  //       // Write the file
+  //       fs.writeFileSync(filePath, Buffer.from(base64Image, 'base64'));
+
+  //       // Create a URL to the saved file
+  //       const fileUrl = `/${filename}`; // Adjust this based on your server setup
+
+  //       return {
+  //         image: fileUrl
+  //       };
+  //     } else {
+  //       throw new Error(`Unexpected content type: ${contentType}`);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error:', error.message);
+  //     throw error;
+  //   }
+  // };
+
+  // try {
+  //   const faceswapResult = await swapFace(removedBackgroundUrl, editedImage);
+  //   res.json({ success: true, images: faceswapResult });
+  // } catch (error) {
+  //   res.status(500).json({ success: false, error: error.message });
+  // }
 });
 
 app.post('/api/gender-hijab', async (req, res) => {
