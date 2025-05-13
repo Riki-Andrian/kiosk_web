@@ -118,29 +118,32 @@ const capturePhoto = () => {
 async function classifyImageClientSide(base64Image) {
   const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
   console.log("Image cleaned:", cleanedBase64);
-
+    updateProgress(25, "Lagi siapin datanya...");
   const res = await fetch("http://localhost:3001/api/gender-hijab", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ base64Image: cleanedBase64 })
   });
-
+    updateProgress(30, "Lagi siapin datanya...");
   const data = await res.json();
   
   if (data.error) {
     console.error(data.error);
+    updateProgress(35, "Aduhh ada kendala teknis nih...");
     return;
   }
 
   if(gender.value === "lanang") {
+    updateProgress(35, "Okee, datanya udah siap!");
     return "a single man"
   }
   
   // Check if female and hijab detected
   if (data.hijab && data.hijab.some(p => p.tagName === "hijab" && p.probability > 0.5)) {
+    updateProgress(35, "Okee, datanya udah siap!");
     return "a single woman wearing a hijab";
   }
-
+  updateProgress(35, "Okee, datanya udah siap!");
   return "a single woman"
 }
 
@@ -237,7 +240,7 @@ const editPhoto = async () => {
         console.log("Selected Style:", selectedStyle);
         console.log("Selected Style Prompt:", selectedStylePrompt);
         console.log("Selected Negative Prompt:", selectedNegativePrompt);
-        updateProgress(60, "Gue proses dulu fotonya...");
+        updateProgress(60, "Okee, gue fine-tune dulu fotonya...");
         const response = await fetch("http://localhost:3001/api/style-transfer", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -252,13 +255,13 @@ const editPhoto = async () => {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        updateProgress(65, "Gue proses dulu fotonya...");
+        updateProgress(65, "Kalem ya, sedikit lagi...");
         const data = await response.json();
         if (data.success) {
             console.log(data.images);
             const imageResponse = await fetch(data.images);
             const blob = await imageResponse.blob();
-            updateProgress(70, "Gue proses dulu fotonya...");
+            updateProgress(70, "Foto lu udah jadi!");
             editedImage.value = URL.createObjectURL(blob);
         } else {
             console.error('Error applying style transfer:', data.error);
@@ -315,7 +318,7 @@ const editVideo = async () => {
             outputName
         );
 
-        updateProgress(85, "Foto udah siap! Gue proses video lu dulu ya...");
+        updateProgress(85, "Video nya dikit lagi siap...");
 
         const files = ffmpeg.FS("readdir", "/");
         if (!files.includes(outputName)) {
@@ -386,13 +389,9 @@ function updateProgress(percent, message) {
 
 const process = async () => {
     isLoading.value = true;
+    updateProgress(0, "Mulai proses...");
     try {
-        updateProgress(0, "Mulai proses...");
-
-        updateProgress(25, "Lagi siapin datanya...");
         const detectedGender = await classifyImageClientSide(capturedImage.value);
-
-        updateProgress(35, "Okee, datanya udah siap!");
         genderPrompt = detectedGender;
 
         updateProgress(55, "Gue proses dulu fotonya...");
@@ -711,6 +710,12 @@ video {
     color: white;
     text-align: center;
     padding: 20px;
+}
+
+.loading-overlay p {
+    margin-top: 5%;
+    font-size: 1rem;
+    font-weight: bold;
 }
 
 .lottie-player {
