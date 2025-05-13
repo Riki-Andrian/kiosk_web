@@ -44,82 +44,35 @@ const faceClient = createClient(
 );
 
 app.post('/api/style-transfer', async (req, res) => {
-  //const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
-
   const replicate = new Replicate({ auth: API_TOKEN });
 
   const { image, style_image, style_prompt, negative_prompt } = req.body;
+  function cleanBase64(base64String) {
+  return base64String.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
+}
 
-  console.log('ini style image nya:', style_image);
-  console.log('ini promptnya: ', style_prompt, negative_prompt);
+  const imagePureBase64 = cleanBase64(image);
 
   if (!image || !style_image) {
     return res.status(400).json({ success: false, error: "Missing image or style_image" });
   }
 
-  const removeBackground = await replicate.run(
-    "851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc",
-    {
-      input: {
-        image: image,
-        format: "png",
-        reverse: false,
-        threshold: 0.99,
-        background_type: 'blur'
-      }
-    }
-  );
+  // const removeBackground = await replicate.run(
+  //   "851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc",
+  //   {
+  //     input: {
+  //       image: image,
+  //       format: "png",
+  //       reverse: false,
+  //       threshold: 0.99,
+  //       background_type: 'blur'
+  //     }
+  //   }
+  // );
 
-  const removedBackgroundUrl = removeBackground.url();
+  // const removedBackgroundUrl = removeBackground.url();
 
-  const transferFile = async (srcImg, targetImg) => {
-    const formData = new FormData();
-    formData.append('seed', 132);
-    formData.append('model', 'fast');
-    formData.append('width', 240);
-    formData.append('height', 240);
-    formData.append('prompt', style_prompt);
-    formData.append('style_image', targetImg);
-    formData.append('output_format', 'webp');
-    formData.append('output_quality', 50);
-    formData.append('negative_prompt', negative_prompt);
-    formData.append('structure_image', srcImg);
-    formData.append('number_of_images', 1);
-    formData.append('structure_depth_strength', 1);
-    formData.append('structure_denoising_strength', 0.65);
-  
-    try {
-      const response = await fetch('https://api.segmind.com/v1/style-transfer', {
-        method: 'POST',
-        headers: {
-          'x-api-key': process.env.SEGMIND_API_KEY,
-        },
-        body: formData,
-      });
-  
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-      }
-
-      const buffer = await response.buffer();
-      const base64Image = buffer.toString('base64');
-
-      return base64Image;
-    } catch (error) {
-      console.error('Error:', error.message);
-      throw error;
-    }
-  };
-
-  try {
-    const faceswapResult = await transferFile(removedBackgroundUrl, style_image);
-    res.json({ success: true, images: faceswapResult });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-
-  // const output = await replicate.run(
+   // const output = await replicate.run(
   //   "fofr/style-transfer:f1023890703bc0a5a3a2c21b5e498833be5f6ef6e70e9daf6b9b3a4fd8309cf0",
   //   {
   //     input: {
@@ -141,101 +94,87 @@ app.post('/api/style-transfer', async (req, res) => {
   // const editedImage = output[0].url();
   // console.log(editedImage);
 
-  // const swapFace = await replicate.run(
-  //   "cdingram/face-swap:d1d6ea8c8be89d664a07a457526f7128109dee7030fdac424788d762c71ed111",
-  //   {
-  //     input: {
-  //       swap_image: removedBackgroundUrl,
-  //       input_image: editedImage
-  //     }
-  //   }
-  // );
+  const transferFile = async (srcImg, targetImg) => {
+    const formData = new FormData();
+    formData.append('seed', 132);
+    formData.append('model', 'fast');
+    formData.append('width', 240);
+    formData.append('height', 240);
+    formData.append('prompt', style_prompt);
+    formData.append('style_image', targetImg);
+    formData.append('output_format', 'png');
+    formData.append('output_quality', 50);
+    formData.append('negative_prompt', negative_prompt);
+    formData.append('structure_image', srcImg);
+    formData.append('number_of_images', 1);
+    formData.append('structure_depth_strength', 1);
+    formData.append('structure_denoising_strength', 0.65);
 
-  // res.json({ success: true, images: swapFace.url() });
+    try {
+      const response = await fetch('https://api.segmind.com/v1/style-transfer', {
+        method: 'POST',
+        headers: {
+          'x-api-key': process.env.SEGMIND_API_KEY,
+        },
+        body: formData,
+      });
 
-  // const swapFace = async (srcImg, targetImg) => {
-  //   console.log("urls: " + srcImg + " " + targetImg);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
 
-  //   const base64srcImg = await imageFileToBase64(srcImg);
-  //   const base64targetImg = await imageFileToBase64(targetImg);
+      const buffer = await response.buffer();
+      const base64Image = buffer.toString('base64');
+      const cleanBase64Image = cleanBase64(base64Image);
 
-  //   const data = {
-  //     "source_img": base64srcImg,
-  //     "target_img": base64targetImg,
-  //     "input_faces_index": 0,
-  //     "source_faces_index": 0,
-  //     "face_restore": "codeformer-v0.1.0.pth",
-  //     "base64": true
-  //   };
+      return cleanBase64Image; // Pure base64 without any prefix
+    } catch (error) {
+      console.error('Error:', error.message);
+      throw error;
+    }
+  };
 
-  //   try {
-  //     const response = await fetch("https://api.segmind.com/v1/faceswap-v2", {
-  //       method: 'POST',
-  //       headers: {
-  //         'x-api-key': process.env.SEGMIND_API_KEY,
-  //         'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify(data)
-  //     });
+  const transferFile2 = async (srcImg, targetImg) => {
+    const data = {
+      "source_img": srcImg,
+      "target_img": targetImg,
+      "image_format": "webp"
+    };
 
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! status: ${response.status}`);
-  //     }
+    try {
+      const response2 = await fetch('https://api.segmind.com/v1/faceswap-v3', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.SEGMIND_API_KEY,
+        },
+        body: JSON.stringify(data),
+      });
 
-  //     const contentType = response.headers.get('content-type');
+      if (!response2.ok) {
+        const errorText = await response2.text();
+        throw new Error(errorText);
+      }
 
-  //     if (contentType && contentType.includes('application/json')) {
-  //       const responseData = await response.json();
+      const buffer2 = await response2.arrayBuffer();
+      const base64Image2 = Buffer.from(buffer2).toString('base64');
 
-  //       if (responseData.image) {
-  //         const filename = `resultAI.jpeg`;
-  //         const filePath = path.join(__dirname, 'editedResult', filename);
+      return base64Image2;
+    } catch (error) {
+      console.error('Error:', error.message);
+      throw error;
+    }
+  };
 
-  //         let base64Data = responseData.image;
-  //         if (base64Data.startsWith('data:')) {
-  //           base64Data = base64Data.split(',')[1];
-  //         }
+  try {
+    const faceswapResult = await transferFile(image, style_image);
+    const finalResult = await transferFile2(imagePureBase64, faceswapResult);
 
-  //         fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
-
-  //         const fileUrl = `/${filename}`;
-
-  //         return {
-  //           image: fileUrl,
-  //           originalResponse: responseData
-  //         };
-  //       }
-
-  //       return responseData;
-  //     } else if (contentType && contentType.includes('image/')) {
-  //       const imageBuffer = await response.arrayBuffer();
-  //       const base64Image = Buffer.from(imageBuffer).toString('base64');
-
-  //       const filename = `resultAI.jpeg`;
-  //       const filePath = path.join(__dirname, 'editedResult', filename);
-
-  //       fs.writeFileSync(filePath, Buffer.from(base64Image, 'base64'));
-
-  //       const fileUrl = `/${filename}`;
-
-  //       return {
-  //         image: fileUrl
-  //       };
-  //     } else {
-  //       throw new Error(`Unexpected content type: ${contentType}`);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error:', error.message);
-  //     throw error;
-  //   }
-  // };
-
-  // try {
-  //   const faceswapResult = await swapFace(removedBackgroundUrl, editedImage);
-  //   res.json({ success: true, images: faceswapResult });
-  // } catch (error) {
-  //   res.status(500).json({ success: false, error: error.message });
-  // }
+    res.json({ success: true, images: finalResult });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 app.post('/api/gender-hijab', async (req, res) => {
