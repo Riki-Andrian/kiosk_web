@@ -319,15 +319,11 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 }
 
 .option-button.active {
-    background-color: #B32024;
+    background-color: #f66200;
     color: #fff;
 }
 
-.option-button img:hover {
-    filter: brightness(0) saturate(100%) invert(100%);
-}
-
-.option-button img:active {
+.option-button.active img {
     filter: brightness(0) saturate(100%) invert(100%);
 }
 
