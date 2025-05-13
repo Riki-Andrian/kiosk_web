@@ -9,7 +9,7 @@ const gender = ref("");
 const goToNext = (event) => {
     if (event) event.preventDefault();
 
-    if (name.value.trim() !== "") {
+    if (name.value.trim() !== "" && gender.value !== "") {
         localStorage.setItem("name", name.value);
 
         const selectors = [
@@ -76,18 +76,10 @@ const selectGender = (value) => {
                 <img src="../assets/mld-logo.png" class="logo" />
                 <img src="../assets/art-n-sound.png" class="logo" />
             </div>
-
+            <div id="popup" class="popup hidden">Tolong masukkin nama & pilih jenis kelamin</div>
             <div class="title-text">
                 <h1 class="enter-name">Masukkan Nama Anda</h1>
                 <input v-model="name" type="text" placeholder="Type your name here" class="name-input" />
-                <div class="gender-selection">
-                    <button :class="{ active: gender === 'lanang' }" @click="selectGender('lanang')">
-                        LAKI-LAKI
-                    </button>
-                    <button :class="{ active: gender === 'wedok' }" @click="selectGender('wedok')">
-                        PEREMPUAN
-                    </button>
-                </div>
             </div>
 
 
@@ -110,8 +102,15 @@ const selectGender = (value) => {
                     </button>
                 </div>
             </div>
+                    <div class="gender-selection">
+                    <button :class="{ active: gender === 'lanang' }" @click="selectGender('lanang')">
+                        LAKI-LAKI
+                    </button>
+                    <button :class="{ active: gender === 'wedok' }" @click="selectGender('wedok')">
+                        PEREMPUAN
+                    </button>
+                </div>
             <button class="next-button" @click="goToNext">S U B M I T</button>
-            <div id="popup" class="popup hidden">Mohon Masukkan Nama!</div>
         </div>
     </div>
 </template>
@@ -160,9 +159,6 @@ const selectGender = (value) => {
 
 .popup {
     position: absolute;
-    bottom: 20px;
-    left: 45%;
-    transform: translateX(-50%);
     background-color: #B32024;
     color: white;
     padding: 1rem 2rem;
@@ -174,6 +170,7 @@ const selectGender = (value) => {
     transform: scale(0.7);
     filter: blur(6px);
     pointer-events: none;
+    top: 15%;
 }
 
 .popup.show {
@@ -404,9 +401,12 @@ const selectGender = (value) => {
 .gender-selection {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: 2rem;
   margin: 10px 0;
   margin-top: 5%;
+  width: 80%;
+
+    /* Animation properties */
 
   animation: buttonAppear 1.5s ease-out forwards;
     transform-origin: center;
@@ -417,13 +417,14 @@ const selectGender = (value) => {
 
 .gender-selection button {
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: 20px;
   background-color: rgba(255, 255, 255, 0.9);
   border: none;
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s ease;
-  width: 80%;
+  width: 100%;
+  color: #B32024;
 }
 
 .gender-selection button.active {
