@@ -106,29 +106,38 @@ const capturePhoto = () => {
 };
 
 async function classifyImageClientSide(base64Image) {
-    const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
-    console.log("Image cleaned:", cleanedBase64);
-
-    const res = await fetch("http://localhost:3001/api/gender-hijab", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ base64Image: cleanedBase64 })
-    });
-
-    const data = await res.json();
+  const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
+  console.log("Image cleaned:", cleanedBase64);
+  updateProgress(25, "Lagi siapin datanya...");
 
   if(gender.value === "lanang") {
     updateProgress(35, "Okee, datanya udah siap!");
     return "a single man"
+  } else {
+
+  const res = await fetch("http://localhost:3001/api/gender-hijab", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ base64Image: cleanedBase64 })
+  });
+  updateProgress(30, "Lagi siapin datanya...");
+  const data = await res.json();
+  
+  if (data.error) {
+    console.error(data.error);
+    updateProgress(35, "Aduhh ada kendala teknis nih...");
+    return;
   }
   
   // Check if female and hijab detected
   if (data.hijab && data.hijab.some(p => p.tagName === "hijab" && p.probability > 0.5)) {
     updateProgress(35, "Okee, datanya udah siap!");
     return "a single woman wearing a hijab";
-  }
+  } else {
   updateProgress(35, "Okee, datanya udah siap!");
   return "a single woman"
+    }
+  }
 }
 
 const retakeCount = ref(0);

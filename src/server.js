@@ -189,7 +189,7 @@ app.post('/api/gender-hijab', async (req, res) => {
       contentType: "application/octet-stream",
       queryParameters: {
         detectionModel: "detection_03",
-        returnFaceId: false, // tidak perlu returnFaceAttributes
+        returnFaceId: false,
       },
       body: imageBuffer,
     });
