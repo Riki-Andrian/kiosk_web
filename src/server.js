@@ -306,8 +306,8 @@ app.post("/api/process-video", async (req, res) => {
         .input(inputVideo)
         .input(imagePath)
         .inputOptions(["-loop 1"])
+        .inputOptions(["-t 5"])
         .input(music)
-        .inputOptions(["-t 15"])
         .complexFilter([
           { filter: "format", options: "yuva420p", inputs: "[1:v]", outputs: "fmt" },
           { filter: "scale", options: "745:745", inputs: "fmt", outputs: "scl" },
