@@ -44,69 +44,137 @@ const faceClient = createClient(
 );
 
 app.post('/api/style-transfer', async (req, res) => {
-  //const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
-
   const replicate = new Replicate({ auth: API_TOKEN });
 
   const { image, style_image, style_prompt, negative_prompt } = req.body;
+  function cleanBase64(base64String) {
+  return base64String.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
+}
 
-  console.log('ini style image nya:', style_image);
+  const imagePureBase64 = cleanBase64(image);
 
   if (!image || !style_image) {
     return res.status(400).json({ success: false, error: "Missing image or style_image" });
   }
 
-  const removeBackground = await replicate.run(
-    "851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc",
-    {
-      input: {
-        image: image,
-        format: "png",
-        reverse: false,
-        threshold: 0.99,
-        background_type: 'blur'
+  // const removeBackground = await replicate.run(
+  //   "851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc",
+  //   {
+  //     input: {
+  //       image: image,
+  //       format: "png",
+  //       reverse: false,
+  //       threshold: 0.99,
+  //       background_type: 'blur'
+  //     }
+  //   }
+  // );
+
+  // const removedBackgroundUrl = removeBackground.url();
+
+   // const output = await replicate.run(
+  //   "fofr/style-transfer:f1023890703bc0a5a3a2c21b5e498833be5f6ef6e70e9daf6b9b3a4fd8309cf0",
+  //   {
+  //     input: {
+  //       model: "fast",
+  //       width: 512,
+  //       height: 512,
+  //       prompt: style_prompt,
+  //       style_image: style_image,
+  //       output_format: "png",
+  //       output_quality: 80,
+  //       negative_prompt: negative_prompt,
+  //       structure_image: removedBackgroundUrl,
+  //       number_of_images: 1,
+  //       structure_depth_strength: 2,
+  //       structure_denoising_strength: 0.7
+  //     }
+  //   });
+
+  // const editedImage = output[0].url();
+  // console.log(editedImage);
+
+  const transferFile = async (srcImg, targetImg) => {
+    const formData = new FormData();
+    formData.append('seed', 132);
+    formData.append('model', 'fast');
+    formData.append('width', 240);
+    formData.append('height', 240);
+    formData.append('prompt', style_prompt);
+    formData.append('style_image', targetImg);
+    formData.append('output_format', 'png');
+    formData.append('output_quality', 50);
+    formData.append('negative_prompt', negative_prompt);
+    formData.append('structure_image', srcImg);
+    formData.append('number_of_images', 1);
+    formData.append('structure_depth_strength', 1);
+    formData.append('structure_denoising_strength', 0.65);
+
+    try {
+      const response = await fetch('https://api.segmind.com/v1/style-transfer', {
+        method: 'POST',
+        headers: {
+          'x-api-key': process.env.SEGMIND_API_KEY,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
       }
+
+      const buffer = await response.buffer();
+      const base64Image = buffer.toString('base64');
+      const cleanBase64Image = cleanBase64(base64Image);
+
+      return cleanBase64Image; // Pure base64 without any prefix
+    } catch (error) {
+      console.error('Error:', error.message);
+      throw error;
     }
-  );
+  };
 
-  const removedBackgroundUrl = removeBackground.url();
+  const transferFile2 = async (srcImg, targetImg) => {
+    const data = {
+      "source_img": srcImg,
+      "target_img": targetImg,
+      "image_format": "webp"
+    };
 
-  const output = await replicate.run(
-    "fofr/style-transfer:f1023890703bc0a5a3a2c21b5e498833be5f6ef6e70e9daf6b9b3a4fd8309cf0",
-    {
-      input: {
-        model: "fast",
-        width: 512,
-        height: 512,
-        prompt: style_prompt,
-        style_image: style_image,
-        output_format: "png",
-        output_quality: 80,
-        negative_prompt: negative_prompt,
-        structure_image: removedBackgroundUrl,
-        number_of_images: 1,
-        structure_depth_strength: 2,
-        structure_denoising_strength: 0.7
+    try {
+      const response2 = await fetch('https://api.segmind.com/v1/faceswap-v3', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.SEGMIND_API_KEY,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response2.ok) {
+        const errorText = await response2.text();
+        throw new Error(errorText);
       }
-    });
 
-  const editedImage = output[0].url();
-  console.log(editedImage);
+      const buffer2 = await response2.arrayBuffer();
+      const base64Image2 = Buffer.from(buffer2).toString('base64');
 
-  const swapFace = await replicate.run(
-    "cdingram/face-swap:d1d6ea8c8be89d664a07a457526f7128109dee7030fdac424788d762c71ed111",
-    {
-      input: {
-        swap_image: removedBackgroundUrl,
-        input_image: editedImage
-      }
+      return base64Image2;
+    } catch (error) {
+      console.error('Error:', error.message);
+      throw error;
     }
-  );
+  };
 
-  console.log(swapFace);
+  try {
+    const faceswapResult = await transferFile(image, style_image);
+    const finalResult = await transferFile2(imagePureBase64, faceswapResult);
 
-  res.json({ success: true, images: swapFace.url() });
-
+    res.json({ success: true, images: finalResult });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 app.post('/api/gender-hijab', async (req, res) => {
@@ -121,7 +189,7 @@ app.post('/api/gender-hijab', async (req, res) => {
       contentType: "application/octet-stream",
       queryParameters: {
         detectionModel: "detection_03",
-        returnFaceId: false, // tidak perlu returnFaceAttributes
+        returnFaceId: false,
       },
       body: imageBuffer,
     });
@@ -203,43 +271,6 @@ app.post('/api/gender-hijab', async (req, res) => {
     res.status(500).json({ error: 'Failed to detect hijab' });
   }
 });
-
-const swapFace = async (srcImg, targetImg) => {
-  console.log("urls: " + srcImg + " " + targetImg);
-
-  const base64srcImg = await imageFileToBase64(srcImg);
-  const base64targetImg = await imageFileToBase64(targetImg);
-
-  const data = {
-    "source_img": base64srcImg,
-    "target_img": base64targetImg,
-    "input_faces_index": 0,
-    "source_faces_index": 0,
-    "face_restore": "codeformer-v0.1.0.pth",
-    "base64": false
-  };
-
-  try {
-    const response = await fetch("https://api.segmind.com/v1/faceswap-v2", {
-      method: 'POST',
-      headers: {
-        'x-api-key': process.env.SEGMIND_API_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const responseData = await response.json();
-    console.log(responseData);
-    return responseData;
-  } catch (error) {
-    console.error('Error:', error.message);
-  }
-}
 
 const imageFileToBase64 = async (url) => {
   try {

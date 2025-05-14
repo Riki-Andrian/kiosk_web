@@ -32,6 +32,8 @@ const isCountingDown = ref(false);
 let countdownInterval = null;
 let genderPrompt = "";
 
+const progressBar = ref(null);
+
 const loadComponent = async () => {
     console.log(`Name: ${name.value}, Gender: ${gender.value}`);
 
@@ -104,27 +106,38 @@ const capturePhoto = () => {
 };
 
 async function classifyImageClientSide(base64Image) {
-    const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
-    console.log("Image cleaned:", cleanedBase64);
-
-    const res = await fetch("http://localhost:3001/api/gender-hijab", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ base64Image: cleanedBase64 })
-    });
-
-    const data = await res.json();
+  const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
+  console.log("Image cleaned:", cleanedBase64);
+  updateProgress(25, "Lagi siapin datanya...");
 
   if(gender.value === "lanang") {
+    updateProgress(35, "Okee, datanya udah siap!");
     return "a single man"
+  } else {
+
+  const res = await fetch("http://localhost:3001/api/gender-hijab", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ base64Image: cleanedBase64 })
+  });
+  updateProgress(30, "Lagi siapin datanya...");
+  const data = await res.json();
+  
+  if (data.error) {
+    console.error(data.error);
+    updateProgress(35, "Aduhh ada kendala teknis nih...");
+    return;
   }
   
   // Check if female and hijab detected
   if (data.hijab && data.hijab.some(p => p.tagName === "hijab" && p.probability > 0.5)) {
+    updateProgress(35, "Okee, datanya udah siap!");
     return "a single woman wearing a hijab";
-  }
-
+  } else {
+  updateProgress(35, "Okee, datanya udah siap!");
   return "a single woman"
+    }
+  }
 }
 
 const retakeCount = ref(0);
@@ -210,8 +223,8 @@ const editPhoto = async () => {
             return;
         }
 
-        console.log("editing...");
-        console.log("Image URL:", imageUrl.value);
+        //console.log("editing...");
+        //console.log("Image URL:", imageUrl.value);
         console.log("Selected Style:", selectedStyle);
         console.log("Selected Style Prompt:", selectedStylePrompt);
         console.log("Selected Negative Prompt:", selectedNegativePrompt);
@@ -230,13 +243,11 @@ const editPhoto = async () => {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-
+        updateProgress(65, "Kalem ya, sedikit lagi...");
         const data = await response.json();
         if (data.success) {
             console.log(data.images);
-            const imageResponse = await fetch(data.images);
-            const blob = await imageResponse.blob();
-            editedImage.value = URL.createObjectURL(blob);
+            editedImage.value = data.images;
         } else {
             console.error('Error applying style transfer:', data.error);
         }
@@ -313,8 +324,7 @@ const editPhoto = async () => {
 
 
 const editVideo = async () => {
-    const imageBlob = await fetch(editedImage.value).then(res => res.blob());
-    const base64Image = await blobToBase64(imageBlob);
+    const base64Image = editedImage.value;
 
     try {
         const response = await fetch("http://localhost:3001/api/process-video", {
@@ -394,19 +404,31 @@ const goToResultPage = () => {
     }
 };
 
+function updateProgress(percent, message) {
+    if (!progressBar.value) return;
+    progressBar.value.style.width = percent + "%";
+    document.getElementById("loading-status").textContent = message;
+}
+
+
 const process = async () => {
     isLoading.value = true;
+    updateProgress(0, "Mulai proses...");
     try {
         console.log("Processing...");
         const detectedGender = await classifyImageClientSide(capturedImage.value);
         genderPrompt = detectedGender;
         await editPhoto();
+
+        updateProgress(75, "Foto udah siap! Gue proses video lu dulu ya...");
         await editVideo();
+
         goToResultPage();
     } finally {
         isLoading.value = false;
     }
 };
+
 
 watch(isLoading, async (val) => {
     if (val) {
@@ -429,10 +451,14 @@ watch(isLoading, async (val) => {
     <div class="app-container">
         <img src="../assets/normal-bg.png" class="background-image" />
 
-
         <div v-if="isLoading" class="loading-overlay">
             <div ref="lottieContainer" class="lottie-player"></div>
-            <p>Processing your music personality...</p>
+            <p id="loading-status">Memproses Music Personality Lu</p>
+
+            <!-- Progress Bar Container -->
+            <div class="progress-container" id="progress-container">
+                <div ref="progressBar" class="progress-bar" id="progress-bar"></div>
+            </div>
         </div>
 
         <div class="overlay">
@@ -501,6 +527,24 @@ watch(isLoading, async (val) => {
     text-align: center;
     overflow-y: auto;
     max-height: 100vh;
+}
+
+.progress-container {
+    width: 80%;
+    height: 5%;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 16px auto 0 auto;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar {
+    z-index: 5;
+    height: 100%;
+    width: 0%;
+    background-color: #f66200;
+    transition: width 0.4s ease;
+    border-radius: 20px;
 }
 
 .top-bar {
@@ -695,6 +739,12 @@ video {
     color: white;
     text-align: center;
     padding: 20px;
+}
+
+.loading-overlay p {
+    margin-top: 5%;
+    font-size: 1rem;
+    font-weight: bold;
 }
 
 .lottie-player {
