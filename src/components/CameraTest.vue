@@ -118,11 +118,11 @@ const capturePhoto = () => {
 async function classifyImageClientSide(base64Image) {
   const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
   console.log("Image cleaned:", cleanedBase64);
-  updateProgress(25, "Lagi siapin datanya...");
+  updateProgress(25, "Processing Your Music Personality...");
 
   if(gender.value === "lanang") {
-    updateProgress(35, "Okee, datanya udah siap!");
-    return "a single man"
+    updateProgress(35, "Processing Your Music Personality...");
+    return "a single man with a normal skin tone"
   } else {
 
   const res = await fetch("http://localhost:3001/api/gender-hijab", {
@@ -130,22 +130,22 @@ async function classifyImageClientSide(base64Image) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ base64Image: cleanedBase64 })
   });
-  updateProgress(30, "Lagi siapin datanya...");
+  updateProgress(30, "Processing Your Music Personality...");
   const data = await res.json();
   
   if (data.error) {
     console.error(data.error);
-    updateProgress(35, "Aduhh ada kendala teknis nih...");
+    updateProgress(35, "Failed to Processing Your Music Personality.");
     return;
   }
   
   // Check if female and hijab detected
   if (data.hijab && data.hijab.some(p => p.tagName === "hijab" && p.probability > 0.5)) {
-    updateProgress(35, "Okee, datanya udah siap!");
-    return "a single woman wearing a hijab";
+    updateProgress(35, "Processing Your Music Personality...");
+    return "a single woman wearing a hijab and normal skin tone";
   } else {
-  updateProgress(35, "Okee, datanya udah siap!");
-  return "a single woman"
+  updateProgress(35, "Processing Your Music Personality...");
+  return "a single woman and normal skin tone"
     }
   }
 }
@@ -161,7 +161,7 @@ const retakePhoto = () => {
     loadCameraStream();
     retakeCount.value += 1;
 }
-const randomIndex34 = Math.random() < 0.5 ? 3 : 4;
+const randomIndex34 = Math.random() < 0.5 ? 4 : 5;
 
 const styles = {
     'ENTP_ENFP': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style${randomIndex34}/ENTP_ENFP.png`,
@@ -196,7 +196,7 @@ const chooseStyle = () => {
                 videoFile.value = video2;
                 imageCoord.value = "170:735";
                 musicFile.value = ESFJ_ENFJ[randomIndex];
-                selectedStylePrompt = `${genderPrompt} on a bold anime-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.`;
+                selectedStylePrompt = `${genderPrompt} on a bold anime-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with radiating black lines, evoking a vintage pop art or retro anime vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.`;
                 selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, natural shadows, painterly, impressionism, pastel colors, low contrast, desaturated, blurry, muted tones, dull colors, smooth gradients, watercolor, cinematic, oil painting, 3D render, text, watermark, logo, blue sky, clouds, irregular layout, asymmetrical composition";
                 break;
         case "ESTP":
@@ -205,7 +205,7 @@ const chooseStyle = () => {
                 videoFile.value = video3;
                 imageCoord.value = "170:625";
                 musicFile.value = ESTP_ESFP[randomIndex];
-                selectedStylePrompt = `${genderPrompt} on a dynamic anime-style explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black speed lines. Use a caramel background. The art style should be bold, vibrant, and high-energy, evoking retro pop art and vintage comic aesthetics.`;
+                selectedStylePrompt = `${genderPrompt} on a dynamic anime-style, on a sunset sky with explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black stroke lines. The art style should be bold, vibrant, and high-energy, evoking retro anime and vintage comic aesthetics.`;
                 selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, blurry, painterly, impressionism, pastel colors, low contrast, smooth gradients, desaturated, natural tones, dull colors, cinematic lighting, noise, text, watermark, logo, 3D render, muted lighting, monochrome, blue sky, clouds";
                 break;
         case "INFJ":
@@ -223,8 +223,8 @@ const chooseStyle = () => {
                 videoFile.value = video5;
                 imageCoord.value = "185:330";
                 musicFile.value = INTJ_INTP[randomIndex];
-                selectedStylePrompt = `${genderPrompt} with a anime-style sky with a bright, vivid red background and red background city scape. include retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle red shading and be spread across a dynamic diagonal composition.`;
-                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, text, watermark, signature, low resolution, asymmetry";
+                selectedStylePrompt = `${genderPrompt} with a anime-style sky with a bright vivid red background and red background tall city scape. The clouds should have soft, rounded shapes and be spread across a dynamic diagonal composition.`;
+                selectedNegativePrompt = "two persons, two humans, wrinkles on face, multiple people, non human object, dark skin tone, abnormal skin tone, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, text, watermark, signature, low resolution, asymmetry";
                 break;
         }
     }
@@ -243,7 +243,7 @@ const editPhoto = async () => {
         console.log("Selected Style:", selectedStyle);
         console.log("Selected Style Prompt:", selectedStylePrompt);
         console.log("Selected Negative Prompt:", selectedNegativePrompt);
-        updateProgress(60, "Okee, gue fine-tune dulu fotonya...");
+        updateProgress(60, "Processing Your Music Personality...");
         const response = await fetch("http://localhost:3001/api/style-transfer", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -258,13 +258,13 @@ const editPhoto = async () => {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        updateProgress(65, "Kalem ya, sedikit lagi...");
+        updateProgress(65, "Processing Your Music Personality...");
         const data = await response.json();
         if (data.success) {
             console.log(data.images);
             const imageResponse = await fetch(data.images);
             const blob = await imageResponse.blob();
-            updateProgress(70, "Foto lu udah jadi!");
+            updateProgress(70, "Processing Your Music Personality...");
             editedImage.value = URL.createObjectURL(blob);
         } else {
             console.error('Error applying style transfer:', data.error);
@@ -291,7 +291,7 @@ const editVideo = async () => {
         const response = await fetch(editedImage.value);
         const overlayBlob = await response.blob();
         const overlayArrayBuffer = await overlayBlob.arrayBuffer();
-        updateProgress(80, "Foto udah siap! Gue proses video lu dulu ya...");
+        updateProgress(80, "Processing Your Music Personality...");
         ffmpeg.FS("writeFile", videoName, await fetchFile(videoFile.value));
         ffmpeg.FS("writeFile", overlayName, new Uint8Array(overlayArrayBuffer));
         ffmpeg.FS("writeFile", musik, await fetchFile(musicFile.value));
@@ -321,7 +321,7 @@ const editVideo = async () => {
             outputName
         );
 
-        updateProgress(85, "Video nya dikit lagi siap...");
+        updateProgress(85, "Processing Your Music Personality...");
 
         const files = ffmpeg.FS("readdir", "/");
         if (!files.includes(outputName)) {
@@ -332,7 +332,7 @@ const editVideo = async () => {
         const outputData = ffmpeg.FS("readFile", outputName);
         const outputBlob = new Blob([outputData.buffer], { type: "video/mp4" });
 
-        updateProgress(95, "Okee, tinggal upload. Tunggu bentar ya...");
+        updateProgress(95, "Processing Your Music Personality...");
         const uid = v4();
         const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}${uid}`;
         const uploadVideo = await uploadVideoFirestore(outputBlob, fileNameWithUuid);
@@ -433,7 +433,7 @@ watch(isLoading, async (val) => {
 
         <div v-if="isLoading" class="loading-overlay">
             <div ref="lottieContainer" class="lottie-player"></div>
-            <p id="loading-status">Memproses Music Personality Lu</p>
+            <p id="loading-status">Processing Your Music Personality...</p>
 
             <!-- Progress Bar Container -->
             <div class="progress-container" id="progress-container">
