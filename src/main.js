@@ -4,4 +4,10 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 
-createApp(App).use(router).mount('#app')
+const app = createApp(App)
+
+if (import.meta.env.PROD) {
+  app.config.devtools = false
+}
+
+app.use(router).mount('#app')
