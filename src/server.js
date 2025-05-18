@@ -44,137 +44,53 @@ const faceClient = createClient(
 );
 
 app.post('/api/style-transfer', async (req, res) => {
+  //const testImage = "https://replicate.delivery/pbxt/KYU95NKY092KYhmCDbLLOVHZqzSC27D5kQLHDb28YM6u8Il1/input.jpg";
+
   const replicate = new Replicate({ auth: API_TOKEN });
 
   const { image, style_image, style_prompt, negative_prompt } = req.body;
-  function cleanBase64(base64String) {
-  return base64String.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
-}
 
-  const imagePureBase64 = cleanBase64(image);
+  console.log('ini style image nya:', style_image);
 
   if (!image || !style_image) {
     return res.status(400).json({ success: false, error: "Missing image or style_image" });
   }
 
-  // const removeBackground = await replicate.run(
-  //   "851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc",
-  //   {
-  //     input: {
-  //       image: image,
-  //       format: "png",
-  //       reverse: false,
-  //       threshold: 0.99,
-  //       background_type: 'blur'
-  //     }
-  //   }
-  // );
-
-  // const removedBackgroundUrl = removeBackground.url();
-
-   // const output = await replicate.run(
-  //   "fofr/style-transfer:f1023890703bc0a5a3a2c21b5e498833be5f6ef6e70e9daf6b9b3a4fd8309cf0",
-  //   {
-  //     input: {
-  //       model: "fast",
-  //       width: 512,
-  //       height: 512,
-  //       prompt: style_prompt,
-  //       style_image: style_image,
-  //       output_format: "png",
-  //       output_quality: 80,
-  //       negative_prompt: negative_prompt,
-  //       structure_image: removedBackgroundUrl,
-  //       number_of_images: 1,
-  //       structure_depth_strength: 2,
-  //       structure_denoising_strength: 0.7
-  //     }
-  //   });
-
-  // const editedImage = output[0].url();
-  // console.log(editedImage);
-
-  const transferFile = async (srcImg, targetImg) => {
-    const formData = new FormData();
-    formData.append('seed', 132);
-    formData.append('model', 'fast');
-    formData.append('width', 240);
-    formData.append('height', 240);
-    formData.append('prompt', style_prompt);
-    formData.append('style_image', targetImg);
-    formData.append('output_format', 'png');
-    formData.append('output_quality', 50);
-    formData.append('negative_prompt', negative_prompt);
-    formData.append('structure_image', srcImg);
-    formData.append('number_of_images', 1);
-    formData.append('structure_depth_strength', 1);
-    formData.append('structure_denoising_strength', 0.65);
-
-    try {
-      const response = await fetch('https://api.segmind.com/v1/style-transfer', {
-        method: 'POST',
-        headers: {
-          'x-api-key': process.env.SEGMIND_API_KEY,
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
+  const output = await replicate.run(
+    "fofr/style-transfer:f1023890703bc0a5a3a2c21b5e498833be5f6ef6e70e9daf6b9b3a4fd8309cf0",
+    {
+      input: {
+        model: "fast",
+        width: 512,
+        height: 512,
+        prompt: style_prompt,
+        style_image: style_image,
+        output_format: "png",
+        output_quality: 80,
+        negative_prompt: negative_prompt,
+        structure_image: image,
+        number_of_images: 1,
+        structure_depth_strength: 2,
+        structure_denoising_strength: 0.7
       }
+    });
 
-      const buffer = await response.buffer();
-      const base64Image = buffer.toString('base64');
-      const cleanBase64Image = cleanBase64(base64Image);
+  const editedImage = output[0].url();
+  console.log(editedImage);
 
-      return cleanBase64Image; // Pure base64 without any prefix
-    } catch (error) {
-      console.error('Error:', error.message);
-      throw error;
-    }
-  };
-
-  const transferFile2 = async (srcImg, targetImg) => {
-    const data = {
-      "source_img": srcImg,
-      "target_img": targetImg,
-      "image_format": "webp"
-    };
-
-    try {
-      const response2 = await fetch('https://api.segmind.com/v1/faceswap-v3', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.SEGMIND_API_KEY,
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response2.ok) {
-        const errorText = await response2.text();
-        throw new Error(errorText);
+  const swapFace = await replicate.run(
+    "cdingram/face-swap:d1d6ea8c8be89d664a07a457526f7128109dee7030fdac424788d762c71ed111",
+    {
+      input: {
+        swap_image: image,
+        input_image: editedImage
       }
-
-      const buffer2 = await response2.arrayBuffer();
-      const base64Image2 = Buffer.from(buffer2).toString('base64');
-
-      return base64Image2;
-    } catch (error) {
-      console.error('Error:', error.message);
-      throw error;
     }
-  };
+  );
 
-  try {
-    const faceswapResult = await transferFile(image, style_image);
-    const finalResult = await transferFile2(imagePureBase64, faceswapResult);
+  console.log(swapFace);
 
-    res.json({ success: true, images: finalResult });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
+  res.json({ success: true, images: swapFace.url() });
 });
 
 app.post('/api/detect-accessories-hair', async (req, res) => {
@@ -359,70 +275,80 @@ app.post('/api/gender-hijab', async (req, res) => {
   }
 });
 
-const imageFileToBase64 = async (url) => {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
-    const buffer = await response.arrayBuffer();
-    return Buffer.from(buffer).toString('base64');
-  } catch (error) {
-    throw new Error(`Error fetching image URL: ${error.message}`);
-  }
-};
-
 app.post("/api/process-video", async (req, res) => {
-  const { imageCoord, overlayImageUrl, personalityStyle } = req.body;
-  const buffer = Buffer.from(overlayImageUrl, 'base64');
-  let imagePath;
+  try {
+    const { imageCoord, overlayImageUrl, personalityStyle } = req.body;
+    
+    const response = await fetch(overlayImageUrl);
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-  file({ postfix: '.png' }, (err, imagePath, fd, cleanupCallback) => {
-    if(err) throw err;
+    file({ postfix: '.png' }, (err, imagePath, fd, cleanupCallback) => {
+      if(err) {
+        console.error("Error creating temporary file:", err);
+        if (!res.headersSent) {
+          res.status(500).send("Failed to create temporary file");
+        }
+        return;
+      }
 
-    writeFile(imagePath, buffer, (err) => {
-      if (err) throw err;
-
-      const selectedNumber = Math.floor(Math.random() * 9) + 1;
-
-      const inputVideo = path.join(__dirname, `assets/video/${personalityStyle}.mp4`);
-      const music = path.join(__dirname, `assets/music/${personalityStyle}/${selectedNumber}.mp3`);
-
-      res.setHeader("Content-Type", "video/mp4");
-      res.setHeader("Content-Disposition", "inline; filename=output.mp4");
-
-      ffmpeg()
-        .input(inputVideo)
-        .input(imagePath)
-        .inputOptions(["-loop 1"])
-        .inputOptions(["-t 5"])
-        .input(music)
-        .complexFilter([
-          { filter: "format", options: "yuva420p", inputs: "[1:v]", outputs: "fmt" },
-          { filter: "scale", options: "745:745", inputs: "fmt", outputs: "scl" },
-          { filter: "fade", options: "t=in:st=0:d=1:alpha=1", inputs: "scl", outputs: "ovl" },
-          { filter: "overlay", options: imageCoord, inputs: ["0:v", "ovl"], outputs: "final" }
-        ])
-        .outputOptions([
-          "-map [final]",
-          "-map 2:a",
-          "-c:v libx264",
-          "-preset veryfast",
-          "-crf 23",
-          "-threads 4",
-          "-b:v 700k",
-          "-c:a aac",
-          "-shortest",
-          "-movflags frag_keyframe+empty_moov" // critical for MP4 streaming
-        ])
-        .format('mp4')
-        .on("error", (err) => {
-          //console.error("FFmpeg error:", err.message);
+      writeFile(imagePath, buffer, (err) => {
+        if (err) {
+          console.error("Error writing file:", err);
           if (!res.headersSent) {
-            res.status(500).send("Video processing failed.");
+            res.status(500).send("Failed to write file");
           }
-        })
-        .pipe(res, { end: true });
+          return;
+        }
+
+        const selectedNumber = Math.floor(Math.random() * 9) + 1;
+
+        const inputVideo = path.join(__dirname, `assets/video/${personalityStyle}.mp4`);
+        const music = path.join(__dirname, `assets/music/${personalityStyle}/${selectedNumber}.mp3`);
+
+        res.setHeader("Content-Type", "video/mp4");
+        res.setHeader("Content-Disposition", "inline; filename=output.mp4");
+
+        ffmpeg()
+          .input(inputVideo)
+          .input(imagePath)
+          .inputOptions(["-loop 1"])
+          .inputOptions(["-t 5"])
+          .input(music)
+          .complexFilter([
+            { filter: "format", options: "yuva420p", inputs: "[1:v]", outputs: "fmt" },
+            { filter: "scale", options: "745:745", inputs: "fmt", outputs: "scl" },
+            { filter: "fade", options: "t=in:st=0:d=1:alpha=1", inputs: "scl", outputs: "ovl" },
+            { filter: "overlay", options: imageCoord, inputs: ["0:v", "ovl"], outputs: "final" }
+          ])
+          .outputOptions([
+            "-map [final]",
+            "-map 2:a",
+            "-c:v libx264",
+            "-preset veryfast",
+            "-crf 23",
+            "-threads 4",
+            "-b:v 700k",
+            "-c:a aac",
+            "-shortest",
+            "-movflags frag_keyframe+empty_moov"
+          ])
+          .format('mp4')
+          .on("error", (err) => {
+            console.error("FFmpeg error:", err.message);
+            if (!res.headersSent) {
+              res.status(500).send("Video processing failed.");
+            }
+          })
+          .pipe(res, { end: true });
+      });
     });
-  });
+  } catch (error) {
+    console.error("Error processing video:", error);
+    if (!res.headersSent) {
+      res.status(500).send("Failed to process video");
+    }
+  }
 });
 
 app.listen(3001, () => {
@@ -431,4 +357,4 @@ app.listen(3001, () => {
 
 app.get('/', (req, res) => {
   res.json("Hello world");
-})
+});
