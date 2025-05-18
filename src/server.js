@@ -158,7 +158,7 @@ app.post('/api/detect-accessories-hair', async (req, res) => {
 
     // Step 4: Analyze attributes
     const baldScore = hair?.bald || 0;
-    const hairType = baldScore > 0.8 ? 'bald' : 'hairy';
+    const hairType = baldScore > 0.8 ? 'bald' : '';
 
     const headwearDetected = (accessories || []).some(acc =>
       acc.type === 'headWear' && acc.confidence > 0.7
@@ -167,7 +167,7 @@ app.post('/api/detect-accessories-hair', async (req, res) => {
     const result = {
       hairType,
       glasses,
-      headwear: headwearDetected ? 'wearing headwear' : 'no headwear',
+      headwear: headwearDetected ? 'wearing headwear' : '',
       croppedFace: croppedFaceBase64, // optional return
     };
 

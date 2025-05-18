@@ -107,10 +107,10 @@ const capturePhoto = () => {
 
 async function classifyImageClientSide(base64Image) {
   const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
-  updateProgress(25, "Processing Your Music Personality...");
+  updateProgress(15, "Processing Your Music Personality...");
 
   if(gender.value === "lanang") {
-    updateProgress(35, "Processing Your Music Personality...");
+    updateProgress(25, "Processing Your Music Personality...");
     return "a single man with a normal skin tone"
   } else {
 
@@ -164,7 +164,19 @@ let selectedStyle = '';
 let selectedStylePrompt = '';
 let selectedNegativePrompt = '';
 
-const chooseStyle = () => {
+const chooseStyle = async () => {
+    const response = await fetch("http://localhost:3001/api/detect-accessories-hair", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            base64Image: imageUrl.value,
+        })
+    });
+
+    const data = await response.json();
+
+    console.log(data);
+
     if (genderPrompt === null){
         alert("no gender detected!");
         return
@@ -215,7 +227,8 @@ const chooseStyle = () => {
 
 const editPhoto = async () => {
     try {
-        chooseStyle();
+        await chooseStyle();
+
         if (!selectedStyle) {
             console.error("Style not found for the selected personality");
             return;
@@ -255,73 +268,6 @@ const editPhoto = async () => {
     }
 };
 
-// const editVideo = async () => {
-//     if (!videoFile.value || !editedImage.value) {
-//         alert("Please select a video and an image!");
-//         return;
-//     }
-
-//     const videoName = "input.mp4";
-//     const overlayName = "overlay.png";
-//     const outputName = "output.mp4";
-//     const musik = "musik.mp3"
-
-//     try {
-
-//         const response = await fetch(editedImage.value);
-//         const overlayBlob = await response.blob();
-//         const overlayArrayBuffer = await overlayBlob.arrayBuffer();
-
-//         ffmpeg.FS("writeFile", videoName, await fetchFile(videoFile.value));
-//         ffmpeg.FS("writeFile", overlayName, new Uint8Array(overlayArrayBuffer));
-//         ffmpeg.FS("writeFile", musik, await fetchFile(musicFile.value));
-
-//         console.log("musicFile.value:", musicFile.value);
-//         console.log("videoFile.value:", videoFile.value);
-
-//         console.log(musicFile.value);
-
-//         await ffmpeg.run(
-//             "-i", videoName,
-//             "-loop", "1",
-//             "-t", "5",
-//             "-i", overlayName,
-//             "-i", musik,
-//             "-filter_complex",
-//             `[1:v] format=yuva420p, scale=495:495, fade=t=in:st=0:d=1:alpha=1 [ovl]; [0:v][ovl] overlay=${imageCoord.value}`,
-//             "-map", "0:v",
-//             "-map", "2:a",
-//             "-c:v", "libx264",
-//             "-preset", "veryfast",
-//             "-crf", "23",
-//             "-threads", "4",
-//             "-b:v", "700k",
-//             "-c:a", "aac",
-//             "-shortest",
-//             outputName
-//         );
-
-//         const files = ffmpeg.FS("readdir", "/");
-//         if (!files.includes(outputName)) {
-//             console.error("Output file not found after processing.");
-//             return;
-//         }
-
-//         const outputData = ffmpeg.FS("readFile", outputName);
-//         const outputBlob = new Blob([outputData.buffer], { type: "video/mp4" });
-
-//         // downloadUrl.value = await uploadVideoFirestore(outputBlob, "test");
-
-//         // console.log(downloadUrl);
-
-//         outputUrl.value = URL.createObjectURL(outputBlob);
-//     } catch (error) {
-//         console.error("Error processing video:", error);
-//         alert("There was an error processing the video.");
-//     }
-// };
-
-
 const editVideo = async () => {
     updateProgress(70, "Foto dah siap, tinggal proses Video lu...");
     try {
@@ -354,16 +300,6 @@ const editVideo = async () => {
         alert("There was an error processing the video.");
     }
 };
-
-
-function blobToBase64(blob) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result.split(',')[1]); // Remove the data:image/... prefix
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-    });
-}
 
 function stopCameraStream() {
     const videoElement = cameraStream.value;
