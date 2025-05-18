@@ -151,7 +151,7 @@ const retakePhoto = () => {
     loadCameraStream();
     retakeCount.value += 1;
 }
-const randomIndex34 = Math.random() < 0.5 ? 3 : 4;
+const randomIndex34 = Math.random() < 0.5 ? 4 : 5;
 
 const styles = {
     'ENTP_ENFP': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style${randomIndex34}/ENTP_ENFP.png`,
@@ -170,46 +170,46 @@ const chooseStyle = () => {
         alert("no gender detected!");
         return
     } else {
-    const randomIndex = Math.floor(Math.random() * 9);
+
         switch (personality.value) {
             case "ESFJ":
                 case "ENFJ":
                     selectedStyle = styles['ESFJ_ENFJ'];
                     musicFile.value = 'ESFJ-ENFJ';
                     imageCoord.value = "170:735";
-                    selectedStylePrompt = `${genderPrompt} on a bold comic book-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with halftone dot patterns and radiating black lines, evoking a vintage pop art or retro comic book vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.`;
-                    selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, natural shadows, painterly, impressionism, pastel colors, low contrast, desaturated, blurry, muted tones, dull colors, smooth gradients, watercolor, cinematic, oil painting, 3D render, text, watermark, logo, blue sky, clouds, irregular layout, asymmetrical composition";
+                    selectedStylePrompt = `${genderPrompt} on A vivid, symmetrical abstract design resembling a radiant sunburst or energy core. The central area glows with warm yellow and orange hues, surrounded by intricate concentric circular patterns and dotted lines in a cool turquoise and teal background. The overall composition is balanced, futuristic, and energetic, with a retro-techno or sacred geometry aesthetic. Clean lines and high detail, with a harmonious color palette and a digital-art style.`;
+                    selectedNegativePrompt = "multiple people, faces, realistic, CGI, 3D render, human figures, animals, landscapes, realistic textures, organic shapes, cluttered background, muted colors, blurry edges, low resolution, text, watermark, uneven symmetry, natural scenery, painterly brush strokes";
                     break;
             case "ESTP":
                 case "ESFP":
                     selectedStyle = styles['ESTP_ESFP'];
                     musicFile.value = 'ESTP-ESFP';
                     imageCoord.value = "170:625";
-                    selectedStylePrompt = `${genderPrompt} on a dynamic comic book-style explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black speed lines. Use a halftone dot pattern in the background with a caramel. The art style should be bold, vibrant, and high-energy, evoking retro pop art and vintage comic aesthetics.`;
-                    selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, blurry, painterly, impressionism, pastel colors, low contrast, smooth gradients, desaturated, natural tones, dull colors, cinematic lighting, noise, text, watermark, logo, 3D render, muted lighting, monochrome, blue sky, clouds";
+                    selectedStylePrompt = `${genderPrompt} on A dynamic, high-energy explosion rendered in an abstract, stylized digital art style. Bright, intense bursts of yellow, orange, and red dominate the scene, radiating outward from a central impact point with sharp streaks, scattered sparks, and smoke plumes. The background fades into deep reds and blacks, evoking a sense of heat, motion, and dramatic impact. Highly saturated colors and expressive brushwork create a vivid, cinematic, and chaotic atmosphere.`;
+                    selectedNegativePrompt = "multiple people, human figures, realistic, CGI, 3D render, animals, soft colors, calm scenery, low contrast, muted tones, water, sky, green nature, buildings, urban setting, realism, photo style, pastel palette, blurry, text, watermark, symmetrical patterns";
                     break;
             case "INFJ":
                 case "INFP":
                     selectedStyle = styles['INFJ_INFP'];
                     musicFile.value = 'INFJ-INFP';
                     imageCoord.value = "265:660";
-                    selectedStylePrompt = `${genderPrompt} on a vibrant, stylized subway station rendered in a pop-art or comic book aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
-                    selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photographic, soft lighting, blurry, painterly, impressionist, natural colors, muted tones, watercolor, low contrast, smooth textures, noise, grain, pastel colors, blue tones, warm lighting, overcrowded, people, cluttered, text, logos, watermark, sky, clouds, sunlight";
+                    selectedStylePrompt = `${genderPrompt} on A futuristic, symmetrical underground subway tunnel rendered in a stylized digital art style. The tunnel is bathed in neon green and cyan lighting, with smooth, curved architecture and glowing ceiling panels. The perspective leads to a bright white light at the vanishing point, creating a sense of depth and mystery. Reflections on the polished floor enhance the immersive, sci-fi atmosphere. No people are present, giving the space a quiet, surreal, and otherworldly vibe.`;
+                    selectedNegativePrompt = "multiple people, crowd, human figures, realistic, CGI, 3D render, cluttered elements, graffiti, decay, dark lighting, low detail, messy textures, natural scenery, animals, medieval architecture, soft lighting, warm tones, low resolution, text, watermark, distorted proportions";
                     break;
             case "INTJ":
                 case "INTP":
                     selectedStyle = styles['INTJ_INTP'];
                     musicFile.value = 'INTJ-INTP';
                     imageCoord.value = "185:330";
-                    selectedStylePrompt = `${genderPrompt} with a comic book-style sky with a bright, vivid red background and red background city scape. include retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle red shading and be spread across a dynamic diagonal composition.`;
-                    selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, text, watermark, signature, low resolution, asymmetry";
+                    selectedStylePrompt = `${genderPrompt} on A stylized futuristic cityscape at sunset, dominated by vivid red, orange, and crimson hues. Tall skyscrapers rise against a dramatic sky with scattered dark clouds, glowing with a moody yet energized atmosphere. Neon-lit buildings, streetlights, and car headlights illuminate the bustling streets below. The perspective is street-level, looking toward the towering skyline, with a slight cinematic glow. A blend of cyberpunk and modern anime aesthetics, with rich contrast and deep shadows.`;
+                    selectedNegativePrompt = "multiple people, crowd scenes, realistic, CGI, 3D render, rural landscapes, daytime blue skies, pastel colors, nature-dominated backgrounds, low contrast, overly dark or stormy clouds, blurry details, low resolution, medieval buildings, graffiti, animals, text, watermark";
                     break;
             default:
                 selectedStyle = styles['ENTP_ENFP'];
                 musicFile.value = 'ENTP-ENFP';
                 imageCoord.value = "75:365";
-                selectedStylePrompt = `${genderPrompt} with a comic book-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. The scene should include halftone dot patterns, sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
-                selectedNegativePrompt = "2 person, two humans, multiple people, non human object, faceless human, realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
+                selectedStylePrompt = `${genderPrompt} on A vibrant, serene anime-style sky with deep blue tones and soft, fluffy big cumulus clouds scattered across the horizon. The lighting suggests a bright, sunny day with dynamic cloud formations, giving a peaceful and dreamy atmosphere. The clouds vary in size, with a few towering clouds in the foreground and wispy cirrus clouds stretching into the distance. High detail and soft color gradients in a scenic, tranquil landscape.`;
+                selectedNegativePrompt = "multiple people, crowd, group of people, realistic, CGI, 3D render, human figures, cityscape, buildings, vehicles, dark sky, night, rain, storm, low resolution, blurry, grainy, text, watermark, distorted shapes, unrealistic cloud formations, fantasy creatures";
                 break;
         }
     }
@@ -228,7 +228,7 @@ const editPhoto = async () => {
         console.log("Selected Style:", selectedStyle);
         console.log("Selected Style Prompt:", selectedStylePrompt);
         console.log("Selected Negative Prompt:", selectedNegativePrompt);
-
+        updateProgress(50, "Lagi proses foto lu, tungguin ya...");
         const response = await fetch("http://localhost:3001/api/style-transfer", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -246,7 +246,7 @@ const editPhoto = async () => {
         updateProgress(65, "Kalem ya, sedikit lagi...");
         const data = await response.json();
         if (data.success) {
-            console.log(data.images);
+            //console.log(data.images);
             editedImage.value = data.images;
         } else {
             console.error('Error applying style transfer:', data.error);
@@ -325,7 +325,7 @@ const editPhoto = async () => {
 
 const editVideo = async () => {
     const base64Image = editedImage.value;
-
+    updateProgress(70, "Foto dah siap, tinggal proses Video lu...");
     try {
         const response = await fetch("http://localhost:3001/api/process-video", {
             method: "POST",
@@ -339,14 +339,14 @@ const editVideo = async () => {
 
         const videoBlob = await response.blob();
         const blobUrl = URL.createObjectURL(videoBlob);
-
+        updateProgress(80, "lagi Upload video lu supaya bisa di download...");
         if(blobUrl){
             outputUrl.value = blobUrl;
 
             const uid = v4();
             const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}${uid}`;
             const uploadVideo = await uploadVideoFirestore(videoBlob, fileNameWithUuid);
-
+            updateProgress(90, "Dikiiiiit lagi");
             if(uploadVideo) downloadUrl.value = fileNameWithUuid;
         } else {
             throw new Error('Error while processing blob');
@@ -420,7 +420,6 @@ const process = async () => {
         genderPrompt = detectedGender;
         await editPhoto();
 
-        updateProgress(75, "Foto udah siap! Gue proses video lu dulu ya...");
         await editVideo();
 
         goToResultPage();

@@ -196,7 +196,7 @@ app.post('/api/gender-hijab', async (req, res) => {
 
 
     if (detectResponse.status !== "200") {
-      console.error("Face API error:", detectResponse.body);
+      //console.error("Face API error:", detectResponse.body);
       return res.status(500).json({ error: "Face API failed." });
     }
 
@@ -261,7 +261,7 @@ app.post('/api/gender-hijab', async (req, res) => {
 
     const hijabResult = await hijabResponse.json();
 
-    console.log(hijabResult.predictions);
+    //console.log(hijabResult.predictions);
 
     res.json({
       hijab: hijabResult.predictions,
@@ -328,7 +328,7 @@ app.post("/api/process-video", async (req, res) => {
         ])
         .format('mp4')
         .on("error", (err) => {
-          console.error("FFmpeg error:", err.message);
+          //console.error("FFmpeg error:", err.message);
           if (!res.headersSent) {
             res.status(500).send("Video processing failed.");
           }
