@@ -108,11 +108,11 @@ const capturePhoto = () => {
 async function classifyImageClientSide(base64Image) {
   const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
   console.log("Image cleaned:", cleanedBase64);
-  updateProgress(25, "Lagi siapin datanya...");
+  updateProgress(25, "Processing Your Music Personality...");
 
   if(gender.value === "lanang") {
-    updateProgress(35, "Okee, datanya udah siap!");
-    return "a single man"
+    updateProgress(35, "Processing Your Music Personality...");
+    return "a single man with a normal skin tone"
   } else {
 
   const res = await fetch("http://localhost:3001/api/gender-hijab", {
@@ -120,22 +120,22 @@ async function classifyImageClientSide(base64Image) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ base64Image: cleanedBase64 })
   });
-  updateProgress(30, "Lagi siapin datanya...");
+  updateProgress(30, "Processing Your Music Personality...");
   const data = await res.json();
   
   if (data.error) {
     console.error(data.error);
-    updateProgress(35, "Aduhh ada kendala teknis nih...");
+    updateProgress(35, "Failed to Processing Your Music Personality.");
     return;
   }
   
   // Check if female and hijab detected
   if (data.hijab && data.hijab.some(p => p.tagName === "hijab" && p.probability > 0.5)) {
-    updateProgress(35, "Okee, datanya udah siap!");
-    return "a single woman wearing a hijab";
+    updateProgress(35, "Processing Your Music Personality...");
+    return "a single woman wearing a hijab and normal skin tone";
   } else {
-  updateProgress(35, "Okee, datanya udah siap!");
-  return "a single woman"
+  updateProgress(35, "Processing Your Music Personality...");
+  return "a single woman and normal skin tone"
     }
   }
 }
@@ -170,46 +170,51 @@ const chooseStyle = () => {
         alert("no gender detected!");
         return
     } else {
-
-        switch (personality.value) {
-            case "ESFJ":
-                case "ENFJ":
-                    selectedStyle = styles['ESFJ_ENFJ'];
-                    musicFile.value = 'ESFJ-ENFJ';
-                    imageCoord.value = "170:735";
-                    selectedStylePrompt = `${genderPrompt} on A vivid, symmetrical abstract design resembling a radiant sunburst or energy core. The central area glows with warm yellow and orange hues, surrounded by intricate concentric circular patterns and dotted lines in a cool turquoise and teal background. The overall composition is balanced, futuristic, and energetic, with a retro-techno or sacred geometry aesthetic. Clean lines and high detail, with a harmonious color palette and a digital-art style.`;
-                    selectedNegativePrompt = "multiple people, faces, realistic, CGI, 3D render, human figures, animals, landscapes, realistic textures, organic shapes, cluttered background, muted colors, blurry edges, low resolution, text, watermark, uneven symmetry, natural scenery, painterly brush strokes";
-                    break;
-            case "ESTP":
-                case "ESFP":
-                    selectedStyle = styles['ESTP_ESFP'];
-                    musicFile.value = 'ESTP-ESFP';
-                    imageCoord.value = "170:625";
-                    selectedStylePrompt = `${genderPrompt} on A dynamic, high-energy explosion rendered in an abstract, stylized digital art style. Bright, intense bursts of yellow, orange, and red dominate the scene, radiating outward from a central impact point with sharp streaks, scattered sparks, and smoke plumes. The background fades into deep reds and blacks, evoking a sense of heat, motion, and dramatic impact. Highly saturated colors and expressive brushwork create a vivid, cinematic, and chaotic atmosphere.`;
-                    selectedNegativePrompt = "multiple people, human figures, realistic, CGI, 3D render, animals, soft colors, calm scenery, low contrast, muted tones, water, sky, green nature, buildings, urban setting, realism, photo style, pastel palette, blurry, text, watermark, symmetrical patterns";
-                    break;
-            case "INFJ":
-                case "INFP":
-                    selectedStyle = styles['INFJ_INFP'];
-                    musicFile.value = 'INFJ-INFP';
-                    imageCoord.value = "265:660";
-                    selectedStylePrompt = `${genderPrompt} on A futuristic, symmetrical underground subway tunnel rendered in a stylized digital art style. The tunnel is bathed in neon green and cyan lighting, with smooth, curved architecture and glowing ceiling panels. The perspective leads to a bright white light at the vanishing point, creating a sense of depth and mystery. Reflections on the polished floor enhance the immersive, sci-fi atmosphere. No people are present, giving the space a quiet, surreal, and otherworldly vibe.`;
-                    selectedNegativePrompt = "multiple people, crowd, human figures, realistic, CGI, 3D render, cluttered elements, graffiti, decay, dark lighting, low detail, messy textures, natural scenery, animals, medieval architecture, soft lighting, warm tones, low resolution, text, watermark, distorted proportions";
-                    break;
-            case "INTJ":
-                case "INTP":
-                    selectedStyle = styles['INTJ_INTP'];
-                    musicFile.value = 'INTJ-INTP';
-                    imageCoord.value = "185:330";
-                    selectedStylePrompt = `${genderPrompt} on A stylized futuristic cityscape at sunset, dominated by vivid red, orange, and crimson hues. Tall skyscrapers rise against a dramatic sky with scattered dark clouds, glowing with a moody yet energized atmosphere. Neon-lit buildings, streetlights, and car headlights illuminate the bustling streets below. The perspective is street-level, looking toward the towering skyline, with a slight cinematic glow. A blend of cyberpunk and modern anime aesthetics, with rich contrast and deep shadows.`;
-                    selectedNegativePrompt = "multiple people, crowd scenes, realistic, CGI, 3D render, rural landscapes, daytime blue skies, pastel colors, nature-dominated backgrounds, low contrast, overly dark or stormy clouds, blurry details, low resolution, medieval buildings, graffiti, animals, text, watermark";
-                    break;
-            default:
-                selectedStyle = styles['ENTP_ENFP'];
-                musicFile.value = 'ENTP-ENFP';
-                imageCoord.value = "75:365";
-                selectedStylePrompt = `${genderPrompt} on A vibrant, serene anime-style sky with deep blue tones and soft, fluffy big cumulus clouds scattered across the horizon. The lighting suggests a bright, sunny day with dynamic cloud formations, giving a peaceful and dreamy atmosphere. The clouds vary in size, with a few towering clouds in the foreground and wispy cirrus clouds stretching into the distance. High detail and soft color gradients in a scenic, tranquil landscape.`;
-                selectedNegativePrompt = "multiple people, crowd, group of people, realistic, CGI, 3D render, human figures, cityscape, buildings, vehicles, dark sky, night, rain, storm, low resolution, blurry, grainy, text, watermark, distorted shapes, unrealistic cloud formations, fantasy creatures";
+    const randomIndex = Math.floor(Math.random() * 9);
+    switch (personality.value) {
+        default:
+            selectedStyle = styles['ENTP_ENFP'];
+            videoFile.value = video1;
+            imageCoord.value = "75:365";
+            musicFile.value = ENTP_ENFP[randomIndex];
+            selectedStylePrompt = `${genderPrompt} with a anime-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
+            selectedNegativePrompt = "2 person, two humans, multiple people, non human object, faceless human, realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
+            break;
+        case "ESFJ":
+            case "ENFJ":
+                selectedStyle = styles['ESFJ_ENFJ'];
+                videoFile.value = video2;
+                imageCoord.value = "170:735";
+                musicFile.value = ESFJ_ENFJ[randomIndex];
+                selectedStylePrompt = `${genderPrompt} on a bold anime-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with radiating black lines, evoking a vintage pop art or retro anime vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.`;
+                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, natural shadows, painterly, impressionism, pastel colors, low contrast, desaturated, blurry, muted tones, dull colors, smooth gradients, watercolor, cinematic, oil painting, 3D render, text, watermark, logo, blue sky, clouds, irregular layout, asymmetrical composition";
+                break;
+        case "ESTP":
+            case "ESFP":
+                selectedStyle = styles['ESTP_ESFP'];
+                videoFile.value = video3;
+                imageCoord.value = "170:625";
+                musicFile.value = ESTP_ESFP[randomIndex];
+                selectedStylePrompt = `${genderPrompt} on a dynamic anime-style, on a sunset sky with explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black stroke lines. The art style should be bold, vibrant, and high-energy, evoking retro anime and vintage comic aesthetics.`;
+                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, blurry, painterly, impressionism, pastel colors, low contrast, smooth gradients, desaturated, natural tones, dull colors, cinematic lighting, noise, text, watermark, logo, 3D render, muted lighting, monochrome, blue sky, clouds";
+                break;
+        case "INFJ":
+            case "INFP":
+                selectedStyle = styles['INFJ_INFP'];
+                videoFile.value = video4;
+                imageCoord.value = "265:660";
+                musicFile.value = INFJ_INFP[randomIndex];
+                selectedStylePrompt = `${genderPrompt} on a vibrant, stylized subway station rendered in a anime style aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
+                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photographic, soft lighting, blurry, painterly, impressionist, natural colors, muted tones, watercolor, low contrast, smooth textures, noise, grain, pastel colors, blue tones, warm lighting, overcrowded, people, cluttered, text, logos, watermark, sky, clouds, sunlight";
+                break;
+        case "INTJ":
+            case "INTP":
+                selectedStyle = styles['INTJ_INTP'];
+                videoFile.value = video5;
+                imageCoord.value = "185:330";
+                musicFile.value = INTJ_INTP[randomIndex];
+                selectedStylePrompt = `${genderPrompt} with a anime-style sky with a bright vivid red background and red background tall city scape. The clouds should have soft, rounded shapes and be spread across a dynamic diagonal composition.`;
+                selectedNegativePrompt = "two persons, two humans, wrinkles on face, multiple people, non human object, dark skin tone, abnormal skin tone, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, text, watermark, signature, low resolution, asymmetry";
                 break;
         }
     }
@@ -228,7 +233,7 @@ const editPhoto = async () => {
         console.log("Selected Style:", selectedStyle);
         console.log("Selected Style Prompt:", selectedStylePrompt);
         console.log("Selected Negative Prompt:", selectedNegativePrompt);
-        updateProgress(50, "Lagi proses foto lu, tungguin ya...");
+        updateProgress(60, "Okee, gue fine-tune dulu fotonya...");
         const response = await fetch("http://localhost:3001/api/style-transfer", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -246,8 +251,11 @@ const editPhoto = async () => {
         updateProgress(65, "Kalem ya, sedikit lagi...");
         const data = await response.json();
         if (data.success) {
-            //console.log(data.images);
-            editedImage.value = data.images;
+            console.log(data.images);
+            const imageResponse = await fetch(data.images);
+            const blob = await imageResponse.blob();
+            updateProgress(70, "Processing Your Music Personality...");
+            editedImage.value = URL.createObjectURL(blob);
         } else {
             console.error('Error applying style transfer:', data.error);
         }
@@ -447,12 +455,13 @@ watch(isLoading, async (val) => {
 </script>
 
 <template>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <div class="app-container">
         <img src="../assets/normal-bg.png" class="background-image" />
 
         <div v-if="isLoading" class="loading-overlay">
             <div ref="lottieContainer" class="lottie-player"></div>
-            <p id="loading-status">Memproses Music Personality Lu</p>
+            <p id="loading-status">Processing Your Music Personality...</p>
 
             <!-- Progress Bar Container -->
             <div class="progress-container" id="progress-container">

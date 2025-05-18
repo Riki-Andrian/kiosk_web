@@ -177,6 +177,93 @@ app.post('/api/style-transfer', async (req, res) => {
   }
 });
 
+app.post('/api/detect-accessories-hair', async (req, res) => {
+  const { base64Image } = req.body;
+  if (!base64Image) return res.status(400).json({ error: 'No image provided' });
+
+  try {
+    const imageBuffer = Buffer.from(base64Image.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+
+    // Step 1: Detect faces using Azure Face API
+    const detectResponse = await faceClient.path("/detect").post({
+      contentType: "application/octet-stream",
+      queryParameters: {
+        detectionModel: "detection_03",
+        returnFaceId: false,
+        returnFaceAttributes: "accessories,glasses,hair"
+      },
+      body: imageBuffer,
+    });
+
+    if (detectResponse.status !== "200") {
+      console.error("Face API error:", detectResponse.body);
+      return res.status(500).json({ error: "Face API failed." });
+    }
+
+    const faces = detectResponse.body;
+
+    if (!Array.isArray(faces) || faces.length === 0) {
+      return res.json({ message: 'No face detected' });
+    }
+
+    // Step 2: Sort to find the closest/largest face
+    const sorted = faces.sort((a, b) => {
+      const aSize = a.faceRectangle.width * a.faceRectangle.height;
+      const bSize = b.faceRectangle.width * b.faceRectangle.height;
+      return bSize - aSize;
+    });
+
+    const mainFace = sorted[0];
+    const { faceRectangle, hair, glasses, accessories } = mainFace;
+
+    // Step 3: Use sharp to crop this face (optional for debugging/saving)
+    const sharpImage = sharp(imageBuffer);
+    const metadata = await sharpImage.metadata();
+
+    const padding = 150;
+    const { top, left, width, height } = faceRectangle;
+    const paddedTop = Math.max(0, top - padding);
+    const paddedLeft = Math.max(0, left - padding);
+    const paddedWidth = Math.min(width + padding * 2, metadata.width - paddedLeft);
+    const paddedHeight = Math.min(height + padding * 2, metadata.height - paddedTop);
+
+    const croppedFaceBuffer = await sharpImage
+      .extract({
+        top: paddedTop,
+        left: paddedLeft,
+        width: paddedWidth,
+        height: paddedHeight,
+      })
+      .toFormat('png')
+      .toBuffer();
+
+    // Optional: Convert to base64 if you want to return it
+    const croppedFaceBase64 = `data:image/png;base64,${croppedFaceBuffer.toString('base64')}`;
+
+    // Step 4: Analyze attributes
+    const baldScore = hair?.bald || 0;
+    const hairType = baldScore > 0.8 ? 'bald' : 'hairy';
+
+    const headwearDetected = (accessories || []).some(acc =>
+      acc.type === 'headWear' && acc.confidence > 0.7
+    );
+
+    const result = {
+      hairType,
+      glasses,
+      headwear: headwearDetected ? 'wearing headwear' : 'no headwear',
+      croppedFace: croppedFaceBase64, // optional return
+    };
+
+    res.json(result);
+
+  } catch (err) {
+    console.error('Detection error:', err);
+    res.status(500).json({ error: 'Failed to detect accessories & hair type' });
+  }
+});
+
+
 app.post('/api/gender-hijab', async (req, res) => {
   const { base64Image } = req.body;
   if (!base64Image) return res.status(400).json({ error: 'No image provided' });
