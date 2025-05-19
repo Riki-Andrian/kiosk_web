@@ -177,6 +177,8 @@ const chooseStyle = async () => {
 
     console.log(data);
 
+    if(data.glasses != 'NoGlasses') genderPrompt += ' wearing glasses';
+
     if (genderPrompt === null){
         alert("no gender detected!");
         return

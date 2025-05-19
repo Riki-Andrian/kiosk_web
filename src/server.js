@@ -106,7 +106,7 @@ app.post('/api/detect-accessories-hair', async (req, res) => {
       queryParameters: {
         detectionModel: "detection_03",
         returnFaceId: false,
-        returnFaceAttributes: "accessories,glasses,hair"
+        returnFaceAttributes: "glasses"
       },
       body: imageBuffer,
     });
@@ -130,7 +130,9 @@ app.post('/api/detect-accessories-hair', async (req, res) => {
     });
 
     const mainFace = sorted[0];
-    const { faceRectangle, hair, glasses, accessories } = mainFace;
+    const { faceRectangle, hair, accessories } = mainFace;
+
+    const glasses = mainFace.faceAttributes.glasses;
 
     // Step 3: Use sharp to crop this face (optional for debugging/saving)
     const sharpImage = sharp(imageBuffer);
@@ -165,10 +167,7 @@ app.post('/api/detect-accessories-hair', async (req, res) => {
     );
 
     const result = {
-      hairType,
-      glasses,
-      headwear: headwearDetected ? 'wearing headwear' : '',
-      croppedFace: croppedFaceBase64, // optional return
+      glasses
     };
 
     res.json(result);
