@@ -202,9 +202,9 @@ const chooseStyle = async () => {
                 musicFile.value = 'ESFJ-ENFJ';
                 imageCoord.value = "170:735";
                 if(randomNumberGenerator === 1){
-                    selectedStylePrompt = `a close up of ${genderPrompt}, standing facing to camera, with a light smile, and DJ table as background. the style should be cartoonish`;
+                    selectedStylePrompt = `a super close up of ${genderPrompt}, standing facing to camera, with a light smile, and DJ tools in the back. the style should be cartoonish`;
                 } else {
-                    selectedStylePrompt = `a close up of ${genderPrompt}, standing facing to camera, with a light smile, and DJ table with a semi-circular sound chamber as background. the style should be cartoonish`;
+                    selectedStylePrompt = `a super close up of ${genderPrompt}, standing facing to camera, with a light smile, and DJ tools with a semi-circular sound chamber in the back. the style should be cartoonish`;
                 }
                 selectedNegativePrompt = "multiple person, realistic";
                 selectedSeed = baseSeed2 + lastSeedDigit;
