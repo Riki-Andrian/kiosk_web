@@ -65,6 +65,7 @@ onMounted(loadCameraStream);
 const capturePhoto = () => {
     if (!cameraStream.value) return;
 
+    capturingPhoto.value = true;
     countdown.value = 3;
     isCountingDown.value = true;
 
@@ -101,6 +102,7 @@ const capturePhoto = () => {
             );
 
             capturedImage.value = canvas.toDataURL("image/png");
+            capturingPhoto.value = false;
         }
     }, 1000);
 };
@@ -140,6 +142,8 @@ async function classifyImageClientSide(base64Image) {
 }
 
 const retakeCount = ref(0);
+const capturingPhoto = ref(false);
+const processingAI = ref(false);
 
 const retakePhoto = () => {
     if (retakeCount.value >= 1) {
@@ -365,6 +369,7 @@ function updateProgress(percent, message) {
 
 
 const process = async () => {
+    processingAI.value = true;
     isLoading.value = true;
     updateProgress(0, "Processing Your Music Personality...");
     try {
@@ -378,6 +383,7 @@ const process = async () => {
         goToResultPage();
     } finally {
         isLoading.value = false;
+        processingAI.value = false;
     }
 };
 
@@ -430,7 +436,7 @@ watch(isLoading, async (val) => {
                 <div v-if="!capturedImage" class="camera-container">
                     <video class="camera-preview" ref="cameraStream" autoplay></video>
                     <div class="button-wrapper">
-                        <button class="action-button" @click="capturePhoto">TAKE A PHOTO</button>
+                        <button class="action-button" :disabled="capturingPhoto || isCountingDown" @click="capturePhoto">TAKE A PHOTO</button>
                     </div>
                 </div>
 
@@ -439,7 +445,7 @@ watch(isLoading, async (val) => {
                     <button id="retake-photo" class="action-button" @click="retakePhoto" :disabled="retakeCount >= 1">
                         RE-TAKE PHOTO
                     </button>
-                    <button class="action-button" @click="process">S U B M I T</button>
+                    <button class="action-button" :disabled="processingAI" @click="process">S U B M I T</button>
                 </div>
             </div>
         </div>
