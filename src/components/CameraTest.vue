@@ -241,7 +241,7 @@ const editPhoto = async () => {
         console.log("Selected Style:", selectedStyle);
         console.log("Selected Style Prompt:", selectedStylePrompt);
         console.log("Selected Negative Prompt:", selectedNegativePrompt);
-        updateProgress(60, "Okee, gue fine-tune dulu fotonya...");
+        updateProgress(60, "Processing Your Music Personality...");
         const response = await fetch("http://localhost:3001/api/style-transfer", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -256,7 +256,7 @@ const editPhoto = async () => {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        updateProgress(65, "Kalem ya, sedikit lagi...");
+        updateProgress(65, "Processing Your Music Personality...");
         const data = await response.json();
         if (data.success) {
             console.log(data.images);
@@ -271,7 +271,7 @@ const editPhoto = async () => {
 };
 
 const editVideo = async () => {
-    updateProgress(70, "Foto dah siap, tinggal proses Video lu...");
+    updateProgress(70, "Processing Your Music Personality...");
     try {
         const response = await fetch("http://localhost:3001/api/process-video", {
             method: "POST",
@@ -285,14 +285,14 @@ const editVideo = async () => {
 
         const videoBlob = await response.blob();
         const blobUrl = URL.createObjectURL(videoBlob);
-        updateProgress(80, "lagi Upload video lu supaya bisa di download...");
+        updateProgress(80, "Processing Your Music Personality...");
         if(blobUrl){
             outputUrl.value = blobUrl;
 
             const uid = v4();
             const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}${uid}`;
             const uploadVideo = await uploadVideoFirestore(videoBlob, fileNameWithUuid);
-            updateProgress(90, "Dikiiiiit lagi");
+            updateProgress(90, "Processing Your Music Personality...");
             if(uploadVideo) downloadUrl.value = fileNameWithUuid;
         } else {
             throw new Error('Error while processing blob');
@@ -349,7 +349,7 @@ function updateProgress(percent, message) {
 
 const process = async () => {
     isLoading.value = true;
-    updateProgress(0, "Mulai proses...");
+    updateProgress(0, "Processing Your Music Personality...");
     try {
         console.log("Processing...");
         const detectedGender = await classifyImageClientSide(capturedImage.value);
