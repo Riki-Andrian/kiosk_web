@@ -107,11 +107,10 @@ const capturePhoto = () => {
 
 async function classifyImageClientSide(base64Image) {
   const cleanedBase64 = base64Image.replace(/^data:image\/(png|jpeg);base64,/, "");
-  console.log("Image cleaned:", cleanedBase64);
-  updateProgress(25, "Processing Your Music Personality...");
+  updateProgress(15, "Processing Your Music Personality...");
 
   if(gender.value === "lanang") {
-    updateProgress(35, "Processing Your Music Personality...");
+    updateProgress(25, "Processing Your Music Personality...");
     return "a single man with a normal skin tone"
   } else {
 
@@ -165,54 +164,62 @@ let selectedStyle = '';
 let selectedStylePrompt = '';
 let selectedNegativePrompt = '';
 
-const chooseStyle = () => {
+const chooseStyle = async () => {
+    const response = await fetch("http://localhost:3001/api/detect-accessories-hair", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            base64Image: imageUrl.value,
+        })
+    });
+
+    const data = await response.json();
+
+    console.log(data);
+
+    if(data.glasses != 'NoGlasses') genderPrompt += ' wearing glasses';
+
     if (genderPrompt === null){
         alert("no gender detected!");
         return
     } else {
-    const randomIndex = Math.floor(Math.random() * 9);
     switch (personality.value) {
         default:
             selectedStyle = styles['ENTP_ENFP'];
-            videoFile.value = video1;
+            musicFile.value = 'ENTP-ENFP';
             imageCoord.value = "75:365";
-            musicFile.value = ENTP_ENFP[randomIndex];
             selectedStylePrompt = `${genderPrompt} with a anime-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
             selectedNegativePrompt = "2 person, two humans, multiple people, non human object, faceless human, realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
             break;
         case "ESFJ":
             case "ENFJ":
                 selectedStyle = styles['ESFJ_ENFJ'];
-                videoFile.value = video2;
+                musicFile.value = 'ESFJ-ENFJ';
                 imageCoord.value = "170:735";
-                musicFile.value = ESFJ_ENFJ[randomIndex];
                 selectedStylePrompt = `${genderPrompt} on a bold anime-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with radiating black lines, evoking a vintage pop art or retro anime vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.`;
                 selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, natural shadows, painterly, impressionism, pastel colors, low contrast, desaturated, blurry, muted tones, dull colors, smooth gradients, watercolor, cinematic, oil painting, 3D render, text, watermark, logo, blue sky, clouds, irregular layout, asymmetrical composition";
                 break;
         case "ESTP":
             case "ESFP":
                 selectedStyle = styles['ESTP_ESFP'];
-                videoFile.value = video3;
+                musicFile.value = 'ESTP-ESFP';
                 imageCoord.value = "170:625";
-                musicFile.value = ESTP_ESFP[randomIndex];
                 selectedStylePrompt = `${genderPrompt} on a dynamic anime-style, on a sunset sky with explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black stroke lines. The art style should be bold, vibrant, and high-energy, evoking retro anime and vintage comic aesthetics.`;
                 selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, blurry, painterly, impressionism, pastel colors, low contrast, smooth gradients, desaturated, natural tones, dull colors, cinematic lighting, noise, text, watermark, logo, 3D render, muted lighting, monochrome, blue sky, clouds";
                 break;
         case "INFJ":
             case "INFP":
                 selectedStyle = styles['INFJ_INFP'];
-                videoFile.value = video4;
+                musicFile.value = 'INFJ-INFP';
                 imageCoord.value = "265:660";
-                musicFile.value = INFJ_INFP[randomIndex];
                 selectedStylePrompt = `${genderPrompt} on a vibrant, stylized subway station rendered in a anime style aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
                 selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photographic, soft lighting, blurry, painterly, impressionist, natural colors, muted tones, watercolor, low contrast, smooth textures, noise, grain, pastel colors, blue tones, warm lighting, overcrowded, people, cluttered, text, logos, watermark, sky, clouds, sunlight";
                 break;
         case "INTJ":
             case "INTP":
                 selectedStyle = styles['INTJ_INTP'];
-                videoFile.value = video5;
+                musicFile.value = 'INTJ-INTP';
                 imageCoord.value = "185:330";
-                musicFile.value = INTJ_INTP[randomIndex];
                 selectedStylePrompt = `${genderPrompt} with a anime-style sky with a bright vivid red background and red background tall city scape. The clouds should have soft, rounded shapes and be spread across a dynamic diagonal composition.`;
                 selectedNegativePrompt = "two persons, two humans, wrinkles on face, multiple people, non human object, dark skin tone, abnormal skin tone, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, text, watermark, signature, low resolution, asymmetry";
                 break;
@@ -222,7 +229,8 @@ const chooseStyle = () => {
 
 const editPhoto = async () => {
     try {
-        chooseStyle();
+        await chooseStyle();
+
         if (!selectedStyle) {
             console.error("Style not found for the selected personality");
             return;
@@ -233,7 +241,7 @@ const editPhoto = async () => {
         console.log("Selected Style:", selectedStyle);
         console.log("Selected Style Prompt:", selectedStylePrompt);
         console.log("Selected Negative Prompt:", selectedNegativePrompt);
-        updateProgress(60, "Processing Your Music Personality...");
+        updateProgress(60, "Okee, gue fine-tune dulu fotonya...");
         const response = await fetch("http://localhost:3001/api/style-transfer", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -248,14 +256,12 @@ const editPhoto = async () => {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        updateProgress(65, "Processing Your Music Personality...");
+        updateProgress(65, "Kalem ya, sedikit lagi...");
         const data = await response.json();
         if (data.success) {
             console.log(data.images);
-            const imageResponse = await fetch(data.images);
-            const blob = await imageResponse.blob();
             updateProgress(70, "Processing Your Music Personality...");
-            editedImage.value = URL.createObjectURL(blob);
+            editedImage.value = data.images;
         } else {
             console.error('Error applying style transfer:', data.error);
         }
@@ -264,154 +270,38 @@ const editPhoto = async () => {
     }
 };
 
-// const editVideo = async () => {
-//     if (!videoFile.value || !editedImage.value) {
-//         alert("Please select a video and an image!");
-//         return;
-//     }
-
-//     const videoName = "input.mp4";
-//     const overlayName = "overlay.png";
-//     const outputName = "output.mp4";
-//     const musik = "musik.mp3"
-
-//     try {
-
-//         const response = await fetch(editedImage.value);
-//         const overlayBlob = await response.blob();
-//         const overlayArrayBuffer = await overlayBlob.arrayBuffer();
-
-//         ffmpeg.FS("writeFile", videoName, await fetchFile(videoFile.value));
-//         ffmpeg.FS("writeFile", overlayName, new Uint8Array(overlayArrayBuffer));
-//         ffmpeg.FS("writeFile", musik, await fetchFile(musicFile.value));
-
-//         console.log("musicFile.value:", musicFile.value);
-//         console.log("videoFile.value:", videoFile.value);
-
-//         console.log(musicFile.value);
-
-//         await ffmpeg.run(
-//             "-i", videoName,
-//             "-loop", "1",
-//             "-t", "5",
-//             "-i", overlayName,
-//             "-i", musik,
-//             "-filter_complex",
-//             `[1:v] format=yuva420p, scale=495:495, fade=t=in:st=0:d=1:alpha=1 [ovl]; [0:v][ovl] overlay=${imageCoord.value}`,
-//             "-map", "0:v",
-//             "-map", "2:a",
-//             "-c:v", "libx264",
-//             "-preset", "veryfast",
-//             "-crf", "23",
-//             "-threads", "4",
-//             "-b:v", "700k",
-//             "-c:a", "aac",
-//             "-shortest",
-//             outputName
-//         );
-
-//         const files = ffmpeg.FS("readdir", "/");
-//         if (!files.includes(outputName)) {
-//             console.error("Output file not found after processing.");
-//             return;
-//         }
-
-//         const outputData = ffmpeg.FS("readFile", outputName);
-//         const outputBlob = new Blob([outputData.buffer], { type: "video/mp4" });
-
-//         // downloadUrl.value = await uploadVideoFirestore(outputBlob, "test");
-
-//         // console.log(downloadUrl);
-
-//         outputUrl.value = URL.createObjectURL(outputBlob);
-//     } catch (error) {
-//         console.error("Error processing video:", error);
-//         alert("There was an error processing the video.");
-//     }
-// };
-
-
 const editVideo = async () => {
-    if (!videoFile.value || !editedImage.value) {
-        alert("Please select a video and an image!");
-        return;
-    }
-
-    const videoName = "input.mp4";
-    const overlayName = "overlay.png";
-    const outputName = "output.mp4";
-    const musik = "musik.mp3"
-
+    updateProgress(70, "Foto dah siap, tinggal proses Video lu...");
     try {
-        
-        //const response = aiResult;
-        const response = await fetch(editedImage.value);
-        const overlayBlob = await response.blob();
-        const overlayArrayBuffer = await overlayBlob.arrayBuffer();
-        updateProgress(80, "Processing Your Music Personality...");
-        ffmpeg.FS("writeFile", videoName, await fetchFile(videoFile.value));
-        ffmpeg.FS("writeFile", overlayName, new Uint8Array(overlayArrayBuffer));
-        ffmpeg.FS("writeFile", musik, await fetchFile(musicFile.value));
+        const response = await fetch("http://localhost:3001/api/process-video", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                imageCoord: imageCoord.value,
+                overlayImageUrl: editedImage.value,
+                personalityStyle: musicFile.value
+            })
+        });
 
-        //console.log("musicFile.value:", musicFile.value);
-        //console.log("videoFile.value:", videoFile.value);
+        const videoBlob = await response.blob();
+        const blobUrl = URL.createObjectURL(videoBlob);
+        updateProgress(80, "lagi Upload video lu supaya bisa di download...");
+        if(blobUrl){
+            outputUrl.value = blobUrl;
 
-        //console.log(musicFile.value);
-
-        await ffmpeg.run(
-            "-i", videoName,
-            "-loop", "1",
-            "-t", "5",
-            "-i", overlayName,
-            "-i", musik,
-            "-filter_complex",
-            `[1:v] format=yuva420p, scale=745:745, fade=t=in:st=0:d=1:alpha=1 [ovl]; [0:v][ovl] overlay=${imageCoord.value}`,
-            "-map", "0:v",
-            "-map", "2:a",
-            "-c:v", "libx264",
-            "-preset", "ultrafast",
-            "-crf", "23",
-            "-threads", "4",
-            "-b:v", "700k",
-            "-c:a", "aac",
-            "-shortest",
-            outputName
-        );
-
-        updateProgress(85, "Processing Your Music Personality...");
-
-        const files = ffmpeg.FS("readdir", "/");
-        if (!files.includes(outputName)) {
-            console.error("Output file not found after processing.");
-            return;
+            const uid = v4();
+            const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}${uid}`;
+            const uploadVideo = await uploadVideoFirestore(videoBlob, fileNameWithUuid);
+            updateProgress(90, "Dikiiiiit lagi");
+            if(uploadVideo) downloadUrl.value = fileNameWithUuid;
+        } else {
+            throw new Error('Error while processing blob');
         }
-
-        const outputData = ffmpeg.FS("readFile", outputName);
-        const outputBlob = new Blob([outputData.buffer], { type: "video/mp4" });
-
-        updateProgress(95, "Processing Your Music Personality...");
-        const uid = v4();
-        const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}${uid}`;
-        const uploadVideo = await uploadVideoFirestore(outputBlob, fileNameWithUuid);
-
-        if(uploadVideo) downloadUrl.value = fileNameWithUuid;
-
-        outputUrl.value = URL.createObjectURL(outputBlob);
     } catch (error) {
         console.error("Error processing video:", error);
         alert("There was an error processing the video.");
     }
 };
-
-
-function blobToBase64(blob) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result.split(',')[1]); // Remove the data:image/... prefix
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-    });
-}
 
 function stopCameraStream() {
     const videoElement = cameraStream.value;
