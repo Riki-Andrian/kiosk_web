@@ -150,19 +150,21 @@ const retakePhoto = () => {
     loadCameraStream();
     retakeCount.value += 1;
 }
-const randomIndex34 = Math.random() < 0.5 ? 4 : 5;
+const randomNumberGenerator = Math.random() < 0.5 ? 1 : 2;
 
 const styles = {
-    'ENTP_ENFP': `https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/Style${randomIndex34}/ENTP-ENFP.jpg`,
-    'ESFJ_ENFJ': `https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/Style${randomIndex34}/ESFJ-ENFJ.jpg`,
-    'ESTP_ESFP': `https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/Style${randomIndex34}/ESTP-ESFP.jpg`,
-    'INFJ_INFP': `https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/Style${randomIndex34}/INFJ-INFP.jpg`,
-    'INTJ_INTP': `https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/Style${randomIndex34}/INTJ-INTP.jpg`
+    'ENTP_ENFP': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style-final-${randomNumberGenerator}/ENTP_ENFP.png`,
+    'ESFJ_ENFJ': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style-final-${randomNumberGenerator}/ESFJ_ENFJ.png`,
+    'ESTP_ESFP': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style-final-${randomNumberGenerator}/ESTP_ESFP.png`,
+    'INFJ_INFP': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style-final-${randomNumberGenerator}/INFJ_INFP.png`,
+    'INTJ_INTP': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style-final-${randomNumberGenerator}/INTJ_INTP.png`
 };
 
 let selectedStyle = '';
 let selectedStylePrompt = '';
 let selectedNegativePrompt = '';
+let selectedSeed=null;
+const lastSeedDigit = Math.floor(Math.random() * 9) + 1;
 
 const chooseStyle = async () => {
     const response = await fetch("http://localhost:3001/api/detect-accessories-hair", {
@@ -177,7 +179,7 @@ const chooseStyle = async () => {
 
     console.log(data);
 
-    if(data.glasses != 'NoGlasses') genderPrompt += ' wearing glasses';
+    if(data.glasses != 'NoGlasses') genderPrompt += ' wearing a glasses';
 
     if (genderPrompt === null){
         alert("no gender detected!");
@@ -185,43 +187,57 @@ const chooseStyle = async () => {
     } else {
     switch (personality.value) {
         default:
+            const baseSeed1 = 2547370140;
             selectedStyle = styles['ENTP_ENFP'];
             musicFile.value = 'ENTP-ENFP';
             imageCoord.value = "75:365";
-            selectedStylePrompt = `${genderPrompt} Futuristic corridor with glowing red neon lights, sleek sci-fi architecture, panoramic windows revealing a futuristic night city skyline, cyberpunk aesthetic, clean metallic floor tiles, dramatic lighting reflections, high-tech interior design, glowing ambient light strips along walls and ceiling, cinematic perspective, ultra-modern space station hallway, moody blue and red color contrast, atmospheric depth, neon-lit metropolis in the background, detailed and symmetrical composition`;
-            selectedNegativePrompt = "low resolution, blurry, foggy glass, poorly lit, no neon, daytime setting, natural light, rustic design, wood textures, cluttered room, medieval or fantasy style, dirty walls, broken lights, plain walls, cartoonish rendering, watermark, text artifacts, distorted perspective, unfinished background";
+            selectedStylePrompt = `a close up of ${genderPrompt} facing to camera, with a light smile, in a futuristic corridor, the corridor has a large windows on the sides reveal a cityscape at night with bright lights and tall buildings`;
+            selectedNegativePrompt = "multiple person, realistic";
+            selectedSeed = baseSeed1 + lastSeedDigit;
             break;
         case "ESFJ":
             case "ENFJ":
+                const baseSeed2 = 3898553140;
                 selectedStyle = styles['ESFJ_ENFJ'];
                 musicFile.value = 'ESFJ-ENFJ';
                 imageCoord.value = "170:735";
-                selectedStylePrompt = `${genderPrompt} on a Futuristic cyberpunk DJ booth, the person should be close up, illuminated with glowing neon blue lights, immersive circular wall of speakers and LED rings, high-tech sound system, DJ equipment with mixers and turntables, vibrant teal and cyan lighting, nightclub ambiance, deep sci-fi atmosphere, energetic environment, reflective black surfaces, concert stage lighting, holographic visual effects, cinematic perspective, sleek modern tech, glowing buttons and controls, powerful subwoofers and monitors, volumetric lighting beams`;
-                selectedNegativePrompt = "laboratory, clinical background, sterile environment, white walls, medical equipment, hospital, scientist, lab coat, microscope, bright flat lighting, office setting, computer desk, cables on walls, classroom, test tubes, generic room, kitchen, bookshelves, classroom setting, low detail, out of focus, wrong context, mismatched background";
+                if(randomNumberGenerator === 1){
+                    selectedStylePrompt = `a close up of ${genderPrompt}, standing facing to camera, with a light smile, and DJ table as background. the style should be cartoonish`;
+                } else {
+                    selectedStylePrompt = `a close up of ${genderPrompt}, standing facing to camera, with a light smile, and DJ table with a semi-circular sound chamber as background. the style should be cartoonish`;
+                }
+                selectedNegativePrompt = "multiple person, realistic";
+                selectedSeed = baseSeed2 + lastSeedDigit;
                 break;
         case "ESTP":
             case "ESFP":
+                const baseSeed3 = 2044740130;
                 selectedStyle = styles['ESTP_ESFP'];
                 musicFile.value = 'ESTP-ESFP';
                 imageCoord.value = "170:625";
-                selectedStylePrompt = `${genderPrompt} High-voltage concert stage with glowing orange electric energy arcs forming a dramatic backdrop, intense lightning visuals across the stage, vibrant and energetic lighting design, Marshall guitar amplifiers on both sides, microphone stand ready for a performance, dramatic reflections on glossy stage floor, rock concert atmosphere, fiery glow, immersive visual effects, cinematic concert scene, symmetrical stage setup, ultra-detailed, digital art`;
-                selectedNegativePrompt = "low energy, no lighting effects, pastel colors, cartoonish, blurry or grainy image, fantasy or medieval background, empty stage, no equipment, incorrect reflections, daytime, natural light, no amps, no microphone, messy cables, asymmetry, watermarks, text, low quality, overexposed highlights";
+                selectedStylePrompt = `a close up of ${genderPrompt}, facing to camera, with a light smile, in front of a dramatic concert stage, The background is filled with vivid orange lightning effects and glowing stage lights, surrounded by large Marshall amplifiers and microphones`;
+                selectedNegativePrompt = "multiple person, realistic";
+                selectedSeed = baseSeed3 + lastSeedDigit;
                 break;
         case "INFJ":
             case "INFP":
+                const baseSeed4 = 2728907370;
                 selectedStyle = styles['INFJ_INFP'];
                 musicFile.value = 'INFJ-INFP';
                 imageCoord.value = "265:660";
-                selectedStylePrompt = `${genderPrompt} on a vibrant, stylized subway station rendered in a anime style aesthetic, with bold green and yellow tones. Two trains are parked on either side of the empty platform, which stretches into a vanishing point in the distance. The ceiling is composed of glowing geometric panels, casting dynamic reflections on the polished floor. The entire scene has a retro-futuristic feel, with heavy linework and halftone textures enhancing the dramatic lighting.`;
-                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photographic, soft lighting, blurry, painterly, impressionist, natural colors, muted tones, watercolor, low contrast, smooth textures, noise, grain, pastel colors, blue tones, warm lighting, overcrowded, people, cluttered, text, logos, watermark, sky, clouds, sunlight";
+                selectedStylePrompt = `a close up of ${genderPrompt}, standing facing to camera, with a light smile, in a futuristic green subway station`;
+                selectedNegativePrompt = "multiple person, realistic";
+                selectedSeed = baseSeed4 + lastSeedDigit;
                 break;
         case "INTJ":
             case "INTP":
+                const baseSeed5 = 394514902;
                 selectedStyle = styles['INTJ_INTP'];
                 musicFile.value = 'INTJ-INTP';
                 imageCoord.value = "185:330";
-                selectedStylePrompt = `${genderPrompt} with a anime-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
-                selectedNegativePrompt = "2 person, two humans, multiple people, non human object, faceless human, realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
+                selectedStylePrompt = `a close up of ${genderPrompt} standing facing to camera, with a light smile under a vivid blue sky filled with fluffy white clouds.`;
+                selectedNegativePrompt = "multiple person, realistic";
+                selectedSeed = baseSeed5 + lastSeedDigit;
                 break;
         }
     }
@@ -249,7 +265,8 @@ const editPhoto = async () => {
                 image: imageUrl.value,
                 style_image: selectedStyle,
                 style_prompt: selectedStylePrompt,
-                negative_prompt: selectedNegativePrompt
+                negative_prompt: selectedNegativePrompt,
+                seed: selectedSeed,
             })
         });
 

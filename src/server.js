@@ -48,7 +48,7 @@ app.post('/api/style-transfer', async (req, res) => {
 
   const replicate = new Replicate({ auth: API_TOKEN });
 
-  const { image, style_image, style_prompt, negative_prompt } = req.body;
+  const { image, style_image, style_prompt, negative_prompt, seed } = req.body;
 
   console.log('ini style image nya:', style_image);
 
@@ -68,10 +68,11 @@ app.post('/api/style-transfer', async (req, res) => {
         output_format: "png",
         output_quality: 80,
         negative_prompt: negative_prompt,
-        structure_image: image,
+        //structure_image: image,
         number_of_images: 1,
         structure_depth_strength: 2,
-        structure_denoising_strength: 0.7
+        structure_denoising_strength: 0.7,
+        seed: seed,
       }
     });
 
