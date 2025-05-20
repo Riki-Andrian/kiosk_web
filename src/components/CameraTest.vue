@@ -215,7 +215,7 @@ const chooseStyle = async () => {
                 selectedStyle = styles['ESTP_ESFP'];
                 musicFile.value = 'ESTP-ESFP';
                 imageCoord.value = "170:625";
-                selectedStylePrompt = `a close up of ${genderPrompt}, facing to camera, with a light smile, in front of a dramatic concert stage, The background is filled with vivid orange lightning effects and glowing stage lights, surrounded by large Marshall amplifiers and microphones`;
+                selectedStylePrompt = `a close up of a ${genderPrompt}, facing to camera, with a light smile, in front of a dramatic concert stage, The background is a large stage filled with vivid orange lightning effects and glowing stage lights, surrounded by large Marshall amplifiers and microphones. The entire stage is visible.`;
                 selectedNegativePrompt = "multiple person, realistic";
                 selectedSeed = baseSeed3 + lastSeedDigit;
                 break;
@@ -235,8 +235,8 @@ const chooseStyle = async () => {
                 selectedStyle = styles['INTJ_INTP'];
                 musicFile.value = 'INTJ-INTP';
                 imageCoord.value = "185:330";
-                selectedStylePrompt = `a close up of ${genderPrompt} standing facing to camera, with a light smile under a vivid blue sky filled with fluffy white clouds.`;
-                selectedNegativePrompt = "multiple person, realistic";
+                selectedStylePrompt = `a close up of ${genderPrompt} standing facing to camera, with a light smile under a vivid blue sky, soft lighting, fluffy white clouds with depth and volume, atmospheric perspective, detailed sky background, dreamy atmosphere.`;
+                selectedNegativePrompt = "multiple people, realistic, flat clouds";
                 selectedSeed = baseSeed5 + lastSeedDigit;
                 break;
         }
