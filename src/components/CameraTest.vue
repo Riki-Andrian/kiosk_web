@@ -215,7 +215,7 @@ const chooseStyle = async () => {
                 selectedStyle = styles['ESTP_ESFP'];
                 musicFile.value = 'ESTP-ESFP';
                 imageCoord.value = "170:625";
-                selectedStylePrompt = `a close up of a ${genderPrompt}, facing to camera, with a light smile, in front of a dramatic concert stage, The background is a large stage filled with vivid orange lightning effects and glowing stage lights, surrounded by large Marshall amplifiers and microphones. The entire stage is visible.`;
+                selectedStylePrompt = `a close up of ${genderPrompt}, standing & facing to camera, with a light smile, on a wide dramatic concert stage filled with vivid orange lightning effects and glowing stage lights, surrounded by large Marshall amplifiers and microphones.`;
                 selectedNegativePrompt = "multiple person, realistic";
                 selectedSeed = baseSeed3 + lastSeedDigit;
                 break;
@@ -235,7 +235,7 @@ const chooseStyle = async () => {
                 selectedStyle = styles['INTJ_INTP'];
                 musicFile.value = 'INTJ-INTP';
                 imageCoord.value = "185:330";
-                selectedStylePrompt = `a close up of ${genderPrompt} standing facing to camera, with a light smile under a vivid blue sky, soft lighting, fluffy white clouds with depth and volume, atmospheric perspective, detailed sky background, dreamy atmosphere.`;
+                selectedStylePrompt = `a close up of ${genderPrompt} standing facing to camera, with a light smile under a super cloudy blue sky, soft lighting, bunch of fluffy white Cumulonimbus clouds with depth and volume, atmospheric perspective, detailed sky background, dreamy atmosphere.`;
                 selectedNegativePrompt = "multiple people, realistic, flat clouds";
                 selectedSeed = baseSeed5 + lastSeedDigit;
                 break;
@@ -401,7 +401,7 @@ watch(isLoading, async (val) => {
 
 <template>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <div class="app-container">
+    <div class="app-container" @contextmenu.prevent>
         <img src="../assets/normal-bg.png" class="background-image" />
 
         <div v-if="isLoading" class="loading-overlay">
