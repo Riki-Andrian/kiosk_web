@@ -191,8 +191,8 @@ const chooseStyle = async () => {
             selectedStyle = styles['ENTP_ENFP'];
             musicFile.value = 'ENTP-ENFP';
             imageCoord.value = "75:365";
-            selectedStylePrompt = `a close up of ${genderPrompt} facing to camera, with a light smile, in a futuristic corridor, the corridor has a large windows on the sides reveal a cityscape at night with bright lights and tall buildings`;
-            selectedNegativePrompt = "multiple person, realistic";
+            selectedStylePrompt = `a close up of ${genderPrompt} facing to camera, with a light smile, in a futuristic corridor, the corridor has a large windows on the sides reveal a cyberpunk cityscape at night with bright lights and tall buildings`;
+            selectedNegativePrompt = "multiple person, realistic, blurry";
             selectedSeed = baseSeed1 + lastSeedDigit;
             break;
         case "ESFJ":
