@@ -153,11 +153,11 @@ const retakePhoto = () => {
 const randomIndex34 = Math.random() < 0.5 ? 4 : 5;
 
 const styles = {
-    'ENTP_ENFP': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style${randomIndex34}/ENTP_ENFP.png`,
-    'ESFJ_ENFJ': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style${randomIndex34}/ESFJ_ENFJ.png`,
-    'ESTP_ESFP': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style${randomIndex34}/ESTP_ESFP.png`,
-    'INFJ_INFP': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style${randomIndex34}/INFJ_INFP.png`,
-    'INTJ_INTP': `https://raw.githubusercontent.com/abdulist/jsonFiles/test-styles/images-style${randomIndex34}/INTJ_INTP.png`
+    'ENTP_ENFP': `https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/Style${randomIndex34}/ENTP-ENFP.jpg`,
+    'ESFJ_ENFJ': `https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/Style${randomIndex34}/ESFJ-ENFJ.jpg`,
+    'ESTP_ESFP': `https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/Style${randomIndex34}/ESTP-ESFP.jpg`,
+    'INFJ_INFP': `https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/Style${randomIndex34}/INFJ-INFP.jpg`,
+    'INTJ_INTP': `https://raw.githubusercontent.com/Riki-Andrian/style_kiosk/main/Style${randomIndex34}/INTJ-INTP.jpg`
 };
 
 let selectedStyle = '';
@@ -188,24 +188,24 @@ const chooseStyle = async () => {
             selectedStyle = styles['ENTP_ENFP'];
             musicFile.value = 'ENTP-ENFP';
             imageCoord.value = "75:365";
-            selectedStylePrompt = `${genderPrompt} with a anime-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
-            selectedNegativePrompt = "2 person, two humans, multiple people, non human object, faceless human, realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
+            selectedStylePrompt = `${genderPrompt} Futuristic corridor with glowing red neon lights, sleek sci-fi architecture, panoramic windows revealing a futuristic night city skyline, cyberpunk aesthetic, clean metallic floor tiles, dramatic lighting reflections, high-tech interior design, glowing ambient light strips along walls and ceiling, cinematic perspective, ultra-modern space station hallway, moody blue and red color contrast, atmospheric depth, neon-lit metropolis in the background, detailed and symmetrical composition`;
+            selectedNegativePrompt = "low resolution, blurry, foggy glass, poorly lit, no neon, daytime setting, natural light, rustic design, wood textures, cluttered room, medieval or fantasy style, dirty walls, broken lights, plain walls, cartoonish rendering, watermark, text artifacts, distorted perspective, unfinished background";
             break;
         case "ESFJ":
             case "ENFJ":
                 selectedStyle = styles['ESFJ_ENFJ'];
                 musicFile.value = 'ESFJ-ENFJ';
                 imageCoord.value = "170:735";
-                selectedStylePrompt = `${genderPrompt} on a bold anime-style sunburst with a bright yellow circular center and sharp yellow rays extending outward. The background should be a vivid teal color with radiating black lines, evoking a vintage pop art or retro anime vibe. The composition should be symmetrical and eye-catching, with high contrast and clean outlines.`;
-                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, natural shadows, painterly, impressionism, pastel colors, low contrast, desaturated, blurry, muted tones, dull colors, smooth gradients, watercolor, cinematic, oil painting, 3D render, text, watermark, logo, blue sky, clouds, irregular layout, asymmetrical composition";
+                selectedStylePrompt = `${genderPrompt} on a Futuristic cyberpunk DJ booth, the person should be close up, illuminated with glowing neon blue lights, immersive circular wall of speakers and LED rings, high-tech sound system, DJ equipment with mixers and turntables, vibrant teal and cyan lighting, nightclub ambiance, deep sci-fi atmosphere, energetic environment, reflective black surfaces, concert stage lighting, holographic visual effects, cinematic perspective, sleek modern tech, glowing buttons and controls, powerful subwoofers and monitors, volumetric lighting beams`;
+                selectedNegativePrompt = "laboratory, clinical background, sterile environment, white walls, medical equipment, hospital, scientist, lab coat, microscope, bright flat lighting, office setting, computer desk, cables on walls, classroom, test tubes, generic room, kitchen, bookshelves, classroom setting, low detail, out of focus, wrong context, mismatched background";
                 break;
         case "ESTP":
             case "ESFP":
                 selectedStyle = styles['ESTP_ESFP'];
                 musicFile.value = 'ESTP-ESFP';
                 imageCoord.value = "170:625";
-                selectedStylePrompt = `${genderPrompt} on a dynamic anime-style, on a sunset sky with explosion in the gradient caramel with bright orange and yellow bubble, surrounded by dramatic black stroke lines. The art style should be bold, vibrant, and high-energy, evoking retro anime and vintage comic aesthetics.`;
-                selectedNegativePrompt = "two persons, two humans, multiple people, non human object, faceless human, realistic, photorealistic, soft light, blurry, painterly, impressionism, pastel colors, low contrast, smooth gradients, desaturated, natural tones, dull colors, cinematic lighting, noise, text, watermark, logo, 3D render, muted lighting, monochrome, blue sky, clouds";
+                selectedStylePrompt = `${genderPrompt} High-voltage concert stage with glowing orange electric energy arcs forming a dramatic backdrop, intense lightning visuals across the stage, vibrant and energetic lighting design, Marshall guitar amplifiers on both sides, microphone stand ready for a performance, dramatic reflections on glossy stage floor, rock concert atmosphere, fiery glow, immersive visual effects, cinematic concert scene, symmetrical stage setup, ultra-detailed, digital art`;
+                selectedNegativePrompt = "low energy, no lighting effects, pastel colors, cartoonish, blurry or grainy image, fantasy or medieval background, empty stage, no equipment, incorrect reflections, daytime, natural light, no amps, no microphone, messy cables, asymmetry, watermarks, text, low quality, overexposed highlights";
                 break;
         case "INFJ":
             case "INFP":
@@ -220,8 +220,8 @@ const chooseStyle = async () => {
                 selectedStyle = styles['INTJ_INTP'];
                 musicFile.value = 'INTJ-INTP';
                 imageCoord.value = "185:330";
-                selectedStylePrompt = `${genderPrompt} with a anime-style sky with a bright vivid red background and red background tall city scape. The clouds should have soft, rounded shapes and be spread across a dynamic diagonal composition.`;
-                selectedNegativePrompt = "two persons, two humans, wrinkles on face, multiple people, non human object, dark skin tone, abnormal skin tone, faceless human, realistic, photorealistic, 3D render, CGI, low contrast, blurry, soft shadows, pastel colors, washed-out tones, natural lighting, overexposed, detailed textures, painterly, oil painting, watercolor, text, watermark, signature, low resolution, asymmetry";
+                selectedStylePrompt = `${genderPrompt} with a anime-style sky with a bright, vivid blue background and scattered white cumulus clouds outlined in black. sketch-style brush strokes, and a retro pop art aesthetic. The clouds should have soft, rounded shapes with subtle blue shading and be spread across a dynamic diagonal composition.`;
+                selectedNegativePrompt = "2 person, two humans, multiple people, non human object, faceless human, realistic, photorealistic, hyperrealistic, cinematic, soft shadows, smooth gradients, painterly, watercolor, oil painting, 3D render, desaturated, muted colors, low contrast, fog, haze, motion blur, natural lighting, detailed texture, photographic clouds, overcast sky, text, watermark, logo, asymmetry";
                 break;
         }
     }

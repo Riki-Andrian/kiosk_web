@@ -12,48 +12,48 @@ const questions = ref(
             "options": [
                 { "option": "Sendirian aja", "point": ["I"], "image": new URL('@/assets/pertanyaan/1-1.png', import.meta.url).href },
                 { "option": "Bareng temen deket", "point": ["I", "E"], "image": new URL('@/assets/pertanyaan/1-2.png', import.meta.url).href },
-                { "option": "Di tengah keramaian, penuh energi", "point": ["E"], "image": new URL('@/assets/pertanyaan/1-3.png', import.meta.url).href },
-                { "option": "Konser live, bebas dan lepas!", "point": ["E"], "image": new URL('@/assets/pertanyaan/1-4.png', import.meta.url).href }
+                { "option": "Circle lo yang energik", "point": ["E"], "image": new URL('@/assets/pertanyaan/1-3.png', import.meta.url).href },
+                { "option": "Nonton konser yang pecah banget", "point": ["E"], "image": new URL('@/assets/pertanyaan/1-4.png', import.meta.url).href }
             ]
         },
         {
             "id": 2,
             "pertanyaan": "LAGU KEREN BUAT LO?",
             "options": [
-                { "option": "Melodi kompleks dan detail", "point": ["T"], "image": new URL('@/assets/pertanyaan/2-1.png', import.meta.url).href },
-                { "option": "Lirik dan emosi yang dalem", "point": ["F"], "image": new URL('@/assets/pertanyaan/2-2.png', import.meta.url).href },
-                { "option": "Groove dan ritme yang bikin gerak", "point": ["S", "E"], "image": new URL('@/assets/pertanyaan/2-3.png', import.meta.url).href },
-                { "option": "beat yang tak terduga", "point": ["P", "E"], "image": new URL('@/assets/pertanyaan/2-4.png', import.meta.url).href }
+                { "option": "Melodinya rich", "point": ["T"], "image": new URL('@/assets/pertanyaan/2-1.png', import.meta.url).href },
+                { "option": "Lirik dalem banget", "point": ["F"], "image": new URL('@/assets/pertanyaan/2-2.png', import.meta.url).href },
+                { "option": "Groove dan ritmenya asik", "point": ["S", "E"], "image": new URL('@/assets/pertanyaan/2-3.png', import.meta.url).href },
+                { "option": "Beatnya mind blowing", "point": ["P", "E"], "image": new URL('@/assets/pertanyaan/2-4.png', import.meta.url).href }
             ]
         },
         {
             "id": 3,
             "pertanyaan": "ARTI MUSIK BUAT LO?",
             "options": [
-                { "option": "Bantu lo mikir", "point": ["I", "T"], "image": new URL('@/assets/pertanyaan/3-1.png', import.meta.url).href },
-                { "option": "Nyambung ke Hati", "point": ["I", "F"], "image": new URL('@/assets/pertanyaan/3-2.png', import.meta.url).href },
+                { "option": "Self-reflection", "point": ["I", "T"], "image": new URL('@/assets/pertanyaan/3-1.png', import.meta.url).href },
+                { "option": "Emotionally connected", "point": ["I", "F"], "image": new URL('@/assets/pertanyaan/3-2.png', import.meta.url).href },
                 { "option": "Booster semangat", "point": ["E"], "image": new URL('@/assets/pertanyaan/3-3.png', import.meta.url).href },
-                { "option": "Cara jadi diri sendiri", "point": ["E", "P"], "image": new URL('@/assets/pertanyaan/3-4.png', import.meta.url).href }
+                { "option": "Be yourself", "point": ["E", "P"], "image": new URL('@/assets/pertanyaan/3-4.png', import.meta.url).href }
             ]
         },
         {
             "id": 4,
             "pertanyaan": "KALO LO MUSISI, LO ADALAH..?",
             "options": [
-                { "option": "Komposer, si jenius di balik penciptaan harmoni dan melodi musik", "point": ["I", "T"], "image": new URL('@/assets/pertanyaan/4-1.png', import.meta.url).href },
-                { "option": "Penulis Lirik, Si perangkai kata penuh makna", "point": ["I", "F"], "image": new URL('@/assets/pertanyaan/4-2.png', import.meta.url).href },
-                { "option": "Drummer, Si pusat energi, bikin semua orang jadi gerak", "point": ["E", "F"], "image": new URL('@/assets/pertanyaan/4-3.png', import.meta.url).href },
-                { "option": "Vokalis, Si penguasa panggung yang bikin penonton lebih semangat", "point": ["E", "P"], "image": new URL('@/assets/pertanyaan/4-4.png', import.meta.url).href }
+                { "option": "Komposer, Jenius di balik semua melodi dan harmoni epic", "point": ["I", "T"], "image": new URL('@/assets/pertanyaan/4-1.png', import.meta.url).href },
+                { "option": "Penulis Lirik, Perangkai kata yang deep meaning", "point": ["I", "F"], "image": new URL('@/assets/pertanyaan/4-2.png', import.meta.url).href },
+                { "option": "Drummer, Pusat energi, bikin vibes-nya nggak bisa diem", "point": ["E", "F"], "image": new URL('@/assets/pertanyaan/4-3.png', import.meta.url).href },
+                { "option": "Vokalis, Penguasa panggung, bikin crowd langsung hype", "point": ["E", "P"], "image": new URL('@/assets/pertanyaan/4-4.png', import.meta.url).href }
             ]
         },
         {
             "id": 5,
             "pertanyaan": "PAS ADA LAGU BARU YANG LO SUKA, LO AKAN..?",
             "options": [
-                { "option": "Analisa lirik, melodi dan aransemennya", "point": ["I", "T"], "image": new URL('@/assets/pertanyaan/5-1.png', import.meta.url).href },
-                { "option": "Langsung masuk playlist, putar terus sampe inget!", "point": ["I", "F"], "image": new URL('@/assets/pertanyaan/5-2.png', import.meta.url).href },
-                { "option": "Share ke temen, terus bahas rame-rame", "point": ["E", "F"], "image": new URL('@/assets/pertanyaan/5-3.png', import.meta.url).href },
-                { "option": "Remix versi lo sendiri, biar nyanyi lebih seru", "point": ["E", "P"], "image": new URL('@/assets/pertanyaan/5-4.png', import.meta.url).href }
+                { "option": "Breakdown lirik, melody, dan aransemennya", "point": ["I", "T"], "image": new URL('@/assets/pertanyaan/5-1.png', import.meta.url).href },
+                { "option": "Save to playlist, loop terus", "point": ["I", "F"], "image": new URL('@/assets/pertanyaan/5-2.png', import.meta.url).href },
+                { "option": "Share ke temen, jadi bahan obrolan", "point": ["E", "F"], "image": new URL('@/assets/pertanyaan/5-3.png', import.meta.url).href },
+                { "option": "Remix versi lo, nyanyi biar seru!", "point": ["E", "P"], "image": new URL('@/assets/pertanyaan/5-4.png', import.meta.url).href }
             ]
         }
     ]
