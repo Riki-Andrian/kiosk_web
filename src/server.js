@@ -68,10 +68,10 @@ app.post('/api/style-transfer', async (req, res) => {
         output_format: "png",
         output_quality: 80,
         negative_prompt: negative_prompt,
-        //structure_image: image,
+        structure_image: image,
         number_of_images: 1,
         structure_depth_strength: 2,
-        structure_denoising_strength: 0.7,
+        structure_denoising_strength: 1,
         seed: seed,
       }
     });

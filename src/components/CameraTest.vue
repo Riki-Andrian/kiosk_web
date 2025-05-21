@@ -195,8 +195,8 @@ const chooseStyle = async () => {
             selectedStyle = styles['ENTP_ENFP'];
             musicFile.value = 'ENTP-ENFP';
             imageCoord.value = "75:365";
-            selectedStylePrompt = `a close up of ${genderPrompt} facing to camera, with a light smile, in a futuristic corridor, the corridor has a large windows on the sides reveal a cyberpunk cityscape at night with bright lights and tall buildings`;
-            selectedNegativePrompt = "multiple person, realistic, blurry";
+            selectedStylePrompt = `a close up of ${genderPrompt} facing to camera, with a light smile, in a red futuristic neon-lit corridor with warm glowing red and orange lights, the corridor has a large windows on the sides reveal a cyberpunk cityscape at night with red neon lights and tall buildings`;
+            selectedNegativePrompt = "multiple person, realistic, blurry, white light, white wall, white background, white stuff, white room, cool lights";
             selectedSeed = baseSeed1 + lastSeedDigit;
             break;
         case "ESFJ":
@@ -206,9 +206,9 @@ const chooseStyle = async () => {
                 musicFile.value = 'ESFJ-ENFJ';
                 imageCoord.value = "170:735";
                 if(randomNumberGenerator === 1){
-                    selectedStylePrompt = `a super close up of ${genderPrompt}, standing facing to camera, with a light smile, and DJ tools in the back. the style should be cartoonish`;
+                    selectedStylePrompt = `a close up of ${genderPrompt}, standing and facing to camera, with a light smile, and professional DJ mixing table with vinyl turntables in the front.`;
                 } else {
-                    selectedStylePrompt = `a super close up of ${genderPrompt}, standing facing to camera, with a light smile, and DJ tools with a semi-circular sound chamber in the back. the style should be cartoonish`;
+                    selectedStylePrompt = `a close up of ${genderPrompt}, standing and facing to camera, with a light smile, and professional DJ mixing table with vinyl turntables in the front with a circular sound chamber in the back.`;
                 }
                 selectedNegativePrompt = "multiple person, realistic";
                 selectedSeed = baseSeed2 + lastSeedDigit;

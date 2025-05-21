@@ -180,6 +180,7 @@ onMounted(async () => {
   cursor: pointer;
   color: #ffffff;
   transition: background-color 0.2s, transform 0.2s;
+  margin-bottom: 20%;
 
     animation: buttonAppear 1s ease-out forwards;
     transform-origin: center;
