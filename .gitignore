@@ -32,3 +32,4 @@ coverage
 
 *.tsbuildinfo
 node_modules/
+generated_videos/*

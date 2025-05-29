@@ -300,7 +300,8 @@ const editVideo = async () => {
             body: JSON.stringify({
                 imageCoord: imageCoord.value,
                 overlayImageUrl: editedImage.value,
-                personalityStyle: musicFile.value
+                personalityStyle: musicFile.value,
+                username: name.value
             })
         });
 

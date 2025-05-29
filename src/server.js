@@ -20,6 +20,8 @@ import createClient from "@azure-rest/ai-vision-face";
 import { AzureKeyCredential } from "@azure/core-auth";
 import { readFile } from 'fs/promises';
 import { file } from 'tmp';
+import { randomUUID } from 'crypto';
+import { blob } from 'stream/consumers';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -277,7 +279,7 @@ app.post('/api/gender-hijab', async (req, res) => {
 
 app.post("/api/process-video", async (req, res) => {
   try {
-    const { imageCoord, overlayImageUrl, personalityStyle } = req.body;
+    const { imageCoord, overlayImageUrl, personalityStyle, username } = req.body;
     
     const response = await fetch(overlayImageUrl);
     const arrayBuffer = await response.arrayBuffer();
@@ -308,6 +310,13 @@ app.post("/api/process-video", async (req, res) => {
 
         res.setHeader("Content-Type", "video/mp4");
         res.setHeader("Content-Disposition", "inline; filename=output.mp4");
+
+        const uid = randomUUID();
+        const generatedVideosPath = path.join(__dirname, 'generated_videos');
+        if (!fs.existsSync(generatedVideosPath)) {
+          fs.mkdirSync(generatedVideosPath);
+        }
+        const filePath = path.join(generatedVideosPath, `${username}-${uid}.mp4`);
 
         ffmpeg()
           .input(inputVideo)
@@ -340,7 +349,16 @@ app.post("/api/process-video", async (req, res) => {
               res.status(500).send("Video processing failed.");
             }
           })
-          .pipe(res, { end: true });
+          .on("end", () => {
+            const stat = fs.statSync(filePath);
+            res.writeHead(200, {
+              "Content-Type": "video/mp4",
+              "Content-Length": stat.size
+            });
+            const readStream = fs.createReadStream(filePath);
+            readStream.pipe(res);
+          })
+          .save(filePath);
       });
     });
   } catch (error) {
