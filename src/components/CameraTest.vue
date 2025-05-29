@@ -196,7 +196,7 @@ const chooseStyle = async () => {
             musicFile.value = 'ENTP-ENFP';
             imageCoord.value = "75:365";
             selectedStylePrompt = `a close up of ${genderPrompt} facing to camera, with a light smile, in a red futuristic neon-lit corridor with warm glowing red and orange lights, the corridor has a large windows on the sides reveal a cyberpunk cityscape at night with red neon lights and tall buildings`;
-            selectedNegativePrompt = "multiple person, realistic, blurry, white light, white wall, white background, white stuff, white room, cool lights";
+            selectedNegativePrompt = "multiple person, realistic, blurry, white light, white wall, white background, white stuff, white room, cool lights, bikini, lingerie, revealing clothing, skimpy outfit, swimsuit, overly exposed skin, excessive cleavage, provocative, seductive, erotic, indecent, lewd";
             selectedSeed = baseSeed1 + lastSeedDigit;
             break;
         case "ESFJ":
@@ -210,7 +210,7 @@ const chooseStyle = async () => {
                 } else {
                     selectedStylePrompt = `a close up of ${genderPrompt}, standing and facing to camera, with a light smile, and professional DJ mixing table with vinyl turntables in the front with a circular sound chamber in the back.`;
                 }
-                selectedNegativePrompt = "multiple person, realistic";
+                selectedNegativePrompt = "multiple person, realistic, bikini, lingerie, revealing clothing, skimpy outfit, swimsuit, overly exposed skin, excessive cleavage, provocative, seductive, erotic, indecent, lewd";
                 selectedSeed = baseSeed2 + lastSeedDigit;
                 break;
         case "ESTP":
@@ -220,7 +220,7 @@ const chooseStyle = async () => {
                 musicFile.value = 'ESTP-ESFP';
                 imageCoord.value = "170:625";
                 selectedStylePrompt = `a close up of ${genderPrompt}, standing & facing to camera, with a light smile, on a wide dramatic concert stage filled with vivid orange lightning effects and glowing stage lights, surrounded by large Marshall amplifiers and microphones.`;
-                selectedNegativePrompt = "multiple person, realistic";
+                selectedNegativePrompt = "multiple person, realistic, bikini, lingerie, revealing clothing, skimpy outfit, swimsuit, overly exposed skin, excessive cleavage, provocative, seductive, erotic, indecent, lewd";
                 selectedSeed = baseSeed3 + lastSeedDigit;
                 break;
         case "INFJ":
@@ -230,7 +230,7 @@ const chooseStyle = async () => {
                 musicFile.value = 'INFJ-INFP';
                 imageCoord.value = "265:660";
                 selectedStylePrompt = `a close up of ${genderPrompt}, standing facing to camera, with a light smile, in a futuristic green subway station`;
-                selectedNegativePrompt = "multiple person, realistic";
+                selectedNegativePrompt = "multiple person, realistic, bikini, lingerie, revealing clothing, skimpy outfit, swimsuit, overly exposed skin, excessive cleavage, provocative, seductive, erotic, indecent, lewd";
                 selectedSeed = baseSeed4 + lastSeedDigit;
                 break;
         case "INTJ":
@@ -240,7 +240,7 @@ const chooseStyle = async () => {
                 musicFile.value = 'INTJ-INTP';
                 imageCoord.value = "185:330";
                 selectedStylePrompt = `a close up of ${genderPrompt} standing facing to camera, with a light smile under a super cloudy blue sky, soft lighting, bunch of fluffy white Cumulonimbus clouds with depth and volume, atmospheric perspective, detailed sky background, dreamy atmosphere.`;
-                selectedNegativePrompt = "multiple people, realistic, flat clouds";
+                selectedNegativePrompt = "multiple people, realistic, flat clouds, bikini, lingerie, revealing clothing, skimpy outfit, swimsuit, overly exposed skin, excessive cleavage, provocative, seductive, erotic, indecent, lewd";
                 selectedSeed = baseSeed5 + lastSeedDigit;
                 break;
         }
