@@ -195,6 +195,7 @@ const chooseStyle = async () => {
         alert("no gender detected!");
         return
     } else {
+        const randomIndex = Math.floor(Math.random() * 9);
     switch (personality.value) {
         default:
             const baseSeed1 = 2547370140;
