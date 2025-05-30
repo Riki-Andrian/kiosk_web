@@ -291,34 +291,106 @@ const editPhoto = async () => {
     }
 };
 
+// const editVideo = async () => {
+//     updateProgress(70, "Processing Your Music Personality...");
+//     try {
+//         const response = await fetch("http://localhost:3001/api/process-video", {
+//             method: "POST",
+//             headers: { "Content-Type": "application/json" },
+//             body: JSON.stringify({
+//                 imageCoord: imageCoord.value,
+//                 overlayImageUrl: editedImage.value,
+//                 personalityStyle: musicFile.value,
+//                 username: name.value
+//             })
+//         });
+
+//         const videoBlob = await response.blob();
+//         const blobUrl = URL.createObjectURL(videoBlob);
+//         updateProgress(80, "Processing Your Music Personality...");
+//         if(blobUrl){
+//             outputUrl.value = blobUrl;
+
+//             const uid = v4();
+//             const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}${uid}`;
+//             const uploadVideo = await uploadVideoFirestore(videoBlob, fileNameWithUuid);
+//             updateProgress(90, "Processing Your Music Personality...");
+//             if(uploadVideo) downloadUrl.value = fileNameWithUuid;
+//         } else {
+//             throw new Error('Error while processing blob');
+//         }
+//     } catch (error) {
+//         console.error("Error processing video:", error);
+//         alert("There was an error processing the video.");
+//     }
+// };
+
 const editVideo = async () => {
-    updateProgress(70, "Processing Your Music Personality...");
+    if (!videoFile.value || !editedImage.value) {
+        alert("Please select a video and an image!");
+        return;
+    }
+
+    const videoName = "input.mp4";
+    const overlayName = "overlay.png";
+    const outputName = "output.mp4";
+    const musik = "musik.mp3"
+
     try {
-        const response = await fetch("http://localhost:3001/api/process-video", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                imageCoord: imageCoord.value,
-                overlayImageUrl: editedImage.value,
-                personalityStyle: musicFile.value,
-                username: name.value
-            })
-        });
-
-        const videoBlob = await response.blob();
-        const blobUrl = URL.createObjectURL(videoBlob);
+        
+        //const response = aiResult;
+        const response = await fetch(editedImage.value);
+        const overlayBlob = await response.blob();
+        const overlayArrayBuffer = await overlayBlob.arrayBuffer();
         updateProgress(80, "Processing Your Music Personality...");
-        if(blobUrl){
-            outputUrl.value = blobUrl;
+        ffmpeg.FS("writeFile", videoName, await fetchFile(videoFile.value));
+        ffmpeg.FS("writeFile", overlayName, new Uint8Array(overlayArrayBuffer));
+        ffmpeg.FS("writeFile", musik, await fetchFile(musicFile.value));
 
-            const uid = v4();
-            const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}${uid}`;
-            const uploadVideo = await uploadVideoFirestore(videoBlob, fileNameWithUuid);
-            updateProgress(90, "Processing Your Music Personality...");
-            if(uploadVideo) downloadUrl.value = fileNameWithUuid;
-        } else {
-            throw new Error('Error while processing blob');
+        //console.log("musicFile.value:", musicFile.value);
+        //console.log("videoFile.value:", videoFile.value);
+
+        //console.log(musicFile.value);
+
+        await ffmpeg.run(
+            "-i", videoName,
+            "-loop", "1",
+            "-t", "5",
+            "-i", overlayName,
+            "-i", musik,
+            "-filter_complex",
+            `[1:v] format=yuva420p, scale=745:745, fade=t=in:st=0:d=1:alpha=1 [ovl]; [0:v][ovl] overlay=${imageCoord.value}`,
+            "-map", "0:v",
+            "-map", "2:a",
+            "-c:v", "libx264",
+            "-preset", "ultrafast",
+            "-crf", "23",
+            "-threads", "4",
+            "-b:v", "700k",
+            "-c:a", "aac",
+            "-shortest",
+            outputName
+        );
+
+        updateProgress(85, "Processing Your Music Personality...");
+
+        const files = ffmpeg.FS("readdir", "/");
+        if (!files.includes(outputName)) {
+            console.error("Output file not found after processing.");
+            return;
         }
+
+        const outputData = ffmpeg.FS("readFile", outputName);
+        const outputBlob = new Blob([outputData.buffer], { type: "video/mp4" });
+
+        updateProgress(95, "Processing Your Music Personality...");
+        const uid = v4();
+        const fileNameWithUuid = `${name.value.trim().replace(/\s+/g, '')}${uid}`;
+        const uploadVideo = await uploadVideoFirestore(outputBlob, fileNameWithUuid);
+
+        if(uploadVideo) downloadUrl.value = fileNameWithUuid;
+
+        outputUrl.value = URL.createObjectURL(outputBlob);
     } catch (error) {
         console.error("Error processing video:", error);
         alert("There was an error processing the video.");
