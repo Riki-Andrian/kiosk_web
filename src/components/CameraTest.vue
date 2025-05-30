@@ -194,6 +194,7 @@ const chooseStyle = async () => {
             const baseSeed1 = 2547370140;
             selectedStyle = styles['ENTP_ENFP'];
             musicFile.value = 'ENTP-ENFP';
+            videoFile.value = 'ENTP-ENFP'; // Added as per instructions
             imageCoord.value = "75:365";
             selectedStylePrompt = `a close up of ${genderPrompt} facing to camera, with a light smile, in a red futuristic neon-lit corridor with warm glowing red and orange lights, the corridor has a large windows on the sides reveal a cyberpunk cityscape at night with red neon lights and tall buildings`;
             selectedNegativePrompt = "multiple person, realistic, blurry, white light, white wall, white background, white stuff, white room, cool lights, bikini, lingerie, revealing clothing, skimpy outfit, swimsuit, overly exposed skin, excessive cleavage, provocative, seductive, erotic, indecent, lewd";
@@ -204,6 +205,7 @@ const chooseStyle = async () => {
                 const baseSeed2 = 3898553140;
                 selectedStyle = styles['ESFJ_ENFJ'];
                 musicFile.value = 'ESFJ-ENFJ';
+                videoFile.value = 'ESFJ-ENFJ'; // Added as per instructions
                 imageCoord.value = "170:735";
                 if(randomNumberGenerator === 1){
                     selectedStylePrompt = `a close up of ${genderPrompt}, standing and facing to camera, with a light smile, and professional DJ mixing table with vinyl turntables in the front.`;
@@ -218,6 +220,7 @@ const chooseStyle = async () => {
                 const baseSeed3 = 2044740130;
                 selectedStyle = styles['ESTP_ESFP'];
                 musicFile.value = 'ESTP-ESFP';
+                videoFile.value = 'ESTP-ESFP'; // Added as per instructions
                 imageCoord.value = "170:625";
                 selectedStylePrompt = `a close up of ${genderPrompt}, standing & facing to camera, with a light smile, on a wide dramatic concert stage filled with vivid orange lightning effects and glowing stage lights, surrounded by large Marshall amplifiers and microphones.`;
                 selectedNegativePrompt = "multiple person, realistic, bikini, lingerie, revealing clothing, skimpy outfit, swimsuit, overly exposed skin, excessive cleavage, provocative, seductive, erotic, indecent, lewd";
@@ -228,6 +231,7 @@ const chooseStyle = async () => {
                 const baseSeed4 = 2728907370;
                 selectedStyle = styles['INFJ_INFP'];
                 musicFile.value = 'INFJ-INFP';
+                videoFile.value = 'INFJ-INFP'; // Added as per instructions
                 imageCoord.value = "265:660";
                 selectedStylePrompt = `a close up of ${genderPrompt}, standing facing to camera, with a light smile, in a futuristic green subway station`;
                 selectedNegativePrompt = "multiple person, realistic, bikini, lingerie, revealing clothing, skimpy outfit, swimsuit, overly exposed skin, excessive cleavage, provocative, seductive, erotic, indecent, lewd";
@@ -238,6 +242,7 @@ const chooseStyle = async () => {
                 const baseSeed5 = 394514902;
                 selectedStyle = styles['INTJ_INTP'];
                 musicFile.value = 'INTJ-INTP';
+                videoFile.value = 'INTJ-INTP'; // Added as per instructions
                 imageCoord.value = "185:330";
                 selectedStylePrompt = `a close up of ${genderPrompt} standing facing to camera, with a light smile under a super cloudy blue sky, soft lighting, bunch of fluffy white Cumulonimbus clouds with depth and volume, atmospheric perspective, detailed sky background, dreamy atmosphere.`;
                 selectedNegativePrompt = "multiple people, realistic, flat clouds, bikini, lingerie, revealing clothing, skimpy outfit, swimsuit, overly exposed skin, excessive cleavage, provocative, seductive, erotic, indecent, lewd";
