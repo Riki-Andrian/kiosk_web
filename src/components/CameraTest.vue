@@ -11,7 +11,7 @@ import video2 from "@/assets/video/ESFJ-ENFJ.mp4";
 import video3 from "@/assets/video/ESTP-ESFP.mp4";
 import video4 from "@/assets/video/INFJ-INFP.mp4";
 import video5 from "@/assets/video/INTJ-INTP.mp4";
-import { INTJ_INTP, ENTP_ENFP, ESFJ_ENFJ, ESTP_ESFP, INFJ_INFP } from "@/assets/music/index.js";
+//import { INTJ_INTP, ENTP_ENFP, ESFJ_ENFJ, ESTP_ESFP, INFJ_INFP } from "@/assets/music/index.js";
 
 const router = useRouter();
 const route = useRoute();
@@ -41,7 +41,7 @@ let genderPrompt = "";
 const progressBar = ref(null);
 
 const loadComponent = async () => {
-    console.log(`Name: ${name.value}, Gender: ${gender.value}`);
+    //console.log(`Name: ${name.value}, Gender: ${gender.value}`);
 
     if (!name.value || !gender.value) {
         router.push('/');
@@ -49,7 +49,7 @@ const loadComponent = async () => {
     }
 
     await ffmpeg.load();
-    console.log("FFmpeg is ready!");
+    //console.log("FFmpeg is ready!");
 };
 
 onMounted(loadComponent);
@@ -64,7 +64,7 @@ const loadCameraStream = async () => {
         }
     } catch (error) {
         console.error("Error accessing camera:", error);
-        router.push(`/cameratest/${personality}`);
+        router.push(`/cameratest/INTJ`);
     }
 };
 onMounted(loadCameraStream);
@@ -174,7 +174,7 @@ const styles = {
 let selectedStyle = '';
 let selectedStylePrompt = '';
 let selectedNegativePrompt = '';
-let selectedSeed=null;
+//let selectedSeed=null;
 const lastSeedDigit = Math.floor(Math.random() * 9) + 1;
 
 const chooseStyle = async () => {
@@ -188,7 +188,7 @@ const chooseStyle = async () => {
 
     const data = await response.json();
 
-    console.log(data);
+    //console.log(data);
 
     if(data.glasses != 'NoGlasses') genderPrompt += ' wearing a glasses';
 
@@ -212,18 +212,18 @@ const chooseStyle = async () => {
         const randomIndex = Math.floor(Math.random() * 9);
     switch (personality.value) {
         default:
-            const baseSeed1 = 2547370140;
+            //const baseSeed1 = 2547370140;
             selectedStyle = styles['ENTP_ENFP'];
             musicFile.value = 'ENTP-ENFP';
             videoFile.value = video1; // Inserted the imported video
             imageCoord.value = "75:365";
             selectedStylePrompt = `a close up of ${genderPrompt} facing to camera, with a light smile, in a red futuristic neon-lit corridor with warm glowing red and orange lights, the corridor has a large windows on the sides reveal a cyberpunk cityscape at night with red neon lights and tall buildings`;
             selectedNegativePrompt = "multiple person, realistic, blurry, white light, white wall, white background, white stuff, white room, cool lights, bikini, lingerie, revealing clothing, skimpy outfit, swimsuit, overly exposed skin, excessive cleavage, provocative, seductive, erotic, indecent, lewd";
-            selectedSeed = baseSeed1 + lastSeedDigit;
+            //selectedSeed = baseSeed1 + lastSeedDigit;
             break;
         case "ESFJ":
             case "ENFJ":
-                const baseSeed2 = 3898553140;
+                //const baseSeed2 = 3898553140;
                 selectedStyle = styles['ESFJ_ENFJ'];
                 musicFile.value = 'ESFJ-ENFJ';
                 videoFile.value = video2; // Inserted the imported video
@@ -234,40 +234,40 @@ const chooseStyle = async () => {
                     selectedStylePrompt = `a close up of ${genderPrompt}, standing and facing to camera, with a light smile, and professional DJ mixing table with vinyl turntables in the front with a circular sound chamber in the back.`;
                 }
                 selectedNegativePrompt = "multiple person, realistic, bikini, lingerie, revealing clothing, skimpy outfit, swimsuit, overly exposed skin, excessive cleavage, provocative, seductive, erotic, indecent, lewd";
-                selectedSeed = baseSeed2 + lastSeedDigit;
+                //selectedSeed = baseSeed2 + lastSeedDigit;
                 break;
         case "ESTP":
             case "ESFP":
-                const baseSeed3 = 2044740130;
+                //const baseSeed3 = 2044740130;
                 selectedStyle = styles['ESTP_ESFP'];
                 musicFile.value = 'ESTP-ESFP';
                 videoFile.value = video3; // Inserted the imported video
                 imageCoord.value = "170:625";
                 selectedStylePrompt = `a close up of ${genderPrompt}, standing & facing to camera, with a light smile, on a wide dramatic concert stage filled with vivid orange lightning effects and glowing stage lights, surrounded by large Marshall amplifiers and microphones.`;
                 selectedNegativePrompt = "multiple person, realistic, bikini, lingerie, revealing clothing, skimpy outfit, swimsuit, overly exposed skin, excessive cleavage, provocative, seductive, erotic, indecent, lewd";
-                selectedSeed = baseSeed3 + lastSeedDigit;
+                //selectedSeed = baseSeed3 + lastSeedDigit;
                 break;
         case "INFJ":
             case "INFP":
-                const baseSeed4 = 2728907370;
+                //const baseSeed4 = 2728907370;
                 selectedStyle = styles['INFJ_INFP'];
                 musicFile.value = 'INFJ-INFP';
                 videoFile.value = video4; // Inserted the imported video
                 imageCoord.value = "265:660";
                 selectedStylePrompt = `a close up of ${genderPrompt}, standing facing to camera, with a light smile, in a futuristic green subway station`;
                 selectedNegativePrompt = "multiple person, realistic, bikini, lingerie, revealing clothing, skimpy outfit, swimsuit, overly exposed skin, excessive cleavage, provocative, seductive, erotic, indecent, lewd";
-                selectedSeed = baseSeed4 + lastSeedDigit;
+                //selectedSeed = baseSeed4 + lastSeedDigit;
                 break;
         case "INTJ":
             case "INTP":
-                const baseSeed5 = 394514902;
+                //const baseSeed5 = 394514902;
                 selectedStyle = styles['INTJ_INTP'];
                 musicFile.value = 'INTJ-INTP';
                 videoFile.value = video5; // Inserted the imported video
                 imageCoord.value = "185:330";
                 selectedStylePrompt = `a close up of ${genderPrompt} standing facing to camera, with a light smile under a super cloudy blue sky, soft lighting, bunch of fluffy white Cumulonimbus clouds with depth and volume, atmospheric perspective, detailed sky background, dreamy atmosphere.`;
                 selectedNegativePrompt = "multiple people, realistic, flat clouds, bikini, lingerie, revealing clothing, skimpy outfit, swimsuit, overly exposed skin, excessive cleavage, provocative, seductive, erotic, indecent, lewd";
-                selectedSeed = baseSeed5 + lastSeedDigit;
+                //selectedSeed = baseSeed5 + lastSeedDigit;
                 break;
         }
     }
@@ -284,9 +284,9 @@ const editPhoto = async () => {
 
         //console.log("editing...");
         //console.log("Image URL:", imageUrl.value);
-        console.log("Selected Style:", selectedStyle);
-        console.log("Selected Style Prompt:", selectedStylePrompt);
-        console.log("Selected Negative Prompt:", selectedNegativePrompt);
+        //console.log("Selected Style:", selectedStyle);
+        //console.log("Selected Style Prompt:", selectedStylePrompt);
+        //console.log("Selected Negative Prompt:", selectedNegativePrompt);
         updateProgress(60, "Processing Your Music Personality...");
         const response = await fetch("http://localhost:3001/api/style-transfer", {
             method: "POST",
@@ -296,7 +296,7 @@ const editPhoto = async () => {
                 style_image: selectedStyle,
                 style_prompt: selectedStylePrompt,
                 negative_prompt: selectedNegativePrompt,
-                seed: selectedSeed,
+                //seed: selectedSeed,
             })
         });
 
@@ -306,7 +306,7 @@ const editPhoto = async () => {
         updateProgress(65, "Processing Your Music Personality...");
         const data = await response.json();
         if (data.success) {
-            console.log(data.images);
+            //console.log(data.images);
             updateProgress(70, "Processing Your Music Personality...");
             editedImage.value = data.images;
         } else {
@@ -314,7 +314,22 @@ const editPhoto = async () => {
         }
     } catch (error) {
         console.error("Error editing photo:", error);
-        router.push(`/cameratest/${personality}`);
+        const popup = document.getElementById('popup');
+        popup.innerHTML = 'Wajah Tidak Terdeteksi, Coba Lagi<br><i>Face Not Detected, Try Again</i>';
+        popup.classList.remove('hidden');
+        popup.classList.remove('hide');
+        popup.classList.add('show');
+
+        setTimeout(() => {
+            popup.classList.remove('show');
+            popup.classList.add('hide');
+
+            // Hide the popup completely after animation
+            setTimeout(() => {
+                popup.classList.add('hidden');
+            }, 3000); // match buttonDisappear duration
+        }, 2000);
+        router.push(`/cameratest/INTJ`);
     }
 };
 
@@ -362,7 +377,7 @@ const editVideo = async () => {
                 popup.classList.add('hidden');
             }, 4000); // match buttonDisappear duration
         }, 2000);
-        router.push(`/cameratest/${personality}`);
+        router.push(`/cameratest/INTJ`);
     }
 };
 
@@ -500,7 +515,7 @@ const process = async () => {
     isLoading.value = true;
     updateProgress(0, "Processing Your Music Personality...");
     try {
-        console.log("Processing...");
+        //console.log("Processing...");
         const detectedGender = await classifyImageClientSide(capturedImage.value);
         genderPrompt = detectedGender;
         await editPhoto();

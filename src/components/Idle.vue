@@ -41,6 +41,7 @@ const goToNext = async () => {
 // Initialize the "start-in" and second Lottie animations
 onMounted(async () => {
     try {
+        console.clear();
         // Load and play the "home-in.json" animation
         const response = await fetch(new URL('@/assets/lottie/home-page/home-in.json', import.meta.url));
         const animationData = await response.json();

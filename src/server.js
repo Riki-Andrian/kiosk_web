@@ -2,9 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
 import Replicate from 'replicate';
-import { send } from 'vite';
+//import { send } from 'vite';
 import dotenv from 'dotenv';
-import { AzureOpenAI } from "openai";
+//import { AzureOpenAI } from "openai";
 // import { uploadVideoFirestore } from './firebase/firestore.js';
 // import { viewDepthKey } from 'vue-router';
 dotenv.config();
@@ -14,14 +14,14 @@ import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
-import { exec } from 'child_process';
+//import { exec } from 'child_process';
 import sharp from 'sharp';
 import createClient from "@azure-rest/ai-vision-face";
 import { AzureKeyCredential } from "@azure/core-auth";
-import { readFile } from 'fs/promises';
+//import { readFile } from 'fs/promises';
 import { file } from 'tmp';
 import { randomUUID } from 'crypto';
-import { blob } from 'stream/consumers';
+//import { blob } from 'stream/consumers';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -50,9 +50,9 @@ app.post('/api/style-transfer', async (req, res) => {
 
   const replicate = new Replicate({ auth: API_TOKEN });
 
-  const { image, style_image, style_prompt, negative_prompt, seed } = req.body;
+  const { image, style_image, style_prompt, negative_prompt } = req.body;
 
-  console.log('ini style image nya:', style_image);
+  //console.log('ini style image nya:', style_image);
 
   if (!image || !style_image) {
     return res.status(400).json({ success: false, error: "Missing image or style_image" });
@@ -74,12 +74,12 @@ app.post('/api/style-transfer', async (req, res) => {
         number_of_images: 1,
         structure_depth_strength: 2,
         structure_denoising_strength: 1,
-        seed: seed,
+        //seed: seed,
       }
     });
 
   const editedImage = output[0].url();
-  console.log(editedImage);
+  //console.log(editedImage);
 
   const swapFace = await replicate.run(
     "cdingram/face-swap:d1d6ea8c8be89d664a07a457526f7128109dee7030fdac424788d762c71ed111",
@@ -91,7 +91,7 @@ app.post('/api/style-transfer', async (req, res) => {
     }
   );
 
-  console.log(swapFace);
+  //console.log(swapFace);
 
   res.json({ success: true, images: swapFace.url() });
 });
