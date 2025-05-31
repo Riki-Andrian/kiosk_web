@@ -321,8 +321,7 @@ app.post("/api/process-video", async (req, res) => {
         ffmpeg()
           .input(inputVideo)
           .input(imagePath)
-          .inputOptions(["-loop 1"])
-          .inputOptions(["-t 5"])
+          .inputOptions(["-loop 1", "-t 5"])
           .input(music)
           .complexFilter([
             { filter: "format", options: "yuva420p", inputs: "[1:v]", outputs: "fmt" },
@@ -334,6 +333,9 @@ app.post("/api/process-video", async (req, res) => {
             "-map [final]",
             "-map 2:a",
             "-c:v libx264",
+            "-profile:v baseline",
+            "-level 3.0",
+            "-pix_fmt yuv420p", 
             "-preset veryfast",
             "-crf 23",
             "-threads 4",
