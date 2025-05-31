@@ -204,7 +204,7 @@ const chooseStyle = async () => {
             // Hide the popup completely after animation
             setTimeout(() => {
                 popup.classList.add('hidden');
-            }, 500); // match buttonDisappear duration
+            }, 4000); // match buttonDisappear duration
         }, 2000);
         return
     } else {
@@ -358,7 +358,7 @@ const editVideo = async () => {
             // Hide the popup completely after animation
             setTimeout(() => {
                 popup.classList.add('hidden');
-            }, 500); // match buttonDisappear duration
+            }, 4000); // match buttonDisappear duration
         }, 2000);
     }
 };
@@ -480,7 +480,7 @@ const goToResultPage = () => {
             // Hide the popup completely after animation
             setTimeout(() => {
                 popup.classList.add('hidden');
-            }, 500); // match buttonDisappear duration
+            }, 4000); // match buttonDisappear duration
         }, 2000);
     }
 };
@@ -563,7 +563,10 @@ watch(isLoading, async (val) => {
                         <button class="action-button" :disabled="capturingPhoto || isCountingDown" @click="capturePhoto">TAKE A PHOTO</button>
                     </div>
 
-                    <div id="popup" class="popup hidden">Ada Error, Panggil Teknisi nya|error occured, call the maintenance team</div>
+                    <div id="popup" class="popup hidden">
+                    Ada Error, Panggil Teknisi nya<br><i>an error occured, call the maintenance team</i>
+                    </div>
+
                 </div>
 
                 <div v-else class="preview-container">
