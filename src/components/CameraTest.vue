@@ -567,7 +567,7 @@ watch(isLoading, async (val) => {
                     </div>
 
                     <div id="popup" class="popup hidden">
-                    Ada Error, Panggil Teknisi nya<br><i>an error occured, call the maintenance team</i>
+                    Telah terjadi kesalahan, Mohon Maaf atas Ketidaknyamanan nya<br><i>an error occured, sorry for the inconvenience.</i>
                     </div>
 
                 </div>
