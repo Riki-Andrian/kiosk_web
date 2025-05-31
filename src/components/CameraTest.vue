@@ -192,7 +192,20 @@ const chooseStyle = async () => {
     if(data.glasses != 'NoGlasses') genderPrompt += ' wearing a glasses';
 
     if (genderPrompt === null){
-        alert("no gender detected!");
+        const popup = document.getElementById('popup');
+        popup.classList.remove('hidden');
+        popup.classList.remove('hide');
+        popup.classList.add('show');
+
+        setTimeout(() => {
+            popup.classList.remove('show');
+            popup.classList.add('hide');
+
+            // Hide the popup completely after animation
+            setTimeout(() => {
+                popup.classList.add('hidden');
+            }, 500); // match buttonDisappear duration
+        }, 2000);
         return
     } else {
         const randomIndex = Math.floor(Math.random() * 9);
@@ -333,7 +346,20 @@ const editVideo = async () => {
         }
     } catch (error) {
         console.error("Error processing video:", error);
-        alert("There was an error processing the video.");
+        const popup = document.getElementById('popup');
+        popup.classList.remove('hidden');
+        popup.classList.remove('hide');
+        popup.classList.add('show');
+
+        setTimeout(() => {
+            popup.classList.remove('show');
+            popup.classList.add('hide');
+
+            // Hide the popup completely after animation
+            setTimeout(() => {
+                popup.classList.add('hidden');
+            }, 500); // match buttonDisappear duration
+        }, 2000);
     }
 };
 
@@ -442,7 +468,20 @@ const goToResultPage = () => {
 
         router.push({ name: "Result", query: { videoUrl: outputUrl.value, downloadUrl: functionUrl } });
     } else {
-        alert("Please finish editing the video first.");
+        const popup = document.getElementById('popup');
+        popup.classList.remove('hidden');
+        popup.classList.remove('hide');
+        popup.classList.add('show');
+
+        setTimeout(() => {
+            popup.classList.remove('show');
+            popup.classList.add('hide');
+
+            // Hide the popup completely after animation
+            setTimeout(() => {
+                popup.classList.add('hidden');
+            }, 500); // match buttonDisappear duration
+        }, 2000);
     }
 };
 
@@ -523,6 +562,8 @@ watch(isLoading, async (val) => {
                     <div class="button-wrapper">
                         <button class="action-button" :disabled="capturingPhoto || isCountingDown" @click="capturePhoto">TAKE A PHOTO</button>
                     </div>
+
+                    <div id="popup" class="popup hidden">Ada Error, Panggil Teknisi nya|error occured, call the maintenance team</div>
                 </div>
 
                 <div v-else class="preview-container">
@@ -542,6 +583,35 @@ watch(isLoading, async (val) => {
 
 * {
     font-family: 'Montserrat', sans-serif;
+}
+
+.popup {
+    position: absolute;
+    background-color: #B32024;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    z-index: 999;
+    opacity: 0;
+    transform: scale(0.7);
+    filter: blur(6px);
+    pointer-events: none;
+    top: 10%;
+    justify-content: center;
+}
+
+.popup.show {
+    animation: buttonAppear 0.5s ease-out forwards;
+}
+
+.popup.hide {
+    animation: buttonDisappear 0.5s ease-in forwards;
+}
+
+.hidden {
+    display: none;
 }
 
 .app-container {

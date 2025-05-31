@@ -364,15 +364,16 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 }
 
 .progress-bar-container {
+    margin: 0 auto; /* Center horizontally */
+    padding: 0 20px 5% 20px; /* Add bottom padding */
     display: flex;
     justify-content: center;
     gap: 6px;
-    padding: 0 20px;
     width: 100%;
     max-width: 500px;
     box-sizing: border-box;
-    padding-bottom: 5%;
 }
+
 
 .progress-segment {
     flex: 1;
