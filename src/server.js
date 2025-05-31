@@ -321,28 +321,25 @@ app.post("/api/process-video", async (req, res) => {
         ffmpeg()
           .input(inputVideo)
           .input(imagePath)
-          .inputOptions(["-loop 1", "-t 5"])
+          .inputOptions(["-loop 1"])
+          .inputOptions(["-t 5"])
           .input(music)
           .complexFilter([
             { filter: "format", options: "yuva420p", inputs: "[1:v]", outputs: "fmt" },
             { filter: "scale", options: "745:745", inputs: "fmt", outputs: "scl" },
             { filter: "fade", options: "t=in:st=0:d=1:alpha=1", inputs: "scl", outputs: "ovl" },
-            { filter: "overlay", options: imageCoord, inputs: ["0:v", "ovl"], outputs: "final" }
+            { filter: "overlay", options: imageCoord, inputs: ["0:v", "ovl"], outputs: "v" }
           ])
           .outputOptions([
-            "-map [final]",
-            "-map 2:a",
-            "-c:v libx264",
-            "-profile:v baseline",
-            "-level 3.0",
-            "-pix_fmt yuv420p", 
-            "-preset veryfast",
-            "-crf 23",
-            "-threads 4",
-            "-b:v 700k",
-            "-c:a aac",
-            "-shortest",
-            "-movflags frag_keyframe+empty_moov"
+            "-map", "[v]",           // Map the overlayed video output
+            "-map", "2:a",           // Map audio from third input (music)
+            "-c:v", "libx264",
+            "-preset", "veryfast",   // Match your original preset
+            "-crf", "23",
+            "-threads", "4",
+            "-b:v", "700k",
+            "-c:a", "aac",
+            "-shortest"
           ])
           .format('mp4')
           .on("error", (err) => {

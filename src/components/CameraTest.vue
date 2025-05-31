@@ -200,7 +200,7 @@ const chooseStyle = async () => {
         default:
             const baseSeed1 = 2547370140;
             selectedStyle = styles['ENTP_ENFP'];
-            musicFile.value = ENTP_ENFP[randomIndex];
+            musicFile.value = 'ENTP-ENFP';
             videoFile.value = video1; // Inserted the imported video
             imageCoord.value = "75:365";
             selectedStylePrompt = `a close up of ${genderPrompt} facing to camera, with a light smile, in a red futuristic neon-lit corridor with warm glowing red and orange lights, the corridor has a large windows on the sides reveal a cyberpunk cityscape at night with red neon lights and tall buildings`;
@@ -211,7 +211,7 @@ const chooseStyle = async () => {
             case "ENFJ":
                 const baseSeed2 = 3898553140;
                 selectedStyle = styles['ESFJ_ENFJ'];
-                musicFile.value = ESFJ_ENFJ[randomIndex];
+                musicFile.value = 'ESFJ-ENFJ';
                 videoFile.value = video2; // Inserted the imported video
                 imageCoord.value = "170:735";
                 if(randomNumberGenerator === 1){
@@ -226,7 +226,7 @@ const chooseStyle = async () => {
             case "ESFP":
                 const baseSeed3 = 2044740130;
                 selectedStyle = styles['ESTP_ESFP'];
-                musicFile.value = ESTP_ESFP[randomIndex];
+                musicFile.value = 'ESTP-ESFP';
                 videoFile.value = video3; // Inserted the imported video
                 imageCoord.value = "170:625";
                 selectedStylePrompt = `a close up of ${genderPrompt}, standing & facing to camera, with a light smile, on a wide dramatic concert stage filled with vivid orange lightning effects and glowing stage lights, surrounded by large Marshall amplifiers and microphones.`;
@@ -237,7 +237,7 @@ const chooseStyle = async () => {
             case "INFP":
                 const baseSeed4 = 2728907370;
                 selectedStyle = styles['INFJ_INFP'];
-                musicFile.value = INFJ_INFP[randomIndex];
+                musicFile.value = 'INFJ-INFP';
                 videoFile.value = video4; // Inserted the imported video
                 imageCoord.value = "265:660";
                 selectedStylePrompt = `a close up of ${genderPrompt}, standing facing to camera, with a light smile, in a futuristic green subway station`;
@@ -248,7 +248,7 @@ const chooseStyle = async () => {
             case "INTP":
                 const baseSeed5 = 394514902;
                 selectedStyle = styles['INTJ_INTP'];
-                musicFile.value = INTJ_INTP[randomIndex];
+                musicFile.value = 'INTJ-INTP';
                 videoFile.value = video5; // Inserted the imported video
                 imageCoord.value = "185:330";
                 selectedStylePrompt = `a close up of ${genderPrompt} standing facing to camera, with a light smile under a super cloudy blue sky, soft lighting, bunch of fluffy white Cumulonimbus clouds with depth and volume, atmospheric perspective, detailed sky background, dreamy atmosphere.`;
