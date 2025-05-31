@@ -313,6 +313,7 @@ const editPhoto = async () => {
         }
     } catch (error) {
         console.error("Error editing photo:", error);
+        router.push(`/cameratest/${personality}`);
     }
 };
 
