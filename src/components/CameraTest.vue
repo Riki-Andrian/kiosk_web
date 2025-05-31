@@ -64,6 +64,7 @@ const loadCameraStream = async () => {
         }
     } catch (error) {
         console.error("Error accessing camera:", error);
+        router.push(`/cameratest/${personality}`);
     }
 };
 onMounted(loadCameraStream);
@@ -361,6 +362,7 @@ const editVideo = async () => {
                 popup.classList.add('hidden');
             }, 4000); // match buttonDisappear duration
         }, 2000);
+        router.push(`/cameratest/${personality}`);
     }
 };
 
