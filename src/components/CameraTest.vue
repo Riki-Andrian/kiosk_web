@@ -589,7 +589,7 @@ watch(isLoading, async (val) => {
 
                 <div v-else class="preview-container">
                     <img :src="imageUrl" alt="Captured Image" class="preview-image" />
-                    <button id="retake-photo" class="action-button" @click="retakePhoto" :disabled="retakeCount >= 1">
+                    <button id="retake-photo" class="action-button" @click="retakePhoto" :disabled="retakeCount >= 10">
                         RE-TAKE PHOTO
                     </button>
                     <button class="action-button" :disabled="processingAI" @click="process">S U B M I T</button>
